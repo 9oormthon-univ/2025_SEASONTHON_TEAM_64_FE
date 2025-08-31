@@ -9,7 +9,7 @@ const MainPage = () => {
     <Wrapper>
       <Container>
           <LogoBox>로고/아이콘</LogoBox>
-          <MainText>메인 페이지</MainText>
+          <MainText>청년과 노인이 마음을 나누는 따뜻한 디지털 마루</MainText>
           <KakaoLoginBtn>카카오 로그인</KakaoLoginBtn>
       </Container>
     </Wrapper>

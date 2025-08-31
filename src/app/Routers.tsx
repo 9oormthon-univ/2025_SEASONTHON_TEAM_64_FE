@@ -1,14 +1,48 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Splash from '../Splash';
-import MainPage from '../MainPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
+import { FontSizeProvider, useFontSize } from "./FontSizeContext";
+
+import Splash from "../Splash";
+import MainPage from "../MainPage";
+import Mypage from "../Mypage/Mypage";
+import LocalInfoShare from "../LocalInfoShare/LocalInfoShare";
+import LocalInfoForm from "../LocalInfoShare/LocalInfoForm";
+
+/* html 폰트 크기를 Context 값으로 변경 → rem 단위가 전역으로 스케일됨 */
+const GlobalStyle = createGlobalStyle<{ $fontSize: number }>`
+  html { 
+    font-size: ${({ $fontSize }) => $fontSize}px;
+  }
+  body {
+    line-height: 1.6;
+    transition: font-size .2s ease;
+  }
+`;
+
+const GlobalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { fontSize } = useFontSize();
+  return (
+    <>
+      <GlobalStyle $fontSize={fontSize} />
+      {children}
+    </>
+  );
+};
 
 export default function Routers() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Splash />} />
-        <Route path="/MainPage" element={<MainPage />} />
-      </Routes>
-    </Router>
+    <FontSizeProvider>
+      <GlobalWrapper>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Splash />} />
+            <Route path="/MainPage" element={<MainPage />} />
+            <Route path="/Mypage" element={<Mypage />} />
+            <Route path="/LocalInfoShare" element={<LocalInfoShare />} />
+            <Route path="/LocalInfoForm" element={<LocalInfoForm />} />
+          </Routes>
+        </Router>
+      </GlobalWrapper>
+    </FontSizeProvider>
   );
 }
