@@ -1,17 +1,34 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Home, Star, Search, User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const BottomNavigation: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname.startsWith('/feed-detail') || location.pathname.startsWith('/mission');
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <NavContainer>
-      <NavItem $isActive={true}>
+      <NavItem 
+        $isActive={isActive('/')}
+        onClick={() => navigate('/')}
+      >
         <Home size={24} />
         <NavLabel>홈</NavLabel>
       </NavItem>
-      <NavItem $isActive={false}>
+      <NavItem 
+        $isActive={isActive('/fortune')}
+        onClick={() => navigate('/fortune')}
+      >
         <Star size={24} />
-        <NavLabel>즐겨찾기</NavLabel>
+        <NavLabel>운세</NavLabel>
       </NavItem>
       <NavItem $isActive={false}>
         <Search size={24} />

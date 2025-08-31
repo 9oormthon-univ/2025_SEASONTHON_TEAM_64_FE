@@ -11,6 +11,8 @@ import TodayViewFeed from "../TodayViewFeed/TodayViewFeed";
 import MissionRegistration from "../TodayViewFeed/MissionRegistration";
 import MissionComplete from "../TodayViewFeed/MissionComplete";
 import FeedDetail from "../TodayViewFeed/FeedDetail";
+import FortunePage from "../FortunePage/FortunePage";
+import FortuneDetail from "../FortunePage/FortuneDetail";
 
 /* html 폰트 크기를 Context 값으로 변경 → rem 단위가 전역으로 스케일됨 */
 const GlobalStyle = createGlobalStyle<{ $fontSize: number }>`
@@ -48,6 +50,8 @@ export default function Routers() {
             <Route path="/mission-registration" element={<MissionRegistration />} />
             <Route path="/mission-complete" element={<MissionComplete />} />
             <Route path="/feed-detail/:id" element={<FeedDetail />} />
+            <Route path="/fortune" element={<FortunePage />} />
+            <Route path="/fortune-detail/:id" element={<FortuneDetail />} />
           </Routes>
         </Router>
       </GlobalWrapper>
