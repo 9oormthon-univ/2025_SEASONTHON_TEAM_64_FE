@@ -7,6 +7,10 @@ import MainPage from "../MainPage";
 import Mypage from "../Mypage/Mypage";
 import LocalInfoShare from "../LocalInfoShare/LocalInfoShare";
 import LocalInfoForm from "../LocalInfoShare/LocalInfoForm";
+import TodayViewFeed from "../TodayViewFeed/TodayViewFeed";
+import MissionRegistration from "../TodayViewFeed/MissionRegistration";
+import MissionComplete from "../TodayViewFeed/MissionComplete";
+import FeedDetail from "../TodayViewFeed/FeedDetail";
 
 /* html 폰트 크기를 Context 값으로 변경 → rem 단위가 전역으로 스케일됨 */
 const GlobalStyle = createGlobalStyle<{ $fontSize: number }>`
@@ -35,11 +39,15 @@ export default function Routers() {
       <GlobalWrapper>
         <Router>
           <Routes>
-            <Route path="/" element={<Splash />} />
+            <Route path="/" element={<TodayViewFeed />} />
+            <Route path="/Splash" element={<Splash />} />
             <Route path="/MainPage" element={<MainPage />} />
             <Route path="/Mypage" element={<Mypage />} />
             <Route path="/LocalInfoShare" element={<LocalInfoShare />} />
             <Route path="/LocalInfoForm" element={<LocalInfoForm />} />
+            <Route path="/mission-registration" element={<MissionRegistration />} />
+            <Route path="/mission-complete" element={<MissionComplete />} />
+            <Route path="/feed-detail/:id" element={<FeedDetail />} />
           </Routes>
         </Router>
       </GlobalWrapper>
