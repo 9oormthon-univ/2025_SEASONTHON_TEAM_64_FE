@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Heart, MessageCircle, User } from 'lucide-react';
+import { Heart, MessageCircle, User, Trash2 } from 'lucide-react';
 
 interface Post {
   id: number;
@@ -16,9 +16,12 @@ interface FeedPostProps {
   post: Post;
   onLike: (postId: number) => void;
   onComment: (postId: number) => void;
+  onDelete: (postId: number) => void;
 }
 
-const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment }) => {
+const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete }) => {
+  const isMyPost = post.user === '나' || post.user === '사용자1'; // 임시로 사용자1을 내 포스트로 설정
+
   return (
     <PostCard>
       <PostHeader>
@@ -26,6 +29,11 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment }) => {
           <User size={20} />
         </UserIcon>
         <UserName>{post.user}</UserName>
+        {isMyPost && (
+          <DeleteButton onClick={() => onDelete(post.id)}>
+            <Trash2 size={16} />
+          </DeleteButton>
+        )}
       </PostHeader>
       
       <PostContent>
@@ -84,6 +92,21 @@ const UserName = styled.span`
   font-size: 14px;
   font-weight: 500;
   color: #333;
+  flex: 1;
+`;
+
+const DeleteButton = styled.button`
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
 `;
 
 const PostContent = styled.div`

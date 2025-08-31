@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ArrowLeft, Bell, User, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { SlideUpContainer } from '../Styles/Animations';
 
 const MissionComplete: React.FC = () => {
   const navigate = useNavigate();
@@ -236,7 +237,7 @@ const SubmitButton = styled.button`
   cursor: not-allowed;
 `;
 
-const ToastMessage = styled.div`
+const ToastMessage = styled(SlideUpContainer)`
   position: fixed;
   bottom: 100px;
   left: 50%;
@@ -248,7 +249,6 @@ const ToastMessage = styled.div`
   font-size: 14px;
   font-weight: 500;
   z-index: 1000;
-  animation: slideUp 0.3s ease-out;
 `;
 
 export default MissionComplete;

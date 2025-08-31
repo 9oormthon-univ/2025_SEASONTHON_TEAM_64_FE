@@ -36,6 +36,24 @@ const TodayViewFeed: React.FC = () => {
       likes: 8,
       comments: 1,
       isLiked: true
+    },
+    {
+      id: 3,
+      user: '사용자3',
+      content: '오늘 점심 메뉴 추천해주세요!',
+      image: '/placeholder-image.jpg',
+      likes: 5,
+      comments: 8,
+      isLiked: false
+    },
+    {
+      id: 4,
+      user: '사용자4',
+      content: '주말에 갈만한 곳 있나요?',
+      image: '/placeholder-image.jpg',
+      likes: 20,
+      comments: 15,
+      isLiked: false
     }
   ]);
 
@@ -57,6 +75,10 @@ const TodayViewFeed: React.FC = () => {
     navigate('/mission-registration');
   };
 
+  const handleDeletePost = (postId: number) => {
+    setPosts(posts.filter(post => post.id !== postId));
+  };
+
   return (
     <Container>
       <Header>
@@ -66,7 +88,7 @@ const TodayViewFeed: React.FC = () => {
         </BellIcon>
       </Header>
 
-      <Content>
+      <ScrollableContent>
         <MissionCard onAddMission={handleAddMission} />
         
         <FeedSection>
@@ -76,10 +98,11 @@ const TodayViewFeed: React.FC = () => {
               post={post}
               onLike={handleLike}
               onComment={handleComment}
+              onDelete={handleDeletePost}
             />
           ))}
         </FeedSection>
-      </Content>
+      </ScrollableContent>
 
       <BottomNavigation />
     </Container>
@@ -92,6 +115,7 @@ const Container = styled.div`
   background-color: #ffffff;
   min-height: 100vh;
   position: relative;
+  overflow: hidden;
 `;
 
 const Header = styled.header`
@@ -117,9 +141,29 @@ const BellIcon = styled.div`
   cursor: pointer;
 `;
 
-const Content = styled.main`
+const ScrollableContent = styled.div`
+  height: calc(100vh - 120px);
+  overflow-y: auto;
   padding: 0 20px;
   padding-bottom: 80px;
+  
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
 `;
 
 const FeedSection = styled.div`
