@@ -2,11 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { FontSizeProvider, useFontSize } from "./FontSizeContext";
 
-import Splash from "../Splash";
-import MainPage from "../MainPage";
-import Mypage from "../Mypage/Mypage";
-import LocalInfoShare from "../LocalInfoShare/LocalInfoShare";
-import LocalInfoForm from "../LocalInfoShare/LocalInfoForm";
+import Splash from "../Landing/Pages/Splash";
+import MainPage from "../Landing/Pages/MainPage";
+import Mypage from "../Mypage/Pages/Mypage";
+import LocalInfoShare from "../LocalInfoShare/Pages/LocalInfoShare";
+import LocalInfoForm from "../LocalInfoShare/Pages/LocalInfoForm";
+import CookieDetail from "../Mypage/Pages/CookieDetailPage";
+import ManagerHome from "../Manager/Pages/ManagerHome";
 
 /* html 폰트 크기를 Context 값으로 변경 → rem 단위가 전역으로 스케일됨 */
 const GlobalStyle = createGlobalStyle<{ $fontSize: number }>`
@@ -40,6 +42,8 @@ export default function Routers() {
             <Route path="/Mypage" element={<Mypage />} />
             <Route path="/LocalInfoShare" element={<LocalInfoShare />} />
             <Route path="/LocalInfoForm" element={<LocalInfoForm />} />
+            <Route path="/CookieDetailPage" element={<CookieDetail />} />
+            <Route path="/ManagerHome" element={<ManagerHome />} />
           </Routes>
         </Router>
       </GlobalWrapper>
