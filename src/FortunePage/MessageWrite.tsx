@@ -1,24 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, Star, User, Plus } from 'lucide-react';
+import { ArrowLeft, Bell, Star, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getRandomFortuneCookie } from './dummyData';
-import { FortuneCookieData } from './types';
 import { fortuneService } from './fortuneService';
 
-const FortunePage: React.FC = () => {
+const MessageWrite: React.FC = () => {
   const navigate = useNavigate();
-  const [fortuneCookie, setFortuneCookie] = useState<FortuneCookieData | null>(null);
   const [message, setMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  const handleOpenTodayFortune = () => {
-    const randomFortune = getRandomFortuneCookie();
-    setFortuneCookie(randomFortune);
-    navigate('/fortune-open', { state: { fortuneCookie: randomFortune } });
-  };
-
-  const handleSendFortune = async () => {
+  const handleSend = async () => {
     if (message.trim()) {
       try {
         // 포춘쿠키 메시지 전송
@@ -28,7 +19,8 @@ const FortunePage: React.FC = () => {
         
         setTimeout(() => {
           setShowToast(false);
-        }, 3000);
+          navigate('/fortune');
+        }, 2000);
       } catch (error) {
         console.error('포춘쿠키 전송 실패:', error);
         // 에러 처리 로직 추가 가능
@@ -36,12 +28,14 @@ const FortunePage: React.FC = () => {
     }
   };
 
+  const isMessageValid = message.trim().length > 0;
+
   return (
     <Container>
       <Header>
-        <ProfileIcon>
-          <User size={24} />
-        </ProfileIcon>
+        <BackButton onClick={() => navigate('/fortune')}>
+          <ArrowLeft size={24} />
+        </BackButton>
         <BellIcon>
           <Bell size={24} />
         </BellIcon>
@@ -52,30 +46,31 @@ const FortunePage: React.FC = () => {
           <Star size={80} strokeWidth={1} />
         </StarIcon>
 
-        <FortuneButton onClick={handleOpenTodayFortune}>
-          <ButtonText>오늘의 포춘쿠키</ButtonText>
-          <Plus size={20} />
-        </FortuneButton>
+        <MessagePrompt>
+          누군가를 위한 따뜻한 말을 전해봐요.
+        </MessagePrompt>
 
-        <SendFortuneSection>
-          <SendFortuneButton onClick={() => navigate('/message-write')}>
-            <ButtonText>포춘쿠키 전하기</ButtonText>
-          </SendFortuneButton>
-          
-          <MessageInput>
-            <UserIcon>
-              <User size={16} />
-            </UserIcon>
-            <Input 
-              type="text" 
-              placeholder="나:" 
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={100}
-            />
-            <SendButton onClick={handleSendFortune}>전송</SendButton>
-          </MessageInput>
-        </SendFortuneSection>
+        <MessageInput>
+          <UserIcon>
+            <User size={16} />
+          </UserIcon>
+          <Input 
+            type="text" 
+            placeholder="나:" 
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            maxLength={100}
+          />
+          <CharacterCount>{message.length}/100</CharacterCount>
+        </MessageInput>
+
+        <SendButton 
+          onClick={handleSend}
+          disabled={!isMessageValid}
+          $isValid={isMessageValid}
+        >
+          전달하기
+        </SendButton>
 
         {showToast && (
           <ToastMessage>
@@ -95,7 +90,7 @@ const FortunePage: React.FC = () => {
           <SearchIcon size={24} />
         </NavItem>
         <NavItem>
-          <User size={24} />
+          <UserIcon size={24} />
         </NavItem>
       </NavigationBar>
     </Container>
@@ -118,9 +113,18 @@ const Header = styled.header`
   background-color: #ffffff;
 `;
 
-const ProfileIcon = styled.div`
+const BackButton = styled.button`
+  background: none;
+  border: none;
   color: #333;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
 `;
 
 const BellIcon = styled.div`
@@ -134,99 +138,80 @@ const Content = styled.main`
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  margin-top: 40px;
 `;
 
 const StarIcon = styled.div`
   color: #333;
-  margin-top: 40px;
 `;
 
-const FortuneButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: #ffffff;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-  justify-content: center;
-
-  &:hover {
-    background-color: #f8f9fa;
-  }
-`;
-
-const SendFortuneSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-`;
-
-const SendFortuneButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-
-  &:hover {
-    background-color: #f8f9fa;
-  }
-`;
-
-const ButtonText = styled.span`
+const MessagePrompt = styled.div`
   font-size: 16px;
-  font-weight: 500;
   color: #333;
+  text-align: center;
+  line-height: 1.5;
 `;
 
 const MessageInput = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: relative;
+  width: 100%;
   background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 16px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: #333;
+  }
 `;
 
 const UserIcon = styled.div`
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #666;
 `;
 
 const Input = styled.input`
-  flex: 1;
+  width: 100%;
   border: none;
   background: none;
   outline: none;
   font-size: 14px;
   color: #333;
+  padding-left: 32px;
+  padding-right: 60px;
 
   &::placeholder {
     color: #999;
   }
 `;
 
-const SendButton = styled.button`
-  background-color: #333;
+const CharacterCount = styled.div`
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #999;
+`;
+
+const SendButton = styled.button<{ $isValid: boolean }>`
+  background-color: ${props => props.$isValid ? '#333' : '#ccc'};
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  border-radius: 8px;
+  padding: 16px 48px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: ${props => props.$isValid ? 'pointer' : 'not-allowed'};
+  transition: all 0.2s;
+  min-width: 120px;
 
   &:hover {
-    background-color: #555;
+    background-color: ${props => props.$isValid ? '#555' : '#ccc'};
   }
 `;
 
@@ -278,4 +263,4 @@ const SearchIcon = ({ size }: { size: number }) => (
   </svg>
 );
 
-export default FortunePage;
+export default MessageWrite;
