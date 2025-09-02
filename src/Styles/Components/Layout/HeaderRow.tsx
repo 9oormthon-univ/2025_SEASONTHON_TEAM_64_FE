@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components"; //HeaderRow.tsx
 
 const HeaderRow = styled.div`
   display: flex; justify-content: space-between; align-items: center;

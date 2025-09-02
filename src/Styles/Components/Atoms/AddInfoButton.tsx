@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components';//AddInfoButton.tsx
 
 export const AddInfoButton = styled.button`
   width: 140px;
@@ -7,5 +7,4 @@ export const AddInfoButton = styled.button`
   border:1px solid black;
   display:block;
   border-radius: 15px;
-  margin-right: 20px;
 `;

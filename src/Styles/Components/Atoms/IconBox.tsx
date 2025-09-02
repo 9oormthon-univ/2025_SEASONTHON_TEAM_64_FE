@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'; //IconBox.tsx
 
 export const IconBox = styled.button`
     width: 70px;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'; //LocalInfoButton.tsx
 
 export const LocalInfoButton = styled.button`
   width: 310px;

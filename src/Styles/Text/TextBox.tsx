@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components"; //TextBox.tsx
 
 export const TextBox = styled.div`
   font-size: 1rem;

@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; //BottomBar.tsx
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { House, Star, Search, User } from "lucide-react";
