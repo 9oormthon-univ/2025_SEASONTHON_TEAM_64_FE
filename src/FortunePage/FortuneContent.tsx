@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell, Star } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FortuneCookieData } from './types';
+import BottomNavigation from '../TodayViewFeed/BottomNavigation';
 
 const FortuneContent: React.FC = () => {
   const navigate = useNavigate();
@@ -35,20 +36,7 @@ const FortuneContent: React.FC = () => {
         </FortuneMessage>
       </Content>
 
-      <NavigationBar>
-        <NavItem>
-          <HomeIcon size={24} />
-        </NavItem>
-        <NavItem $active={true}>
-          <Star size={24} fill="currentColor" />
-        </NavItem>
-        <NavItem>
-          <SearchIcon size={24} />
-        </NavItem>
-        <NavItem>
-          <UserIcon size={24} />
-        </NavItem>
-      </NavigationBar>
+      <BottomNavigation />
     </Container>
   );
 };
@@ -113,46 +101,6 @@ const FortuneMessage = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const NavigationBar = styled.nav`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  background-color: #ffffff;
-  border-top: 1px solid #e9ecef;
-  border-radius: 20px 20px 0 0;
-  padding: 16px 32px;
-  gap: 48px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const NavItem = styled.div<{ $active?: boolean }>`
-  color: ${props => props.$active ? '#ff6b6b' : '#666'};
-  cursor: pointer;
-  transition: color 0.2s;
-`;
-
-// 아이콘 컴포넌트들
-const HomeIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    <polyline points="9,22 9,12 15,12 15,22"/>
-  </svg>
-);
-
-const SearchIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
-
-const UserIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
+// 하단 네비게이션은 공용 컴포넌트를 사용
 
 export default FortuneContent;

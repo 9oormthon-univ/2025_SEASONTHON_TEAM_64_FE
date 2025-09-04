@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, Star, User, Plus } from 'lucide-react';
+import { Bell, Star, User, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getRandomFortuneCookie } from './dummyData';
-import { FortuneCookieData } from './types';
 import { fortuneService } from './fortuneService';
+import BottomNavigation from '../TodayViewFeed/BottomNavigation';
 
 const FortunePage: React.FC = () => {
   const navigate = useNavigate();
-  const [fortuneCookie, setFortuneCookie] = useState<FortuneCookieData | null>(null);
+  
   const [message, setMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleOpenTodayFortune = () => {
     const randomFortune = getRandomFortuneCookie();
-    setFortuneCookie(randomFortune);
     navigate('/fortune-open', { state: { fortuneCookie: randomFortune } });
   };
 
@@ -58,23 +58,50 @@ const FortunePage: React.FC = () => {
         </FortuneButton>
 
         <SendFortuneSection>
-          <SendFortuneButton onClick={() => navigate('/message-write')}>
-            <ButtonText>포춘쿠키 전하기</ButtonText>
-          </SendFortuneButton>
-          
-          <MessageInput>
-            <UserIcon>
-              <User size={16} />
-            </UserIcon>
-            <Input 
-              type="text" 
-              placeholder="나:" 
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={100}
-            />
-            <SendButton onClick={handleSendFortune}>전송</SendButton>
-          </MessageInput>
+          <WriteBox>
+            <WriteHeader>
+              <ButtonText>포춘쿠키 전하기</ButtonText>
+            </WriteHeader>
+
+            {!isExpanded && (
+              <CompactBar onClick={() => setIsExpanded(true)}>
+                <UserIcon>
+                  <User size={16} />
+                </UserIcon>
+                <Input
+                  type="text"
+                  placeholder="나:"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  maxLength={100}
+                  readOnly
+                />
+                <MiniSend>전송</MiniSend>
+              </CompactBar>
+            )}
+
+            {isExpanded && (
+              <ExpandedArea>
+                <LabelRow>
+                  <User size={16} />
+                  <span>나:</span>
+                </LabelRow>
+                <TextArea
+                  placeholder="따뜻한 말을 적어주세요"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  maxLength={100}
+                  autoFocus
+                />
+                <BottomRow>
+                  <CharCount>{message.trim().length}/100</CharCount>
+                  <SendButton onClick={handleSendFortune} disabled={!message.trim()}>
+                    전달하기
+                  </SendButton>
+                </BottomRow>
+              </ExpandedArea>
+            )}
+          </WriteBox>
         </SendFortuneSection>
 
         {showToast && (
@@ -84,20 +111,7 @@ const FortunePage: React.FC = () => {
         )}
       </Content>
 
-      <NavigationBar>
-        <NavItem>
-          <HomeIcon size={24} />
-        </NavItem>
-        <NavItem $active={true}>
-          <Star size={24} fill="currentColor" />
-        </NavItem>
-        <NavItem>
-          <SearchIcon size={24} />
-        </NavItem>
-        <NavItem>
-          <User size={24} />
-        </NavItem>
-      </NavigationBar>
+      <BottomNavigation />
     </Container>
   );
 };
@@ -166,21 +180,20 @@ const SendFortuneSection = styled.div`
   width: 100%;
 `;
 
-const SendFortuneButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: all 0.2s;
+const WriteBox = styled.div`
   width: 100%;
+  border: 2px solid #333;
+  border-radius: 12px;
+  background-color: #ffffff;
+  overflow: hidden;
+`;
 
-  &:hover {
-    background-color: #f8f9fa;
-  }
+const WriteHeader = styled.div`
+  padding: 14px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
 `;
 
 const ButtonText = styled.span`
@@ -189,13 +202,13 @@ const ButtonText = styled.span`
   color: #333;
 `;
 
-const MessageInput = styled.div`
+const CompactBar = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
   background-color: #f8f9fa;
-  border-radius: 8px;
   padding: 12px 16px;
+  cursor: text;
 `;
 
 const UserIcon = styled.div`
@@ -215,6 +228,54 @@ const Input = styled.input`
   }
 `;
 
+const MiniSend = styled.div`
+  background-color: #111;
+  color: white;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  min-height: 180px;
+  background-color: #f8f9fa;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+`;
+
+const ExpandedArea = styled.div`
+  padding: 12px 12px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const LabelRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  padding: 0 4px;
+`;
+
+const BottomRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+`;
+
+const CharCount = styled.span`
+  font-size: 12px;
+  color: #888;
+`;
+
 const SendButton = styled.button`
   background-color: #333;
   color: white;
@@ -227,6 +288,10 @@ const SendButton = styled.button`
 
   &:hover {
     background-color: #555;
+  }
+  &:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
   }
 `;
 
@@ -243,39 +308,5 @@ const ToastMessage = styled.div`
   z-index: 1000;
 `;
 
-const NavigationBar = styled.nav`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  background-color: #ffffff;
-  border-top: 1px solid #e9ecef;
-  border-radius: 20px 20px 0 0;
-  padding: 16px 32px;
-  gap: 48px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const NavItem = styled.div<{ $active?: boolean }>`
-  color: ${props => props.$active ? '#ff6b6b' : '#666'};
-  cursor: pointer;
-  transition: color 0.2s;
-`;
-
-// 아이콘 컴포넌트들
-const HomeIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    <polyline points="9,22 9,12 15,12 15,22"/>
-  </svg>
-);
-
-const SearchIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
 
 export default FortunePage;
