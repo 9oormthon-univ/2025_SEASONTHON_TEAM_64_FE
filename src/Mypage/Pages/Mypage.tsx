@@ -41,7 +41,7 @@ const Mypage: React.FC = () => {
 
         <CenterRow>
           <CardButton type="button">내가 쓴 글</CardButton>
-          <CardButton type="button">내가 공유한 정보</CardButton>
+          <CardButton type="button" onClick={() => navigate("/LocalInfoShare")}>내가 공유한 정보</CardButton>
         </CenterRow>
 
         <FortuneCookieButton
