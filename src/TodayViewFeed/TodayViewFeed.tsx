@@ -1,71 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Bell, Home, Star, Search, User } from 'lucide-react';
+import { Bell, Wifi, WifiOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MissionCard from './MissionCard';
 import FeedPost from './FeedPost';
 import BottomNavigation from './BottomNavigation';
-
-interface Post {
-  id: number;
-  user: string;
-  content: string;
-  image: string;
-  likes: number;
-  comments: number;
-  isLiked: boolean;
-}
+import { useFeed } from '../app/FeedContext';
 
 const TodayViewFeed: React.FC = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: 1,
-      user: '사용자1',
-      content: '오늘 하늘 정말 예뻤어요!',
-      image: '/placeholder-image.jpg',
-      likes: 12,
-      comments: 3,
-      isLiked: false
-    },
-    {
-      id: 2,
-      user: '사용자2',
-      content: '산책길에서 만난 고양이입니다',
-      image: '/placeholder-image.jpg',
-      likes: 8,
-      comments: 1,
-      isLiked: true
-    },
-    {
-      id: 3,
-      user: '사용자3',
-      content: '오늘 점심 메뉴 추천해주세요!',
-      image: '/placeholder-image.jpg',
-      likes: 5,
-      comments: 8,
-      isLiked: false
-    },
-    {
-      id: 4,
-      user: '사용자4',
-      content: '주말에 갈만한 곳 있나요?',
-      image: '/placeholder-image.jpg',
-      likes: 20,
-      comments: 15,
-      isLiked: false
-    }
-  ]);
+  const { posts, likePost, addComment, deletePost, isOnline, pendingActions } = useFeed();
 
   const handleLike = (postId: number) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked }
-        : post
-    ));
+    likePost(postId);
   };
 
   const handleComment = (postId: number) => {
+    addComment(postId);
     // 댓글 페이지로 이동
     navigate(`/feed-detail/${postId}`);
   };
@@ -76,16 +27,27 @@ const TodayViewFeed: React.FC = () => {
   };
 
   const handleDeletePost = (postId: number) => {
-    setPosts(posts.filter(post => post.id !== postId));
+    deletePost(postId);
   };
 
   return (
     <Container>
       <Header>
         <Logo>로고/아이콘</Logo>
-        <BellIcon>
-          <Bell size={24} />
-        </BellIcon>
+        <HeaderRight>
+          <ConnectionStatus>
+            {isOnline ? <Wifi size={16} /> : <WifiOff size={16} />}
+            <StatusText $isOnline={isOnline}>
+              {isOnline ? '온라인' : '오프라인'}
+            </StatusText>
+            {pendingActions.length > 0 && (
+              <PendingBadge>{pendingActions.length}</PendingBadge>
+            )}
+          </ConnectionStatus>
+          <BellIcon>
+            <Bell size={24} />
+          </BellIcon>
+        </HeaderRight>
       </Header>
 
       <ScrollableContent>
@@ -134,6 +96,44 @@ const Logo = styled.div`
   font-size: 18px;
   font-weight: bold;
   color: #333;
+`;
+
+const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const ConnectionStatus = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  position: relative;
+`;
+
+const StatusText = styled.span<{ $isOnline: boolean }>`
+  font-size: 12px;
+  color: ${props => props.$isOnline ? '#28a745' : '#dc3545'};
+  font-weight: 500;
+`;
+
+const PendingBadge = styled.div`
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #ff6b6b;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const BellIcon = styled.div`

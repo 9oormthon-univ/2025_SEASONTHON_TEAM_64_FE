@@ -1,17 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Plus } from 'lucide-react';
+import { useMission } from '../app/MissionContext';
 
 interface MissionCardProps {
   onAddMission?: () => void;
 }
 
 const MissionCard: React.FC<MissionCardProps> = ({ onAddMission }) => {
+  const { currentMission } = useMission();
   return (
     <Card>
       <MissionTitle>&lt;오늘의 시선_MISSION&gt;</MissionTitle>
       <MissionDescription>
-        오늘 가장 인상적인 풍경을 공유해봐요.
+        {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
       </MissionDescription>
       <AddButton onClick={onAddMission}>
         <Plus size={20} />

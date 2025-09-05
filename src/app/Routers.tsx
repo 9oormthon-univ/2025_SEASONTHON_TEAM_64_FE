@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { FontSizeProvider, useFontSize } from "./FontSizeContext";
+import { MissionProvider } from "./MissionContext";
+import { FeedProvider } from "./FeedContext";
 
 import Splash from "../Splash";
 import MainPage from "../MainPage";
@@ -8,6 +10,7 @@ import Mypage from "../Mypage/Mypage";
 import LocalInfoShare from "../LocalInfoShare/LocalInfoShare";
 import LocalInfoForm from "../LocalInfoShare/LocalInfoForm";
 import TodayViewFeed from "../TodayViewFeed/TodayViewFeed";
+import AdminMissionPage from "../TodayViewFeed/AdminMissionPage";
 import MissionRegistration from "../TodayViewFeed/MissionRegistration";
 import MissionComplete from "../TodayViewFeed/MissionComplete";
 import FeedDetail from "../TodayViewFeed/FeedDetail";
@@ -41,9 +44,11 @@ const GlobalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 export default function Routers() {
   return (
     <FontSizeProvider>
-      <GlobalWrapper>
-        <Router>
-          <Routes>
+      <MissionProvider>
+        <FeedProvider>
+          <GlobalWrapper>
+            <Router>
+              <Routes>
             <Route path="/" element={<TodayViewFeed />} />
             <Route path="/Splash" element={<Splash />} />
             <Route path="/MainPage" element={<MainPage />} />
@@ -58,9 +63,13 @@ export default function Routers() {
             <Route path="/fortune-open" element={<FortuneOpen />} />
             <Route path="/fortune-content" element={<FortuneContent />} />
             <Route path="/message-write" element={<MessageWrite />} />
-          </Routes>
-        </Router>
-      </GlobalWrapper>
+                {/* 관리자 전용 임시 공개 경로 */}
+                <Route path="/admin/missions" element={<AdminMissionPage />} />
+              </Routes>
+            </Router>
+          </GlobalWrapper>
+        </FeedProvider>
+      </MissionProvider>
     </FontSizeProvider>
   );
 }

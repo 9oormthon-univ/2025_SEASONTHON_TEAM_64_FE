@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ArrowLeft, Bell, User, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useMission } from '../app/MissionContext';
+import { useFeed } from '../app/FeedContext';
 
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();
+  const { addPost } = useFeed();
+  const { currentMission } = useMission();
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -31,7 +35,13 @@ const MissionRegistration: React.FC = () => {
       alert('텍스트나 이미지를 입력해주세요.');
       return;
     }
-    
+    // 피드에 게시글 추가 (이미지는 미리보기 dataURL 사용)
+    addPost({
+      user: '나',
+      content: text.trim(),
+      image: imagePreview || '/placeholder-image.jpg'
+    });
+
     // 성공적으로 등록된 후 완료 페이지로 이동
     navigate('/mission-complete');
   };
@@ -51,7 +61,7 @@ const MissionRegistration: React.FC = () => {
         <MissionCard>
           <MissionTitle>&lt;오늘의 시선_MISSION&gt;</MissionTitle>
           <MissionDescription>
-            오늘 가장 인상적인 풍경을 공유해봐요.
+            {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
           </MissionDescription>
         </MissionCard>
 

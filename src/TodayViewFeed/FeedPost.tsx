@@ -1,16 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Heart, MessageCircle, User, Trash2 } from 'lucide-react';
-
-interface Post {
-  id: number;
-  user: string;
-  content: string;
-  image: string;
-  likes: number;
-  comments: number;
-  isLiked: boolean;
-}
+import { Heart, MessageCircle, User, Trash2, WifiOff } from 'lucide-react';
+import { Post } from '../app/FeedContext';
 
 interface FeedPostProps {
   post: Post;
@@ -29,6 +20,11 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete }
           <User size={20} />
         </UserIcon>
         <UserName>{post.user}</UserName>
+        {post.isOffline && (
+          <OfflineIndicator title="오프라인에서 작성됨">
+            <WifiOff size={12} />
+          </OfflineIndicator>
+        )}
         {isMyPost && (
           <DeleteButton onClick={() => onDelete(post.id)}>
             <Trash2 size={16} />
@@ -93,6 +89,14 @@ const UserName = styled.span`
   font-weight: 500;
   color: #333;
   flex: 1;
+`;
+
+const OfflineIndicator = styled.div`
+  color: #6c757d;
+  margin-left: 4px;
+  padding: 2px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
 `;
 
 const DeleteButton = styled.button`
