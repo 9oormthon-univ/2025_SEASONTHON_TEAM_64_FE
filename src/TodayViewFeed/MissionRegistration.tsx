@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, User, Upload } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Bell, Upload } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
 import { useFeed } from '../app/FeedContext';
 
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addPost } = useFeed();
   const { currentMission } = useMission();
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const isEditMode = Boolean((location.state as any)?.editPostId);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,8 +44,8 @@ const MissionRegistration: React.FC = () => {
       image: imagePreview || '/placeholder-image.jpg'
     });
 
-    // 성공적으로 등록된 후 완료 페이지로 이동
-    navigate('/mission-complete');
+    // 성공 후 피드로 이동 (토스트는 피드/오버레이로 별도 처리 가능)
+    navigate('/');
   };
 
   return (
@@ -59,53 +61,56 @@ const MissionRegistration: React.FC = () => {
 
       <Content>
         <MissionCard>
-          <MissionTitle>&lt;오늘의 시선_MISSION&gt;</MissionTitle>
-          <MissionDescription>
-            {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
-          </MissionDescription>
+        <MissionTitle style={{ color: "#3D8AFF", fontSize: "0.9rem" }}>
+          오늘의 시선_MISSION
+        </MissionTitle>
+
+        <MissionDescription
+          style={{ fontSize: "1.1rem", fontWeight: "bold" }}
+        >
+          {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
+        </MissionDescription>
+
+
         </MissionCard>
 
-        <UserSection>
-          <UserIcon>
-            <User size={20} />
-          </UserIcon>
-          <UserLabel>나</UserLabel>
-        </UserSection>
 
-        <InputSection>
-          <InputLabel>글 작성</InputLabel>
-          <TextArea
-            placeholder="200자 이내로 작성해주세요."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={200}
-          />
-          <CharCount>{text.length}/200</CharCount>
-        </InputSection>
 
-        <InputSection>
-          <InputLabel>사진</InputLabel>
-          <ImageUploadArea>
-            {imagePreview ? (
-              <ImagePreview src={imagePreview} alt="미리보기" />
-            ) : (
-              <UploadPlaceholder>
-                <Upload size={32} />
-                <UploadText>이미지를 선택하세요</UploadText>
-                <UploadSize>0/10MB</UploadSize>
-              </UploadPlaceholder>
-            )}
-            <HiddenInput
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
+        <InputWrapper>
+          <InputSection>
+            <ImageUploadArea>
+              {imagePreview ? (
+                <ImagePreview src={imagePreview} alt="미리보기" />
+              ) : (
+                <UploadPlaceholder>
+                  <Upload size={32} />
+                  <UploadText>이미지를 선택하세요</UploadText>
+                  <UploadSize>0/10MB</UploadSize>
+                </UploadPlaceholder>
+              )}
+              <HiddenInput
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </ImageUploadArea>
+          </InputSection>
+
+          <InputSection>
+            <TextArea
+              placeholder="200자 이내로 작성해주세요."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={200}
             />
-          </ImageUploadArea>
-          <SizeInfo>10MB 이하 파일만 업로드 가능합니다.</SizeInfo>
-        </InputSection>
+            <CharCount>{text.length}/200</CharCount>
+          </InputSection>
+        </InputWrapper>
+
+
 
         <SubmitButton onClick={handleSubmit}>
-          등록하기
+          {isEditMode ? '수정하기' : '등록하기'}
         </SubmitButton>
       </Content>
     </Container>
@@ -115,8 +120,8 @@ const MissionRegistration: React.FC = () => {
 const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
-  background-color: #ffffff;
   min-height: 100vh;
+  background: linear-gradient(180deg, #FF6A25 0%, #FaFaFa 36%);
 `;
 
 const Header = styled.header`
@@ -124,8 +129,7 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  background: transparent;
 `;
 
 const BackButton = styled.button`
@@ -152,18 +156,23 @@ const Content = styled.main`
 `;
 
 const MissionCard = styled.div`
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 77%,   /* 위쪽: 완전 흰색 */
+    rgba(255, 255, 255, 0.7) 100% /* 아래쪽: 70% 불투명 */
+  );
+  border-radius: 20px;
+  padding: 16px 20px;
   margin-bottom: 24px;
-  border: 1px solid #e9ecef;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  text-align: center;
 `;
 
 const MissionTitle = styled.h2`
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;  /* 👈 간격 줄였음 (원래 8px → 4px) */
 `;
 
 const MissionDescription = styled.p`
@@ -197,6 +206,15 @@ const UserLabel = styled.span`
   color: #333;
 `;
 
+const InputWrapper = styled.div`
+  background: #ffffff;
+  border-radius: 20px; /* MissionCard와 통일 */
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
+`;
+
+
 const InputSection = styled.div`
   margin-bottom: 24px;
 `;
@@ -213,11 +231,11 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 100px;
   padding: 12px;
-  border: 1px solid #e9ecef;
+  border: 0px solid #e9ecef;
+  resize: none; /* 👈 드래그 핸들 제거 */
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.4;
-  resize: vertical;
   outline: none;
 
   &:focus {
@@ -239,18 +257,15 @@ const CharCount = styled.div`
 const ImageUploadArea = styled.div`
   position: relative;
   width: 100%;
-  height: 200px;
-  border: 2px dashed #e9ecef;
-  border-radius: 8px;
+  height: 220px;
+  border: none;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: border-color 0.2s;
-
-  &:hover {
-    border-color: #007bff;
-  }
+  background: #F2F2F2;
 `;
 
 const UploadPlaceholder = styled.div`
@@ -273,7 +288,7 @@ const ImagePreview = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 12px;
 `;
 
 const HiddenInput = styled.input`
@@ -294,22 +309,26 @@ const SizeInfo = styled.div`
 
 const SubmitButton = styled.button`
   width: 100%;
-  background-color: #333;
+  background-color: #FF6A25;
   color: white;
   border: none;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
 
   &:hover {
-    background-color: #555;
+    background-color: #ff7f47;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   &:disabled {
-    background-color: #ccc;
+    background-color: #ffc2a5;
     cursor: not-allowed;
   }
 `;
