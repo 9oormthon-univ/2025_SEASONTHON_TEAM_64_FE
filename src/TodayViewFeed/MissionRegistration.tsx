@@ -163,7 +163,7 @@ const MissionCard = styled.div`
   );
   border-radius: 20px;
   padding: 16px 20px;
-  margin-bottom: 24px;
+  margin-bottom: 56px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   text-align: center;
 `;
@@ -210,7 +210,7 @@ const InputWrapper = styled.div`
   background: #ffffff;
   border-radius: 20px; /* MissionCard와 통일 */
   padding: 20px;
-  margin: 16px 0;
+  margin: 55px 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
 `;
 

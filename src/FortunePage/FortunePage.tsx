@@ -17,6 +17,8 @@ const FortunePage: React.FC = () => {
     navigate('/message-write');
   };
 
+  // 운세 페이지에서는 플러스 버튼을 노출하지 않습니다.
+
   return (
     <Container>
       <Header>
@@ -48,7 +50,6 @@ const FortunePage: React.FC = () => {
 
 
       </Content>
-
       <BottomNavigation />
     </Container>
   );
@@ -57,9 +58,9 @@ const FortunePage: React.FC = () => {
 const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
-  background: linear-gradient(to top, #FF6A25, #FAFAFA);
   min-height: 100vh;
   position: relative;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 60%, rgba(255,106,37,0.12) 90%, rgba(255,106,37,0) 100%);
 `;
 
 const Header = styled.header`
@@ -124,6 +125,8 @@ const ButtonsArea = styled.div`
     cursor: pointer;
   }
 `;
+
+// 운세 페이지에서는 플로팅 버튼 스타일도 사용하지 않음
 
 
 

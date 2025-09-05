@@ -23,12 +23,13 @@ const MissionCard: React.FC<MissionCardProps> = ({ onAddMission }) => {
 };
 
 const Card = styled.div`
-  background-color: #f8f9fa;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7));
   border-radius: 12px;
   padding: 20px;
   margin-top: 20px;
   position: relative;
   border: 1px solid #e9ecef;
+  backdrop-filter: blur(10px);
 `;
 
 const MissionTitle = styled.h2`

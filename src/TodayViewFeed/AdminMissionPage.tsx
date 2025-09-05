@@ -1,61 +1,121 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Bell } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
+import BottomNavigation from './BottomNavigation';
 
 const AdminMissionPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { missions, addMission, updateMission, deleteMission, finalizeMission } = useMission();
   const [text, setText] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editMissionId, setEditMissionId] = useState<string | null>(null);
 
   const canSubmit = text.trim().length > 0;
 
-  const latest = useMemo(() => missions[0], [missions]);
+  useEffect(() => {
+    const editId = location.state?.editMissionId;
+    if (editId) {
+      const mission = missions.find(m => m.id === editId);
+      if (mission) {
+        setIsEditMode(true);
+        setEditMissionId(editId);
+        setText(mission.text);
+      }
+    }
+  }, [location.state, missions]);
+
+  const handleSubmit = () => {
+    if (canSubmit) {
+      if (isEditMode && editMissionId) {
+        updateMission(editMissionId, text.trim());
+      } else {
+        addMission(text.trim());
+      }
+      setText('');
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        navigate('/mission-list');
+      }, 2000);
+    }
+  };
+
+  const handleUpdate = (id: string) => {
+    const mission = missions.find(m => m.id === id);
+    if (mission) {
+      const newText = prompt('수정할 내용을 입력하세요', mission.text);
+      if (newText && newText.trim()) {
+        updateMission(id, newText.trim());
+      }
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('등록된 미션을 삭제 하시겠습니까?')) {
+      deleteMission(id);
+    }
+  };
 
   return (
     <Container>
       <Header>
-        <BackButton onClick={() => navigate(-1)}>←</BackButton>
-        <Title>관리자 미션 관리</Title>
+        <BackButton onClick={() => navigate(-1)}>
+          <ArrowLeft size={24} />
+        </BackButton>
+        <Title>등록미션 리스트</Title>
+        <BellIcon>
+          <Bell size={24} />
+        </BellIcon>
       </Header>
 
-      <Section>
-        <Label>오늘의 미션 등록</Label>
-        <TextArea
-          placeholder="오늘의 미션을 등록하세요."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          maxLength={100}
-        />
-        <Row>
-          <PrimaryButton disabled={!canSubmit} onClick={() => { addMission(text.trim()); setText(''); }}>
-            등록하기
-          </PrimaryButton>
-          <Counter>{text.length}/100</Counter>
-        </Row>
-      </Section>
+      <Content>
+        <TopCard>
+          <CardTitle>오늘의 미션을 등록하세요!</CardTitle>
+          <CardSubtitle>관리자는 미션을 등록해주세요</CardSubtitle>
+        </TopCard>
 
-      <Section>
-        <Label>등록된 미션</Label>
-        <List>
-          {missions.map(m => (
-            <Item key={m.id} $finalized={m.finalized}>
-              <ItemText>{m.text}</ItemText>
-              <ItemRow>
-                <SmallButton disabled={m.finalized} onClick={() => updateMission(m.id, prompt('수정할 내용을 입력하세요', m.text) || m.text)}>수정</SmallButton>
-                <SmallButton disabled={m.finalized} onClick={() => deleteMission(m.id)}>삭제</SmallButton>
-                <SmallPrimary disabled={m.finalized} onClick={() => finalizeMission(m.id)}>최종등록</SmallPrimary>
-              </ItemRow>
-            </Item>
-          ))}
-        </List>
-      </Section>
+        <MissionInputCard>
+          <UserSection>
+            <UserIcon>
+              <img src="/Maru_pen.png" alt="마루" width={32} height={32} />
+            </UserIcon>
+            <UserInfo>
+              <UserName>관리자</UserName>
+              <UserSubtitle>가나다홍길동</UserSubtitle>
+            </UserInfo>
+          </UserSection>
+          
+          <InputArea>
+            <TextArea
+              placeholder="오늘의 미션 작성..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={100}
+            />
+            <CharCount>{text.length}/100</CharCount>
+          </InputArea>
+        </MissionInputCard>
 
-      {latest && (
-        <Footer>
-          <span>가장 최근 등록: {latest.text}</span>
-        </Footer>
-      )}
+        <SubmitButton onClick={handleSubmit} disabled={!canSubmit}>
+          {isEditMode ? '재등록하기' : '등록하기'}
+        </SubmitButton>
+
+
+        {showSuccess && (
+          <SuccessOverlay>
+            <SuccessCard>
+              <SuccessText>미션이 재등록되었습니다.</SuccessText>
+              <img src="/Maru_front.png" alt="마루" width={60} height={60} />
+            </SuccessCard>
+          </SuccessOverlay>
+        )}
+      </Content>
+
+      <BottomNavigation />
     </Container>
   );
 };
@@ -63,116 +123,250 @@ const AdminMissionPage: React.FC = () => {
 const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: #FAFAFA;
   min-height: 100vh;
+  position: relative;
 `;
 
 const Header = styled.header`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
   padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  background-color: transparent;
 `;
 
 const BackButton = styled.button`
   background: none;
   border: none;
-  font-size: 20px;
+  color: #333;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const Title = styled.h1`
   font-size: 18px;
   margin: 0;
+  color: #333;
 `;
 
-const Section = styled.section`
+const BellIcon = styled.div`
+  color: #333;
+  cursor: pointer;
+`;
+
+const Content = styled.main`
   padding: 20px;
-  border-bottom: 1px solid #f5f5f5;
 `;
 
-const Label = styled.h2`
+const TopCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const CardTitle = styled.h2`
   font-size: 16px;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
+  color: #333;
+`;
+
+const CardSubtitle = styled.p`
+  font-size: 14px;
+  margin: 0;
+  color: #666;
+`;
+
+const MissionInputCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+`;
+
+const UserSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+`;
+
+const UserIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const UserName = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+`;
+
+const UserSubtitle = styled.span`
+  font-size: 12px;
+  color: #666;
+`;
+
+const InputArea = styled.div`
+  position: relative;
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 110px;
-  resize: none;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
-  padding: 12px;
-  font-size: 14px;
-`;
-
-const Row = styled.div`
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const PrimaryButton = styled.button`
-  background: #000;
-  color: #fff;
+  min-height: 80px;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  opacity: ${(p) => (p.disabled ? 0.4 : 1)};
-` as any;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  resize: none;
+  font-family: inherit;
 
-const Counter = styled.span`
-  color: #888;
-  font-size: 12px;
+  &::placeholder {
+    color: #999;
+  }
 `;
 
-const List = styled.div`
+const CharCount = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 12px;
+  color: #999;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  background-color: #FF6A25;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 20px;
+
+  &:hover:not(:disabled) {
+    background-color: #ff7f47;
+  }
+
+  &:disabled {
+    background-color: #ffbe9f;
+    cursor: not-allowed;
+  }
+`;
+
+const MissionList = styled.div`
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+`;
+
+const ListTitle = styled.h3`
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  color: #333;
+`;
+
+const SortOption = styled.div`
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 16px;
+`;
+
+const MissionItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
 `;
 
-const Item = styled.div<{ $finalized: boolean }>`
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
+const MissionItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 12px;
-  background: ${(p) => (p.$finalized ? '#f6f7f8' : '#fff')};
+  background-color: #f8f9fa;
+  border-radius: 8px;
 `;
 
-const ItemText = styled.div`
+const MissionText = styled.div`
   font-size: 14px;
-  margin-bottom: 8px;
+  color: #333;
+  flex: 1;
 `;
 
-const ItemRow = styled.div`
+const ActionMenu = styled.div`
   display: flex;
   gap: 8px;
 `;
 
-const SmallButton = styled.button`
-  background: #f1f3f5;
+const ActionButton = styled.button`
+  background: none;
   border: none;
-  padding: 8px 10px;
-  border-radius: 8px;
+  font-size: 12px;
+  color: #666;
   cursor: pointer;
-  opacity: ${(p) => (p.disabled ? 0.4 : 1)};
-` as any;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 
-const SmallPrimary = styled(SmallButton)`
-  background: #000;
-  color: #fff;
+  &:hover:not(:disabled) {
+    background-color: #e9ecef;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `;
 
-const Footer = styled.footer`
-  padding: 16px 20px 40px;
-  color: #666;
-  font-size: 12px;
+const SuccessOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 22, 22, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const SuccessCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
+
+const SuccessText = styled.div`
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
 `;
 
 export default AdminMissionPage;
-
-
-

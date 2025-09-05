@@ -79,7 +79,7 @@ const FeedDetail: React.FC = () => {
         <PostCard>
           <PostHeader>
             <UserIcon>
-              <User size={20} />
+              <img src="/Feed_maru.png" alt="마루" width={32} height={32} />
             </UserIcon>
             <UserName>{post.user}</UserName>
           </PostHeader>

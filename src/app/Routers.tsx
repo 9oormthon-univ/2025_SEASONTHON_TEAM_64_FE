@@ -11,6 +11,7 @@ import LocalInfoShare from "../LocalInfoShare/LocalInfoShare";
 import LocalInfoForm from "../LocalInfoShare/LocalInfoForm";
 import TodayViewFeed from "../TodayViewFeed/TodayViewFeed";
 import AdminMissionPage from "../TodayViewFeed/AdminMissionPage";
+import MissionListPage from "../TodayViewFeed/MissionListPage";
 import MissionRegistration from "../TodayViewFeed/MissionRegistration";
 import MissionComplete from "../TodayViewFeed/MissionComplete";
 import FeedDetail from "../TodayViewFeed/FeedDetail";
@@ -65,6 +66,7 @@ export default function Routers() {
             <Route path="/message-write" element={<MessageWrite />} />
                 {/* 관리자 전용 임시 공개 경로 */}
                 <Route path="/admin/missions" element={<AdminMissionPage />} />
+                <Route path="/mission-list" element={<MissionListPage />} />
               </Routes>
             </Router>
           </GlobalWrapper>
