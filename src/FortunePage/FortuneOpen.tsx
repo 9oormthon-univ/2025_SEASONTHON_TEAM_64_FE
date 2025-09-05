@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, Star } from 'lucide-react';
+import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // 타입 전용 사용 시 런타임 번들 제거
 import type { FortuneCookieData } from './types';
@@ -28,15 +28,16 @@ const FortuneOpen: React.FC = () => {
 
       <Content>
         <Message>
-          새로운 포춘쿠키가 도착했어요!{'\n'}열어보시겠습니까?
+          새로운 <OrangeText>포춘쿠키</OrangeText>가 도착했어요!{'\n'}열어보시겠습니까?
         </Message>
 
-        <StarIcon>
-          <Star size={80} strokeWidth={1} />
-        </StarIcon>
+        <VideoPlaceholder>
+          <VideoText>동영상전달예정</VideoText>
+          <VideoText>포춘mp4_1</VideoText>
+        </VideoPlaceholder>
 
         <OpenButton onClick={handleOpen}>
-          열기
+          받기
         </OpenButton>
       </Content>
 
@@ -58,7 +59,7 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: #ffffff;
+  background-color: transparent;
 `;
 
 const BackButton = styled.button`
@@ -98,12 +99,30 @@ const Message = styled.div`
   white-space: pre-line;
 `;
 
-const StarIcon = styled.div`
-  color: #333;
+const OrangeText = styled.span`
+  color: #FF6A25;
+`;
+
+const VideoPlaceholder = styled.div`
+  width: 200px;
+  height: 200px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const VideoText = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
 `;
 
 const OpenButton = styled.button`
-  background-color: #333;
+  background-color: #FF6A25;
   color: white;
   border: none;
   border-radius: 8px;
@@ -115,7 +134,7 @@ const OpenButton = styled.button`
   min-width: 120px;
 
   &:hover {
-    background-color: #555;
+    background-color: #ff7f47;
   }
 `;
 

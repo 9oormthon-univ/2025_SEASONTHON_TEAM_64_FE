@@ -1,114 +1,52 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Bell, Star, User, Plus } from 'lucide-react';
+import { Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getRandomFortuneCookie } from './dummyData';
-import { fortuneService } from './fortuneService';
 import BottomNavigation from '../TodayViewFeed/BottomNavigation';
 
 const FortunePage: React.FC = () => {
   const navigate = useNavigate();
-  
-  const [message, setMessage] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleOpenTodayFortune = () => {
     const randomFortune = getRandomFortuneCookie();
     navigate('/fortune-open', { state: { fortuneCookie: randomFortune } });
   };
 
-  const handleSendFortune = async () => {
-    if (message.trim()) {
-      try {
-        // 포춘쿠키 메시지 전송
-        await fortuneService.sendFortuneMessage(message, '나');
-        setShowToast(true);
-        setMessage('');
-        
-        setTimeout(() => {
-          setShowToast(false);
-        }, 3000);
-      } catch (error) {
-        console.error('포춘쿠키 전송 실패:', error);
-        // 에러 처리 로직 추가 가능
-      }
-    }
+  const handleSendFortune = () => {
+    navigate('/message-write');
   };
 
   return (
     <Container>
       <Header>
-        <ProfileIcon>
-          <User size={24} />
-        </ProfileIcon>
+        <BackButton onClick={() => navigate(-1)}>
+          <ArrowLeft size={24} />
+        </BackButton>
         <BellIcon>
           <Bell size={24} />
         </BellIcon>
       </Header>
 
       <Content>
-        <StarIcon>
-          <Star size={80} strokeWidth={1} />
-        </StarIcon>
+        <TopCookie>
+          <img src="/Fortune_Cookie.svg" alt="포춘쿠키" />
+        </TopCookie>
 
-        <FortuneButton onClick={handleOpenTodayFortune}>
-          <ButtonText>오늘의 포춘쿠키</ButtonText>
-          <Plus size={20} />
-        </FortuneButton>
+        <ButtonsArea>
+          <img
+            src="/Fortune_Butoon1.svg"
+            alt="오늘의 포춘쿠키 보러가기"
+            onClick={handleOpenTodayFortune}
+          />
+          <img
+            src="/Fortune_Butoon2.svg"
+            alt="포춘쿠키 전하기"
+            onClick={handleSendFortune}
+          />
+        </ButtonsArea>
 
-        <SendFortuneSection>
-          <WriteBox>
-            <WriteHeader>
-              <ButtonText>포춘쿠키 전하기</ButtonText>
-            </WriteHeader>
 
-            {!isExpanded && (
-              <CompactBar onClick={() => setIsExpanded(true)}>
-                <UserIcon>
-                  <User size={16} />
-                </UserIcon>
-                <Input
-                  type="text"
-                  placeholder="나:"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  maxLength={100}
-                  readOnly
-                />
-                <MiniSend>전송</MiniSend>
-              </CompactBar>
-            )}
-
-            {isExpanded && (
-              <ExpandedArea>
-                <LabelRow>
-                  <User size={16} />
-                  <span>나:</span>
-                </LabelRow>
-                <TextArea
-                  placeholder="따뜻한 말을 적어주세요"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  maxLength={100}
-                  autoFocus
-                />
-                <BottomRow>
-                  <CharCount>{message.trim().length}/100</CharCount>
-                  <SendButton onClick={handleSendFortune} disabled={!message.trim()}>
-                    전달하기
-                  </SendButton>
-                </BottomRow>
-              </ExpandedArea>
-            )}
-          </WriteBox>
-        </SendFortuneSection>
-
-        {showToast && (
-          <ToastMessage>
-            당신의 포춘쿠키가 전송되었습니다.
-          </ToastMessage>
-        )}
       </Content>
 
       <BottomNavigation />
@@ -119,7 +57,7 @@ const FortunePage: React.FC = () => {
 const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
-  background-color: #ffffff;
+  background: linear-gradient(to top, #FF6A25, #FAFAFA);
   min-height: 100vh;
   position: relative;
 `;
@@ -129,12 +67,21 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: #ffffff;
+  background-color: transparent;
 `;
 
-const ProfileIcon = styled.div`
+const BackButton = styled.button`
+  background: none;
+  border: none;
   color: #333;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const BellIcon = styled.div`
@@ -150,163 +97,34 @@ const Content = styled.main`
   gap: 24px;
 `;
 
-const StarIcon = styled.div`
-  color: #333;
-  margin-top: 40px;
+const TopCookie = styled.div`
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  img {
+    width: 180px;
+    height: auto;
+    display: block;
+  }
 `;
 
-const FortuneButton = styled.button`
+const ButtonsArea = styled.div`
+  width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
-  background-color: #ffffff;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-  justify-content: center;
+  margin-top: 8px;
 
-  &:hover {
-    background-color: #f8f9fa;
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
   }
 `;
 
-const SendFortuneSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-`;
-
-const WriteBox = styled.div`
-  width: 100%;
-  border: 2px solid #333;
-  border-radius: 12px;
-  background-color: #ffffff;
-  overflow: hidden;
-`;
-
-const WriteHeader = styled.div`
-  padding: 14px 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid #e9ecef;
-`;
-
-const ButtonText = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-`;
-
-const CompactBar = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f8f9fa;
-  padding: 12px 16px;
-  cursor: text;
-`;
-
-const UserIcon = styled.div`
-  color: #666;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  background: none;
-  outline: none;
-  font-size: 14px;
-  color: #333;
-
-  &::placeholder {
-    color: #999;
-  }
-`;
-
-const MiniSend = styled.div`
-  background-color: #111;
-  color: white;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  min-height: 180px;
-  background-color: #f8f9fa;
-  border: none;
-  outline: none;
-  resize: none;
-  padding: 14px 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #333;
-`;
-
-const ExpandedArea = styled.div`
-  padding: 12px 12px 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const LabelRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #666;
-  padding: 0 4px;
-`;
-
-const BottomRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px;
-`;
-
-const CharCount = styled.span`
-  font-size: 12px;
-  color: #888;
-`;
-
-const SendButton = styled.button`
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #555;
-  }
-  &:disabled {
-    background-color: #bbb;
-    cursor: not-allowed;
-  }
-`;
-
-const ToastMessage = styled.div`
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  z-index: 1000;
-`;
 
 
 export default FortunePage;
