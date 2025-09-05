@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, Heart, MessageCircle, User, Trash2 } from 'lucide-react';
+import { ArrowLeft, Bell, Heart, MessageCircle, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CommentSection from './CommentSection';
 
@@ -19,6 +19,8 @@ interface Comment {
   user: string;
   content: string;
   isMyComment: boolean;
+  handle?: string;
+  time?: string;
 }
 
 const FeedDetail: React.FC = () => {
@@ -36,9 +38,27 @@ const FeedDetail: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([
     {
       id: 1,
-      user: '사용자2',
-      content: '정말 아름다운 하늘이네요!',
-      isMyComment: false
+      user: '쿵야',
+      content: '하늘이 너무 맑네요! 오늘도 좋은하루 보내세요~',
+      isMyComment: false,
+      handle: '@addffgg',
+      time: '09.01'
+    },
+    {
+      id: 2,
+      user: '마루',
+      content: '쿵야님도 좋은 하루 보내세요.',
+      isMyComment: true,
+      handle: '@abcde.000',
+      time: '5분 전'
+    },
+    {
+      id: 3,
+      user: '사과',
+      content: '완전 가을 하늘이네요 ㅎㅎ',
+      isMyComment: false,
+      handle: '@apple_119',
+      time: '09.01'
     }
   ]);
 
@@ -70,6 +90,7 @@ const FeedDetail: React.FC = () => {
         <BackButton onClick={() => navigate(-1)}>
           <ArrowLeft size={24} />
         </BackButton>
+        <HeaderTitle>노청마루</HeaderTitle>
         <BellIcon>
           <Bell size={24} />
         </BellIcon>
@@ -77,17 +98,23 @@ const FeedDetail: React.FC = () => {
 
       <Content>
         <PostCard>
+          <BirdDecoration>
+            <img src="/Maru_front.png" alt="마루" width={60} height={60} />
+          </BirdDecoration>
           <PostHeader>
             <UserIcon>
               <img src="/Feed_maru.png" alt="마루" width={32} height={32} />
             </UserIcon>
-            <UserName>{post.user}</UserName>
+            <UserInfo>
+              <UserName>{post.user}</UserName>
+              <UserHandle>@abcde.000</UserHandle>
+            </UserInfo>
           </PostHeader>
           
           <PostContent>
             <PostText>{post.content}</PostText>
             <PostImage>
-              <ImagePlaceholder>사진</ImagePlaceholder>
+              <PostImg src="/placeholder-image.jpg" alt="post" />
             </PostImage>
           </PostContent>
           
@@ -121,7 +148,7 @@ const FeedDetail: React.FC = () => {
 const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: #FAFAFA;
   min-height: 100vh;
 `;
 
@@ -130,8 +157,16 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(180deg, #FF6A25 0%, #FFA66F 40%, rgba(255,255,255,0) 100%);
+  position: relative;
+  z-index: 100;
+`;
+
+const HeaderTitle = styled.h1`
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin: 0;
 `;
 
 const BackButton = styled.button`
@@ -159,35 +194,57 @@ const Content = styled.main`
 
 const PostCard = styled.div`
   background-color: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px;
   border: 1px solid #e9ecef;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
+`;
+
+const BirdDecoration = styled.div`
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
 `;
 
 const PostHeader = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  margin-top: 20px;
 `;
 
 const UserIcon = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #e9ecef;
+  background-color: #FF6A25;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
-  color: #666;
+  margin-right: 12px;
+  overflow: hidden;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const UserName = styled.span`
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: bold;
   color: #333;
+`;
+
+const UserHandle = styled.span`
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
 `;
 
 const PostContent = styled.div`
@@ -203,35 +260,34 @@ const PostText = styled.p`
 
 const PostImage = styled.div`
   width: 100%;
-  height: 200px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #e9ecef;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
 `;
 
-const ImagePlaceholder = styled.span`
-  color: #999;
-  font-size: 14px;
+const PostImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const PostActions = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 20px;
+  margin-top: 16px;
 `;
 
 const ActionButton = styled.button<{ $isActive?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: none;
   border: none;
-  color: ${props => props.$isActive ? '#e74c3c' : '#666'};
+  color: ${props => props.$isActive ? '#FF6A25' : '#666'};
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
   transition: all 0.2s;
 
   &:hover {
@@ -241,7 +297,7 @@ const ActionButton = styled.button<{ $isActive?: boolean }>`
 
 const ActionText = styled.span`
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 `;
 
 export default FeedDetail;

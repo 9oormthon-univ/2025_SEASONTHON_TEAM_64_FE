@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Bell, Wifi, WifiOff, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MissionCard from './MissionCard';
+import { useMission } from '../app/MissionContext';
 import FeedPost from './FeedPost';
 import BottomNavigation from './BottomNavigation';
 import { useFeed } from '../app/FeedContext';
@@ -10,6 +11,7 @@ import { useFeed } from '../app/FeedContext';
 const TodayViewFeed: React.FC = () => {
   const navigate = useNavigate();
   const { posts, likePost, addComment, deletePost, isOnline, pendingActions } = useFeed();
+  const { currentMission } = useMission();
   const [showMissionBar, setShowMissionBar] = useState(true);
   const [scrollY, setScrollY] = useState(0);
 
@@ -18,8 +20,7 @@ const TodayViewFeed: React.FC = () => {
   };
 
   const handleComment = (postId: number) => {
-    addComment(postId);
-    // 댓글 페이지로 이동
+    // 댓글 페이지로 이동 (카운트 증가 없이)
     navigate(`/feed-detail/${postId}`);
   };
 
@@ -80,7 +81,7 @@ const TodayViewFeed: React.FC = () => {
       <MissionBar $show={showMissionBar}>
         <MissionCardWrap>
           <MissionTitle>오늘의 시선 MISSION</MissionTitle>
-          <MissionDesc>{(typeof window !== 'undefined' ? '' : '') || '오늘 가장 인상적인 풍경을 공유해봐요!'}</MissionDesc>
+          <MissionDesc>{currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요!'}</MissionDesc>
         </MissionCardWrap>
         <BirdDecoration>
           <img src="/Maru_front.png" alt="마루" width={72} height={72} />

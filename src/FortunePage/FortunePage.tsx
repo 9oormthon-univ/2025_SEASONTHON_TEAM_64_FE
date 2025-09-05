@@ -2,15 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getRandomFortuneCookie } from './dummyData';
+import { fortuneService } from './fortuneService';
 import BottomNavigation from '../TodayViewFeed/BottomNavigation';
 
 const FortunePage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleOpenTodayFortune = () => {
-    const randomFortune = getRandomFortuneCookie();
-    navigate('/fortune-open', { state: { fortuneCookie: randomFortune } });
+  const handleOpenTodayFortune = async () => {
+    const opened = await fortuneService.openFortune();
+    navigate('/fortune-content', { state: { fortuneCookie: { id: opened.id, message: opened.description, category: '' } } });
   };
 
   const handleSendFortune = () => {

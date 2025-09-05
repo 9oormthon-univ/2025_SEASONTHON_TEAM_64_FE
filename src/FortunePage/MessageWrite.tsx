@@ -13,8 +13,7 @@ const MessageWrite: React.FC = () => {
   const handleSend = async () => {
     if (message.trim()) {
       try {
-        // 포춘쿠키 메시지 전송
-        await fortuneService.sendFortuneMessage(message, '나');
+        await fortuneService.sendFortune(undefined, message);
         setShowToast(true);
         setMessage('');
         

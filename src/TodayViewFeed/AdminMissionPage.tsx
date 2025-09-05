@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
+import { missionService } from '../app/missionService';
 import BottomNavigation from './BottomNavigation';
 
 const AdminMissionPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { missions, addMission, updateMission, deleteMission, finalizeMission } = useMission();
+  const { missions, addMission, updateMission } = useMission();
   const [text, setText] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -28,11 +29,13 @@ const AdminMissionPage: React.FC = () => {
     }
   }, [location.state, missions]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (canSubmit) {
       if (isEditMode && editMissionId) {
         updateMission(editMissionId, text.trim());
       } else {
+        // 서버 등록 시도 후 실패하면 로컬에 추가
+        await missionService.createMission(text.trim()).catch(() => {});
         addMission(text.trim());
       }
       setText('');
@@ -44,21 +47,9 @@ const AdminMissionPage: React.FC = () => {
     }
   };
 
-  const handleUpdate = (id: string) => {
-    const mission = missions.find(m => m.id === id);
-    if (mission) {
-      const newText = prompt('수정할 내용을 입력하세요', mission.text);
-      if (newText && newText.trim()) {
-        updateMission(id, newText.trim());
-      }
-    }
-  };
+  // 인라인 수정 기능은 현재 사용하지 않음 (페이지 상단 입력 영역 재사용)
 
-  const handleDelete = (id: string) => {
-    if (confirm('등록된 미션을 삭제 하시겠습니까?')) {
-      deleteMission(id);
-    }
-  };
+  // 삭제 핸들러는 리스트 UI 개편으로 제거됨
 
   return (
     <Container>
@@ -277,70 +268,7 @@ const SubmitButton = styled.button`
   }
 `;
 
-const MissionList = styled.div`
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-`;
-
-const ListTitle = styled.h3`
-  font-size: 16px;
-  margin: 0 0 12px 0;
-  color: #333;
-`;
-
-const SortOption = styled.div`
-  font-size: 12px;
-  color: #666;
-  text-align: right;
-  margin-bottom: 16px;
-`;
-
-const MissionItems = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const MissionItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-`;
-
-const MissionText = styled.div`
-  font-size: 14px;
-  color: #333;
-  flex: 1;
-`;
-
-const ActionMenu = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ActionButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 12px;
-  color: #666;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-
-  &:hover:not(:disabled) {
-    background-color: #e9ecef;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-`;
+/* 미션 리스트 관련 스타일은 현재 화면에서 미사용 */
 
 const SuccessOverlay = styled.div`
   position: fixed;

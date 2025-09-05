@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell, Upload } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
+import { missionService } from '../app/missionService';
 import { useFeed } from '../app/FeedContext';
 
 const MissionRegistration: React.FC = () => {
@@ -32,7 +33,7 @@ const MissionRegistration: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!text.trim() && !image) {
       alert('텍스트나 이미지를 입력해주세요.');
       return;
@@ -43,6 +44,9 @@ const MissionRegistration: React.FC = () => {
       content: text.trim(),
       image: imagePreview || '/placeholder-image.jpg'
     });
+
+    // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
+    try { await missionService.getTodayMission(); } catch {}
 
     // 성공 후 피드로 이동 (토스트는 피드/오버레이로 별도 처리 가능)
     navigate('/');
@@ -182,29 +186,7 @@ const MissionDescription = styled.p`
   line-height: 1.4;
 `;
 
-const UserSection = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-`;
-
-const UserIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #e9ecef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  color: #666;
-`;
-
-const UserLabel = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-`;
+/* 사용자 섹션은 디자인 개편으로 제거됨 */
 
 const InputWrapper = styled.div`
   background: #ffffff;
@@ -219,13 +201,7 @@ const InputSection = styled.div`
   margin-bottom: 24px;
 `;
 
-const InputLabel = styled.label`
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-`;
+/* 인풋 라벨은 현재 UI에서 미사용 */
 
 const TextArea = styled.textarea`
   width: 100%;
@@ -301,11 +277,7 @@ const HiddenInput = styled.input`
   cursor: pointer;
 `;
 
-const SizeInfo = styled.div`
-  font-size: 12px;
-  color: #666;
-  margin-top: 4px;
-`;
+/* 사이즈 안내 문구는 현재 UI에서 미사용 */
 
 const SubmitButton = styled.button`
   width: 100%;

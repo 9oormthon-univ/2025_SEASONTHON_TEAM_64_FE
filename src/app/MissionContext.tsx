@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { missionService } from './missionService';
 
 export interface MissionItem {
   id: string;
@@ -73,13 +74,14 @@ export const MissionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       id: crypto.randomUUID(),
       text,
       createdAt: Date.now(),
-      finalized: false,
+      finalized: true,
     };
-    setMissions(prev => [newMission, ...prev]);
+    // 최신 미션이 항상 currentMission이 되도록 finalized=true로 설정
+    setMissions(prev => [newMission, ...prev.map(m => ({ ...m, finalized: false }))]);
   }, []);
 
   const updateMission = useCallback((id: string, text: string) => {
-    setMissions(prev => prev.map(m => (m.id === id && !m.finalized ? { ...m, text } : m)));
+    setMissions(prev => prev.map(m => (m.id === id ? { ...m, text } : m)));
   }, []);
 
   const deleteMission = useCallback((id: string) => {
@@ -91,9 +93,23 @@ export const MissionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, []);
 
   const currentMission = useMemo(() => {
-    const firstFinalized = missions.find(m => m.finalized);
-    return firstFinalized ?? null;
+    // finalized 우선, 없으면 최신(createdAt 최대) 사용
+    const finalized = missions.find(m => m.finalized);
+    if (finalized) return finalized;
+    return missions.length ? [...missions].sort((a,b)=>b.createdAt-a.createdAt)[0] : null;
   }, [missions]);
+
+  // 초기 로드 시 서버에서 오늘 미션을 가져오고, 실패하면 저장소 값 사용
+  useEffect(() => {
+    (async () => {
+      try {
+        const today = await missionService.getTodayMission();
+        if (today) {
+          setMissions(prev => [{ id: String(today.id), text: today.description, createdAt: Date.now(), finalized: true }, ...prev]);
+        }
+      } catch {}
+    })();
+  }, []);
 
   const value = useMemo<MissionContextValue>(() => ({
     missions,

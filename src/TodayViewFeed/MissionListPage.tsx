@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
+import { missionService } from '../app/missionService';
 import BottomNavigation from './BottomNavigation';
 
 const MissionListPage: React.FC = () => {
@@ -14,7 +15,8 @@ const MissionListPage: React.FC = () => {
     setShowDeleteConfirm(id);
   };
 
-  const confirmDelete = (id: string) => {
+  const confirmDelete = async (id: string) => {
+    await missionService.deleteMission(id).catch(() => {});
     deleteMission(id);
     setShowDeleteConfirm(null);
   };
