@@ -29,7 +29,7 @@ const FortuneContent: React.FC = () => {
       <Content>
         <VideoContainer>
           <VideoPlayer
-            src="/FortuneMove2.mp4"
+            src="/FortuneMove2.webm"
             autoPlay
             loop
             muted

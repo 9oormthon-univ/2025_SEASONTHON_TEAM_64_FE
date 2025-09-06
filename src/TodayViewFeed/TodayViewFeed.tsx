@@ -36,7 +36,14 @@ const TodayViewFeed: React.FC = () => {
   };
 
   const handleAddPost = () => {
-    navigate('/mission-registration');
+    // 현재 미션 ID가 있으면 URL에 포함해서 이동
+    if (currentMission) {
+      navigate(`/mission-registration/${currentMission.id}`);
+      console.log('📝 미션 ID와 함께 게시글 작성 페이지로 이동:', currentMission.id);
+    } else {
+      navigate('/mission-registration');
+      console.log('📝 기본 게시글 작성 페이지로 이동');
+    }
   };
 
   const handleEditPost = (postId: number) => {

@@ -78,6 +78,7 @@ export default function Routers() {
                   {/* 우리가 추가한 FortunePage와 TodayViewFeed 경로들 */}
                   <Route path="/feed" element={<TodayViewFeed />} />
                   <Route path="/mission-registration" element={<MissionRegistration />} />
+                  <Route path="/mission-registration/:missionId" element={<MissionRegistration />} />
                   <Route path="/mission-complete" element={<MissionComplete />} />
                   <Route path="/feed-detail/:id" element={<FeedDetail />} />
                   <Route path="/fortune" element={<FortunePage />} />

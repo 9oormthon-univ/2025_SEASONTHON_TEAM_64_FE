@@ -33,15 +33,12 @@ const FortuneOpen: React.FC = () => {
 
         <VideoContainer>
           <VideoPlayer
-            src="/FortuneMove1.mp4"
+            src="/FortuneMove1.webm"
             autoPlay
             loop
             muted
             playsInline
           />
-          <VideoOverlay>
-            <VideoText>포춘무브1</VideoText>
-          </VideoOverlay>
         </VideoContainer>
 
         <OpenButton onClick={handleOpen}>
@@ -117,7 +114,6 @@ const VideoContainer = styled.div`
   border-radius: 12px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
 const VideoPlayer = styled.video`
@@ -132,7 +128,6 @@ const VideoOverlay = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
   padding: 16px 8px 8px;
   display: flex;
   justify-content: center;

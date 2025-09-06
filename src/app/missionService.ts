@@ -73,13 +73,12 @@ export const missionService = {
     }
   },
 
-  // 회원의 오늘 미션 조회 - GET /api/v1/members/{memberId}/missions/today
+  // 가장 최근 미션 조회 - GET /api/v1/missions/assignments
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
-    console.log('🎯 getTodayMission 호출 시작:', { memberId });
+    console.log('🎯 getTodayMission 호출 시작: 최근 미션 조회');
     try {
-      // 새로운 엔드포인트는 memberId를 URL에 포함하지 않음
-
-      const url = `/members/missions/today`;
+      // 미션 배정 현황 조회 (오늘 날짜 기준)
+      const url = `/missions/assignments`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
@@ -88,16 +87,45 @@ export const missionService = {
       
       // API 응답을 변환
       const data = res.data as any;
-      if (data && data.mission) {
-        const mission = {
-          id: data.mission.id.toString(),
-          text: data.mission.title,
-          status: data.status || 'ASSIGNED'
-        };
-        console.log('✅ 변환된 미션 데이터:', mission);
-        return mission;
+      console.log('🔍 API 응답 구조 분석:', {
+        hasData: !!data,
+        hasAssignments: !!(data && data.assignments),
+        assignmentsLength: data?.assignments?.length,
+        assignments: data?.assignments
+      });
+      
+      if (data && data.assignments && Array.isArray(data.assignments) && data.assignments.length > 0) {
+        // missionId 기준으로 내림차순 정렬하여 가장 최근 미션 선택
+        const sortedMissions = [...data.assignments].sort((a: any, b: any) => {
+          const aId = a.missionId || a.id || 0;
+          const bId = b.missionId || b.id || 0;
+          return bId - aId; // 내림차순 (큰 값이 먼저)
+        });
+        
+        const latestMission = sortedMissions[0];
+        console.log('🎯 정렬된 미션 목록:', sortedMissions.map(m => ({ 
+          id: m.missionId || m.id, 
+          title: m.missionTitle || m.title 
+        })));
+        console.log('🎯 가장 최근 미션 선택:', latestMission);
+        
+        const missionId = latestMission.missionId || latestMission.id;
+        const missionTitle = latestMission.missionTitle || latestMission.title;
+        
+        if (missionId && missionTitle) {
+          const mission = {
+            id: String(missionId),
+            text: missionTitle,
+            status: latestMission.status || 'ASSIGNED'
+          };
+          console.log('✅ 변환된 최근 미션 데이터:', mission);
+          return mission;
+        } else {
+          console.log('⚠️ 최근 미션 ID 또는 제목이 없음:', { missionId, missionTitle });
+          return null;
+        }
       } else {
-        console.log('⚠️ API 응답에 미션 데이터 없음:', data);
+        console.log('⚠️ API 응답에 미션 목록 없음:', data);
         return null;
       }
     } catch (e: any) {

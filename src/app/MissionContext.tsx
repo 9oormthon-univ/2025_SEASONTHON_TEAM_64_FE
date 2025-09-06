@@ -64,7 +64,8 @@ function saveToStorage(missions: MissionItem[]) {
 }
 
 export const MissionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [missions, setMissions] = useState<MissionItem[]>(() => loadFromStorage());
+  // 서버 미션이 우선되도록 초기 상태는 빈 배열로 시작
+  const [missions, setMissions] = useState<MissionItem[]>([]);
 
   useEffect(() => {
     saveToStorage(missions);
@@ -130,8 +131,15 @@ export const MissionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const currentMission = useMemo(() => {
     // finalized 우선, 없으면 최신(createdAt 최대) 사용
     const finalized = missions.find(m => m.finalized);
-    if (finalized) return finalized;
-    return missions.length ? [...missions].sort((a,b)=>b.createdAt-a.createdAt)[0] : null;
+    if (finalized) {
+      console.log('🎯 MissionContext: finalized 미션 선택:', finalized);
+      return finalized;
+    }
+    const latest = missions.length ? [...missions].sort((a,b)=>b.createdAt-a.createdAt)[0] : null;
+    if (latest) {
+      console.log('🎯 MissionContext: 최신 미션 선택:', latest);
+    }
+    return latest;
   }, [missions]);
 
   // 초기 로드 시 서버에서 오늘 미션을 가져오고, 실패하면 저장소 값 사용
@@ -145,32 +153,49 @@ export const MissionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (today) {
           const serverMission = { 
             id: String(today.id), 
-            text: today.description, 
+            text: today.text, 
             createdAt: Date.now(), 
             finalized: true 
           };
           
+          console.log('🔄 MissionContext: 서버 미션으로 교체:', serverMission);
+          
           setMissions(prev => {
+            // 서버에서 받은 미션이 최우선이 되도록 모든 기존 미션을 finalized: false로 설정
+            const updatedMissions = prev.map(m => ({ ...m, finalized: false }));
+            
             // 기존 미션 중에서 같은 ID가 있는지 확인
-            const existingIndex = prev.findIndex(m => m.id === serverMission.id);
+            const existingIndex = updatedMissions.findIndex(m => m.id === serverMission.id);
             if (existingIndex >= 0) {
               // 기존 미션 업데이트
-              const updated = [...prev];
-              updated[existingIndex] = serverMission;
-              return updated;
+              updatedMissions[existingIndex] = serverMission;
+              console.log('🔄 MissionContext: 기존 미션 업데이트');
+              return updatedMissions;
             } else {
-              // 새 미션 추가
-              return [serverMission, ...prev.map(m => ({ ...m, finalized: false }))];
+              // 새 미션 추가 (서버 미션이 맨 앞에 오도록)
+              console.log('🔄 MissionContext: 새 서버 미션 추가');
+              return [serverMission, ...updatedMissions];
             }
           });
           
           console.log('✅ MissionContext: 서버 미션 적용 완료');
         } else {
           console.log('⚠️ MissionContext: 서버에서 미션 없음, 로컬 데이터 사용');
+          // 서버에서 미션이 없을 때만 로컬 데이터 로드
+          const localMissions = loadFromStorage();
+          if (localMissions.length > 0) {
+            setMissions(localMissions);
+            console.log('📝 MissionContext: 로컬 미션 데이터 로드:', localMissions);
+          }
         }
       } catch (error) {
         console.error('❌ MissionContext: 서버 미션 조회 실패:', error);
-        console.log('📝 MissionContext: 로컬 데이터 사용');
+        // 서버 조회 실패 시 로컬 데이터 로드
+        const localMissions = loadFromStorage();
+        if (localMissions.length > 0) {
+          setMissions(localMissions);
+          console.log('📝 MissionContext: 서버 실패로 로컬 미션 데이터 로드:', localMissions);
+        }
       }
     })();
   }, []);

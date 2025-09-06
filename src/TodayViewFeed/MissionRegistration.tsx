@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { ArrowLeft, Bell, Upload } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
 import { useFeed } from '../app/FeedContext';
 import { missionService } from '../app/missionService';
@@ -11,12 +11,25 @@ import { authService } from '../services/authService';
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { missionId } = useParams<{ missionId?: string }>();
   const { addPost } = useFeed();
   const { currentMission } = useMission();
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [selectedMissionId, setSelectedMissionId] = useState<number | null>(null);
   const isEditMode = Boolean((location.state as any)?.editPostId);
+
+  // URL 파라미터에서 미션 ID 처리
+  useEffect(() => {
+    if (missionId) {
+      const parsedMissionId = parseInt(missionId);
+      if (!isNaN(parsedMissionId)) {
+        setSelectedMissionId(parsedMissionId);
+        console.log('📝 URL에서 미션 ID 받음:', parsedMissionId);
+      }
+    }
+  }, [missionId]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -74,19 +87,22 @@ const MissionRegistration: React.FC = () => {
       }
 
       // 피드에 게시글 추가
-      const missionId = currentMission ? parseInt(currentMission.id) : null;
+      // URL 파라미터에서 받은 미션 ID 우선 사용, 없으면 현재 미션 사용
+      const finalMissionId = selectedMissionId || (currentMission ? parseInt(currentMission.id) : null);
       console.log('📝 게시글 생성 데이터:', {
         user: memberInfo.nickname || '나',
         content: text.trim(),
         image: uploadedImageUrl,
-        missionId: missionId
+        missionId: finalMissionId,
+        selectedMissionId: selectedMissionId,
+        currentMissionId: currentMission ? parseInt(currentMission.id) : null
       });
       
       await addPost({
         user: memberInfo.nickname || '나',
         content: text.trim(),
         image: uploadedImageUrl,
-        missionId: missionId
+        missionId: finalMissionId
       });
 
       // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
