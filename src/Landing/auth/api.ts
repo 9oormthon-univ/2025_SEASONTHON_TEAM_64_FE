@@ -48,7 +48,12 @@ api.interceptors.response.use(
       try {
         refreshing = true;
         const rt = sessionStorage.getItem("refreshToken");
-        if (!rt) throw new Error("no refresh token");
+        if (!rt) {
+          console.log('❌ 리프레시 토큰 없음, 로그인 페이지로 이동');
+          sessionStorage.clear();
+          window.location.href = '/main';
+          throw new Error("no refresh token");
+        }
 
         const { data }: any = await api.post("/auth/reissue", { refreshToken: rt });
         if (data?.accessToken) sessionStorage.setItem("accessToken", data.accessToken);
@@ -60,6 +65,11 @@ api.interceptors.response.use(
         original.headers = original.headers ?? {};
         (original.headers as any).Authorization = `Bearer ${sessionStorage.getItem("accessToken")}`;
         return api(original);
+      } catch (refreshError) {
+        console.log('❌ 토큰 갱신 실패, 로그인 페이지로 이동:', refreshError);
+        sessionStorage.clear();
+        window.location.href = '/main';
+        throw refreshError;
       } finally {
         refreshing = false;
       }
