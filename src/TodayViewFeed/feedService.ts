@@ -125,6 +125,13 @@ export const feedService = {
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 단건 조회 응답 구조:', {
+        feedId: res.data?.feedId,
+        description: res.data?.description,
+        member: res.data?.member,
+        likeCount: res.data?.likeCount,
+        commentCount: res.data?.commentCount
+      });
       return res.data as FeedResponse;
     } catch (e: any) {
       console.log('💥 피드 조회 에러, 폴백 사용:', e);
@@ -153,6 +160,13 @@ export const feedService = {
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 응답 구조 분석:', {
+        hasItems: !!res.data?.items,
+        itemsLength: res.data?.items?.length,
+        hasNextCursorId: !!res.data?.nextCursorId,
+        hasNext: res.data?.hasNext,
+        firstItem: res.data?.items?.[0]
+      });
       return res.data as FeedCursorResponse;
     } catch (e: any) {
       console.log('💥 피드 리스트 에러, 폴백 사용:', e);

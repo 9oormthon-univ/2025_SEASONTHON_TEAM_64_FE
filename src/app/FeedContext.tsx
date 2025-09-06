@@ -356,24 +356,41 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // API 응답이 유효한지 확인
         if (response && response.items && Array.isArray(response.items)) {
+          console.log('📊 API 응답 분석:', {
+            itemsCount: response.items.length,
+            firstItem: response.items[0],
+            hasNext: response.hasNext,
+            nextCursorId: response.nextCursorId
+          });
+          
           // API 응답을 Post 형태로 변환
-          const apiPosts: Post[] = response.items.map(feed => ({
-            id: feed.feedId,
-            user: feed.member.nickname,
-            content: feed.description,
-            image: feed.imageUrl,
-            likes: feed.likeCount,
-            comments: feed.commentCount,
-            isLiked: false,
-            createdAt: Date.now(),
-            isOffline: false,
-            missionId: feed.missionId
-          }));
+          const apiPosts: Post[] = response.items.map(feed => {
+            console.log('🔄 피드 변환:', {
+              feedId: feed.feedId,
+              member: feed.member,
+              description: feed.description,
+              imageUrl: feed.imageUrl
+            });
+            
+            return {
+              id: feed.feedId,
+              user: feed.member?.nickname || '알 수 없음',
+              content: feed.description || '',
+              image: feed.imageUrl || '/placeholder-image.jpg',
+              likes: feed.likeCount || 0,
+              comments: feed.commentCount || 0,
+              isLiked: false,
+              createdAt: Date.now(),
+              isOffline: false,
+              missionId: feed.missionId || 1
+            };
+          });
 
           setPosts(apiPosts);
           console.log('✅ 초기 피드 데이터 로딩 완료:', apiPosts.length, '개');
         } else {
           console.log('⚠️ API 응답이 유효하지 않음, 로컬 데이터 사용');
+          console.log('📊 응답 구조:', response);
         }
       } catch (error) {
         console.error('❌ 초기 피드 데이터 로딩 실패:', error);
