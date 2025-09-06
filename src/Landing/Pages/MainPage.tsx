@@ -1,12 +1,9 @@
-
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../auth/token";
 import { Wrapper, Container, LogoBox, MainText, LoginBtn, LoginText } from "../Styles/MainPage.Styles";
 import { TalkIcon } from "../../Styles/Icons/TalkIcon";
 import SessionTokenTest from "../../components/SessionTokenTest";
-
-
 
 const KAKAO_AUTH_URL = `https://api.planhub.site/oauth2/authorization/kakao`;
 
@@ -15,7 +12,7 @@ export default function MainPage() {
 
   const handleKakaoLogin = useCallback(() => {
     if (isAuthenticated()) {
-      navigate("/mypage", { replace: true });
+      navigate("/feed", { replace: true });
       return;
     }
     window.location.href = KAKAO_AUTH_URL;

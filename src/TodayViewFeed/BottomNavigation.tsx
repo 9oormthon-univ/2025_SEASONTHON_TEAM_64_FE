@@ -11,6 +11,15 @@ const BottomNavigation: React.FC = () => {
     if (path === '/feed') {
       return location.pathname === '/feed' || location.pathname.startsWith('/feed-detail') || location.pathname.startsWith('/mission');
     }
+    if (path === '/local-info-share') {
+      return location.pathname.startsWith('/local-info-share') || location.pathname.startsWith('/local-info-form') || location.pathname.startsWith('/local-info-address') || location.pathname.startsWith('/local-info-map');
+    }
+    if (path === '/fortune') {
+      return location.pathname.startsWith('/fortune') || location.pathname.startsWith('/fortune-content') || location.pathname.startsWith('/message-write');
+    }
+    if (path === '/mypage') {
+      return location.pathname.startsWith('/mypage') || location.pathname.startsWith('/cookie-detail');
+    }
     return location.pathname.startsWith(path);
   };
 
@@ -21,20 +30,26 @@ const BottomNavigation: React.FC = () => {
         onClick={() => navigate('/feed')}
       >
         <Home size={24} />
-        <NavLabel>홈</NavLabel>
+        <NavLabel>내 피드</NavLabel>
+      </NavItem>
+      <NavItem 
+        $isActive={isActive('/local-info-share')}
+        onClick={() => navigate('/local-info-share')}
+      >
+        <Search size={24} />
+        <NavLabel>지역정보</NavLabel>
       </NavItem>
       <NavItem 
         $isActive={isActive('/fortune')}
         onClick={() => navigate('/fortune')}
       >
         <Star size={24} />
-        <NavLabel>운세</NavLabel>
+        <NavLabel>포춘쿠키</NavLabel>
       </NavItem>
-      <NavItem $isActive={false}>
-        <Search size={24} />
-        <NavLabel>검색</NavLabel>
-      </NavItem>
-      <NavItem $isActive={false}>
+      <NavItem 
+        $isActive={isActive('/mypage')}
+        onClick={() => navigate('/mypage')}
+      >
         <User size={24} />
         <NavLabel>프로필</NavLabel>
       </NavItem>

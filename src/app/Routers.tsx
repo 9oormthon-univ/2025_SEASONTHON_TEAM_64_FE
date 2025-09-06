@@ -67,12 +67,12 @@ export default function Routers() {
                 <Route element={<RequireAuth />}>
                   {/* 메인 브랜치의 기존 경로들 */}
                   <Route path="/mypage" element={<Mypage />} />
-                  <Route path="/localinfoshare" element={<LocalInfoShare />} />
-                  <Route path="/localinfoform" element={<LocalInfoForm />} />
-                  <Route path="/localinfoaddress" element={<LocalInfoAddress />} />
-                  <Route path="/localinfomap" element={<LocalInfoMap />} />
-                  <Route path="/cookiedetailpage" element={<CookieDetail />} />
-                  <Route path="/managerhome" element={<ManagerHome />} />
+                  <Route path="/local-info-share" element={<LocalInfoShare />} />
+                  <Route path="/local-info-form" element={<LocalInfoForm />} />
+                  <Route path="/local-info-address" element={<LocalInfoAddress />} />
+                  <Route path="/local-info-map" element={<LocalInfoMap />} />
+                  <Route path="/cookie-detail" element={<CookieDetail />} />
+                  <Route path="/manager-home" element={<ManagerHome />} />
                   
                   {/* 우리가 추가한 FortunePage와 TodayViewFeed 경로들 */}
                   <Route path="/feed" element={<TodayViewFeed />} />

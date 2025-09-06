@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ArrowLeft, Bell, Star } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FortuneCookieData } from './types';
+import type { FortuneCookieData } from './types';
 import BottomNavigation from '../TodayViewFeed/BottomNavigation';
 
 const FortuneContent: React.FC = () => {

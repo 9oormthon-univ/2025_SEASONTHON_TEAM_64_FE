@@ -29,7 +29,7 @@ export default function OauthCallback() {
           const role = data?.role;
 
           if (role === "ROLE_ADMIN") {
-            navigate("/managerhome", { replace: true });
+            navigate("/manager-home", { replace: true });
           } else {
             navigate("/feed", { replace: true });
           }

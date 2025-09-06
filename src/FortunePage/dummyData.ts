@@ -1,4 +1,4 @@
-import { FortuneCookieData } from './types';
+import type { FortuneCookieData } from './types';
 
 export const fortuneCookieMessages: FortuneCookieData[] = [
   {
