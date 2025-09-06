@@ -4,7 +4,7 @@ import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
 import { missionService } from '../app/missionService';
-import BottomNavigation from './BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 
 const MissionListPage: React.FC = () => {
   const navigate = useNavigate();
