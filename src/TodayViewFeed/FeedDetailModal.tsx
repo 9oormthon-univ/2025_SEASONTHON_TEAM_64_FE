@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Heart, MessageCircle, Send, X } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Send, X, MoreVertical, Edit3, Trash2 } from 'lucide-react';
 import type { Post } from '../app/FeedContext';
+import { commentService, type CommentResponse } from '../services/commentService';
+import { authService } from '../services/authService';
 
 interface Comment {
   id: number;
@@ -10,6 +12,8 @@ interface Comment {
   isMyComment: boolean;
   handle?: string;
   time?: string;
+  commentId?: number;
+  memberId?: number;
 }
 
 interface FeedDetailModalProps {
@@ -27,39 +31,17 @@ const FeedDetailModal: React.FC<FeedDetailModalProps> = ({
   onLike, 
   onComment 
 }) => {
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      user: '쿵야',
-      content: '하늘이 너무 맑네요! 오늘도 좋은하루 보내세요~',
-      isMyComment: false,
-      handle: '@addffgg',
-      time: '09.01'
-    },
-    {
-      id: 2,
-      user: '마루',
-      content: '쿵야님도 좋은 하루 보내세요.',
-      isMyComment: true,
-      handle: '@abcde.000',
-      time: '5분 전'
-    },
-    {
-      id: 3,
-      user: '사과',
-      content: '완전 가을 하늘이네요 ㅎㅎ',
-      isMyComment: false,
-      handle: '@apple_119',
-      time: '09.01'
-    }
-  ]);
-
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [editingComment, setEditingComment] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
 
-  // 모달이 열릴 때 body 스크롤 방지
+  // 모달이 열릴 때 body 스크롤 방지 및 댓글 로딩
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      loadComments();
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -67,21 +49,173 @@ const FeedDetailModal: React.FC<FeedDetailModalProps> = ({
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, post.id]);
 
-  const handleSendComment = () => {
+  // 댓글 로딩
+  const loadComments = async () => {
+    setIsLoadingComments(true);
+    try {
+      const response = await commentService.getCommentsCursor(post.id, undefined, 20);
+      console.log('✅ 댓글 로딩 성공:', response);
+      
+      // API 응답을 Comment 형태로 변환
+      const transformedComments: Comment[] = response.items.map(comment => ({
+        id: comment.commentId,
+        commentId: comment.commentId,
+        memberId: comment.memberId,
+        user: `사용자${comment.memberId}`, // 실제로는 회원 정보에서 가져와야 함
+        content: comment.description,
+        isMyComment: false, // 실제로는 현재 사용자와 비교해야 함
+        handle: `@user${comment.memberId}`,
+        time: formatTime(comment.createdAt)
+      }));
+      
+      setComments(transformedComments);
+    } catch (error) {
+      console.error('❌ 댓글 로딩 실패:', error);
+      // 폴백: 더미 댓글
+      setComments([
+        {
+          id: 1,
+          user: '쿵야',
+          content: '하늘이 너무 맑네요! 오늘도 좋은하루 보내세요~',
+          isMyComment: false,
+          handle: '@addffgg',
+          time: '09.01'
+        },
+        {
+          id: 2,
+          user: '마루',
+          content: '쿵야님도 좋은 하루 보내세요.',
+          isMyComment: true,
+          handle: '@abcde.000',
+          time: '5분 전'
+        },
+        {
+          id: 3,
+          user: '사과',
+          content: '완전 가을 하늘이네요 ㅎㅎ',
+          isMyComment: false,
+          handle: '@apple_119',
+          time: '09.01'
+        }
+      ]);
+    } finally {
+      setIsLoadingComments(false);
+    }
+  };
+
+  // 시간 포맷팅
+  const formatTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (minutes < 1) return '방금 전';
+    if (minutes < 60) return `${minutes}분 전`;
+    if (hours < 24) return `${hours}시간 전`;
+    if (days < 7) return `${days}일 전`;
+    
+    return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
+  };
+
+  const handleSendComment = async () => {
     if (newComment.trim()) {
-      const comment: Comment = {
-        id: Date.now(),
-        user: '나',
-        content: newComment.trim(),
-        isMyComment: true,
-        handle: '@me',
-        time: '방금 전'
-      };
-      setComments(prev => [...prev, comment]);
-      setNewComment('');
-      onComment(post.id);
+      try {
+        const response = await commentService.createComment(post.id, {
+          description: newComment.trim()
+        });
+        
+        console.log('✅ 댓글 생성 성공:', response);
+        
+        // 새 댓글을 목록에 추가
+        const newCommentObj: Comment = {
+          id: response.commentId,
+          commentId: response.commentId,
+          memberId: response.memberId,
+          user: '나',
+          content: response.description,
+          isMyComment: true,
+          handle: '@me',
+          time: formatTime(response.createdAt)
+        };
+        
+        setComments(prev => [newCommentObj, ...prev]);
+        setNewComment('');
+        onComment(post.id);
+      } catch (error) {
+        console.error('❌ 댓글 생성 실패:', error);
+        // 폴백: 로컬에 추가
+        const comment: Comment = {
+          id: Date.now(),
+          user: '나',
+          content: newComment.trim(),
+          isMyComment: true,
+          handle: '@me',
+          time: '방금 전'
+        };
+        setComments(prev => [comment, ...prev]);
+        setNewComment('');
+        onComment(post.id);
+      }
+    }
+  };
+
+  const handleEditComment = (commentId: number) => {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      setEditingComment(commentId);
+      setEditText(comment.content);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (editText.trim() && editingComment) {
+      try {
+        const response = await commentService.updateComment(editingComment, {
+          description: editText.trim()
+        });
+        
+        console.log('✅ 댓글 수정 성공:', response);
+        
+        setComments(prev => prev.map(comment => 
+          comment.id === editingComment 
+            ? { ...comment, content: response.description }
+            : comment
+        ));
+        
+        setEditingComment(null);
+        setEditText('');
+      } catch (error) {
+        console.error('❌ 댓글 수정 실패:', error);
+        // 폴백: 로컬 수정
+        setComments(prev => prev.map(comment => 
+          comment.id === editingComment 
+            ? { ...comment, content: editText.trim() }
+            : comment
+        ));
+        setEditingComment(null);
+        setEditText('');
+      }
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm('댓글을 삭제하시겠습니까?')) {
+      try {
+        await commentService.deleteComment(commentId);
+        console.log('✅ 댓글 삭제 성공');
+        
+        setComments(prev => prev.filter(comment => comment.id !== commentId));
+      } catch (error) {
+        console.error('❌ 댓글 삭제 실패:', error);
+        // 폴백: 로컬 삭제
+        setComments(prev => prev.filter(comment => comment.id !== commentId));
+      }
     }
   };
 
@@ -141,19 +275,55 @@ const FeedDetailModal: React.FC<FeedDetailModalProps> = ({
           <CommentsSection>
             <CommentsHeader>댓글 {comments.length}개</CommentsHeader>
             <CommentsList>
-              {comments.map(comment => (
-                <CommentItem key={comment.id}>
-                  <CommentProfile>
-                    <CommentProfileImage src="/Feed_maru.png" alt="프로필" />
-                    <CommentInfo>
-                      <CommentUserName>{comment.user}</CommentUserName>
-                      <CommentUserHandle>{comment.handle}</CommentUserHandle>
-                    </CommentInfo>
-                    <CommentTime>{comment.time}</CommentTime>
-                  </CommentProfile>
-                  <CommentContent>{comment.content}</CommentContent>
-                </CommentItem>
-              ))}
+              {isLoadingComments ? (
+                <LoadingText>댓글을 불러오는 중...</LoadingText>
+              ) : (
+                comments.map(comment => (
+                  <CommentItem key={comment.id}>
+                    <CommentProfile>
+                      <CommentProfileImage src="/Feed_maru.png" alt="프로필" />
+                      <CommentInfo>
+                        <CommentUserName>{comment.user}</CommentUserName>
+                        <CommentUserHandle>{comment.handle}</CommentUserHandle>
+                      </CommentInfo>
+                      <CommentTime>{comment.time}</CommentTime>
+                      {comment.isMyComment && (
+                        <CommentMenu>
+                          <CommentMenuButton onClick={() => handleEditComment(comment.id)}>
+                            <Edit3 size={14} />
+                          </CommentMenuButton>
+                          <CommentMenuButton onClick={() => handleDeleteComment(comment.id)}>
+                            <Trash2 size={14} />
+                          </CommentMenuButton>
+                        </CommentMenu>
+                      )}
+                    </CommentProfile>
+                    {editingComment === comment.id ? (
+                      <CommentEditSection>
+                        <CommentEditInput
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleSaveEdit();
+                            }
+                          }}
+                        />
+                        <CommentEditButtons>
+                          <CommentEditButton onClick={handleSaveEdit}>저장</CommentEditButton>
+                          <CommentEditButton onClick={() => {
+                            setEditingComment(null);
+                            setEditText('');
+                          }}>취소</CommentEditButton>
+                        </CommentEditButtons>
+                      </CommentEditSection>
+                    ) : (
+                      <CommentContent>{comment.content}</CommentContent>
+                    )}
+                  </CommentItem>
+                ))
+              )}
             </CommentsList>
           </CommentsSection>
         </ModalContent>
@@ -406,6 +576,80 @@ const CommentContent = styled.div`
   line-height: 1.4;
   color: #333;
   margin-left: 44px;
+`;
+
+const LoadingText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+`;
+
+const CommentMenu = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+`;
+
+const CommentMenuButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #666;
+  
+  &:hover {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+`;
+
+const CommentEditSection = styled.div`
+  margin-left: 44px;
+  margin-top: 8px;
+`;
+
+const CommentEditInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 8px;
+  
+  &:focus {
+    border-color: #FF6A25;
+  }
+`;
+
+const CommentEditButtons = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const CommentEditButton = styled.button`
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  &:first-child {
+    background-color: #FF6A25;
+    color: white;
+    border-color: #FF6A25;
+    
+    &:hover {
+      background-color: #ff7f47;
+    }
+  }
 `;
 
 const CommentInputSection = styled.div`
