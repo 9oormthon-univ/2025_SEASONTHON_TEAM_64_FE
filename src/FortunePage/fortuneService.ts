@@ -87,26 +87,17 @@ export const fortuneService = {
   async sendFortune(memberId: number = getMemberId(), description: string): Promise<{ id: number; description: string }> {
     console.log('📝 sendFortune 호출 시작:', { memberId, description });
     try {
-      // 방법 1: Body에 description 포함 (기본)
       const url = `${API_BASE}/send?memberId=${memberId}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
-      // 스웨거 스펙에 맞는 간단한 요청 형식
       const requestBody = {
         description
       };
-      console.log('📦 요청 데이터 (Body):', requestBody);
+      console.log('📦 요청 데이터:', requestBody);
       console.log('📊 요청 헤더:', {
         'Content-Type': 'application/json',
         'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
-      });
-      console.log('🔍 요청 상세 정보:', {
-        method: 'POST',
-        url: url,
-        memberId: memberId,
-        description: description,
-        hasToken: !!sessionStorage.getItem('accessToken')
       });
       
       const res = await api.post(url, requestBody);
@@ -114,31 +105,8 @@ export const fortuneService = {
       console.log('📊 응답 상태:', res.status);
       return res.data;
     } catch (e: any) {
-      console.log('💥 포춘쿠키 전송 에러 (방법 1 실패), 방법 2 시도:', e);
-      
-      // 방법 2: description을 쿼리 파라미터로 전송
-      try {
-        const url2 = `${API_BASE}/send?memberId=${memberId}&description=${encodeURIComponent(description)}`;
-        console.log('🔄 방법 2 시도 - URL:', url2);
-        console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url2}`);
-        
-        const res2 = await api.post(url2);
-        console.log('✅ 방법 2 API 응답 성공:', res2.data);
-        console.log('📊 응답 상태:', res2.status);
-        return res2.data;
-      } catch (e2: any) {
-        console.log('💥 방법 2도 실패, 폴백 사용:', e2);
-        console.log('🔍 방법 2 에러 상세 정보:', {
-          status: e2.response?.status,
-          statusText: e2.response?.statusText,
-          data: e2.response?.data,
-          message: e2.message,
-          url: e2.config?.url,
-          fullUrl: e2.config?.baseURL + e2.config?.url
-        });
-      }
-      
-      console.log('🔍 방법 1 에러 상세 정보:', {
+      console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,

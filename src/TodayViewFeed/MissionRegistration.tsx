@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell, Upload } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
-import { missionService } from '../app/missionService';
 import { useFeed } from '../app/FeedContext';
+import { missionService } from '../app/missionService';
 
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();

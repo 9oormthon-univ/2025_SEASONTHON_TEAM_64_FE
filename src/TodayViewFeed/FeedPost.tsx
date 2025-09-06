@@ -61,13 +61,11 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete, 
       
       <PostContent>
         <PostText>{post.content}</PostText>
-        <PostImage>
-          {post.image ? (
+        {post.image && post.image !== '/placeholder-image.jpg' && (
+          <PostImage>
             <PostImg src={post.image} alt="post" />
-          ) : (
-            <ImagePlaceholder>사진</ImagePlaceholder>
-          )}
-        </PostImage>
+          </PostImage>
+        )}
       </PostContent>
       
       <PostActions>
@@ -167,10 +165,6 @@ const PostImage = styled.div`
   border: 1px solid #e9ecef;
 `;
 
-const ImagePlaceholder = styled.span`
-  color: #999;
-  font-size: 14px;
-`;
 
 const PostImg = styled.img`
   width: 100%;
