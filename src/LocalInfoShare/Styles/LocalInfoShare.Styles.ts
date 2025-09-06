@@ -1,6 +1,6 @@
+// src/LocalInfoShare/Styles/LocalInfoShare.Styles.ts
 import styled from "styled-components";
 
-/* ===== 레이아웃 ===== */
 export const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -18,12 +18,10 @@ export const Container = styled.div`
   max-width: 375px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,.05);
-  border-radius: 50px;
-  /* 페이지 전체는 스크롤 금지 */
   overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
 `;
 
-/* ===== 상단 "최신순 + 필터" ===== */
 export const UpdateRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -33,7 +31,7 @@ export const UpdateRow = styled.div`
 `;
 
 export const UpdateList = styled.div`
-  font-size: .875rem;
+  font-size: .9rem;
   font-weight: 600;
   color: #777;
   margin-right: 8px;
@@ -48,12 +46,12 @@ export const FilterBar = styled.div`
 const PLUM_ULTRA_LIGHT = "#F8EAF2";
 
 export const FilterButton = styled.button<{ $active: boolean }>`
-  padding: 8px 12px;
+  padding: 10px;
   border-radius: 9999px;
   border: 1px solid ${({ $active }) => ($active ? "#e3c7d7" : "#e5e5e5")};
   background: ${({ $active }) => ($active ? PLUM_ULTRA_LIGHT : "#f4f4f4")};
   color: #333;
-  font-size: .85rem;
+  font-size: .9rem;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -65,27 +63,25 @@ export const FilterButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-/* ===== 카드 리스트 스크롤 박스 ===== */
 export const ListViewport = styled.div`
   flex: 1 1 auto;
-  min-height: 0;                 /* flex 컨테이너에서 스크롤 위해 필요 */
-  overflow-y: auto;              /* 이 박스만 스크롤 */
+  min-height: 0;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 4px 0 84px;           /* 하단 버튼/탭바와 겹치지 않게 여유 */
+  padding: 4px 0 90px;
 `;
 
-export const Sentinel = styled.div`
-  height: 1px;
+export const EmptyBox = styled.div`
+  margin: 24px 16px 8px;
+  padding: 14px 12px;
+  border-radius: 12px;
+  background: #fafafa;
+  border: 1px dashed #e3e3e3;
+  color: #888;
+  font-size: .95rem;
 `;
 
-export const LoadingRow = styled.div`
-  text-align: center;
-  color: #777;
-  padding: 8px 0 16px;
-`;
-
-/* ===== 카드 ===== */
 export const Card = styled.div`
   border-radius: 16px;
   border: 1px solid #e5e5e5;
@@ -103,11 +99,34 @@ export const RowBox = styled.div`
 export const IconBox = styled.div`
   flex: 0 0 70px;
   height: 70px;
-  border-radius: 20px;
-  background-color: #d2d0d0;
-  border: 2px solid #000;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fafafa;
+  border: 1px solid #e7e7e7;
   display: grid;
   place-items: center;
+`;
+
+export const ThumbDiv = styled.div<{ $src: string; $fit?: "cover" | "contain" }>`
+  width: 100%;
+  height: 100%;
+  background-image: url("${({ $src }) => $src}");
+  background-size: ${({ $fit }) => $fit || "cover"};
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform: translateZ(0);
+`;
+
+export const ThumbFallback = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #aaa;
+  font-size: 12px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #f3f3f3 0%, #e9e9e9 100%);
+  border: 1px solid #eee;
 `;
 
 export const TextColumn = styled.div`
@@ -116,7 +135,7 @@ export const TextColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin: 0 19px 20px 0;
+  margin: 0 6px 6px 0;
 
   & > * {
     word-break: break-word;
@@ -135,15 +154,18 @@ export const IconButtonPlain = styled.button`
   border: none;
   background: transparent;
   cursor: pointer;
-  padding: 0;
+  padding: 6px;
   line-height: 0;
+  border-radius: 10px;
+
+  &:active { background: #f3f3f3; }
 `;
 
 export const TagBox = styled.div`
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 7px;
   color: #fff;
-  font-size: .75rem;
+  font-size: .78rem;
   font-weight: 700;
   white-space: nowrap;
   line-height: 1;
@@ -156,163 +178,158 @@ export const AddInfoRow = styled.div`
   padding: 6px 20px 14px;
 `;
 
-export const EmptyBox = styled.div`
-  margin: 24px 16px 8px;
-  padding: 14px 12px;
-  border-radius: 12px;
-  background: #fafafa;
-  border: 1px dashed #e3e3e3;
-  color: #888;
-  font-size: .9rem;
-`;
-
-/* ===== 모달 ===== */
 export const ModalBackdrop = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.25);
+  background: rgba(0,0,0,.35);
   display: grid;
   place-items: center;
   z-index: 1000;
 `;
 
-export const ModalContainer = styled.div`
-  width: min(92vw, 360px);
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
-  overflow: hidden;
+export const ModalShell = styled.div`
+  width: min(92vw, 380px);
+  background: #f0f0f0;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  padding: 16px 16px calc(18px + env(safe-area-inset-bottom));
   border: 1px solid #e6e6e6;
 `;
 
-export const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
+export const ModalHeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: 44px 1fr 36px;
   align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
-  background: #f3f3f3;
-  border-bottom: 1px solid #e9e9e9;
-`;
-
-export const HeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  column-gap: 10px;
+  margin-bottom: 6px;
 `;
 
 export const AvatarCircle = styled.div`
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1.5px solid #222;
+  background: #ff7a00;
+  color: #fff;
   display: grid;
   place-items: center;
+  font-weight: 900;
+  font-size: 18px;
 `;
 
-export const HeaderAuthor = styled.span`
-  font-weight: 700;
-  color: #333;
+export const NameCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+export const Nickname = styled.div`
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1d1d1d;
+  letter-spacing: -0.2px;
+`;
+
+export const Handle = styled.div`
+  font-size: .85rem;
+  color: #999;
 `;
 
 export const ModalCloseBtn = styled.button`
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 9999px;
   border: 1px solid #ddd;
   background: #fff;
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
+  justify-self: end;
 
-  &:hover {
-    background: #fafafa;
-  }
+  &:hover { background: #fafafa; }
 `;
 
-export const ModalBody = styled.div`
-  padding: 14px;
-`;
-
-export const ModalFooter = styled.div`
-  height: 10px;
-`;
-
-export const ModalSection = styled.div`
-  width: 100%;
-  min-height: 58px;
-  border-radius: 12px;
-  border: 1.5px solid #191919;
-  background: #e8eef5;
-  margin: 10px 0;
-  padding: 12px;
+/* 오렌지 제목 바 */
+export const TitleBar = styled.div`
+  background: #ff6a00;
+  color: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
+  gap: 8px;
 `;
 
-export const ModalPill = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  border: 1.5px solid #191919;
-  background: #f3f6fb;
-  font-weight: 700;
-  color: #111;
+export const TitleLabel = styled.span`
+  font-weight: 900;
+  font-size: 1.05rem;
+`;
+
+export const TitleText = styled.h3`
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
   letter-spacing: -0.2px;
 `;
 
-export const ModalText = styled.div`
-  font-size: .95rem;
+/* 하얀 내용 카드 */
+export const ContentCard = styled.div`
+  background: #fff;
+  border-radius: 0 0 16px 16px;
+  padding: 16px 16px 22px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+`;
+
+export const ContentText = styled.p`
+  margin: 0;
   color: #333;
-  line-height: 1.5;
-  word-break: break-word;
+  line-height: 1.55;
+  font-size: .98rem;
+  min-height: 120px;
 `;
 
-export const ModalImagePlaceholder = styled.div`
-  width: 100%;
-  text-align: center;
-  color: #666;
+export const ContentDate = styled.div`
+  text-align: right;
+  color: #b5b5b5;
+  font-size: .85rem;
+  margin-top: 12px;
 `;
 
-export const ModalBadge = styled.div`
-  display: inline-block;
-  margin-right: 8px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  color: #fff;
-  font-size: .75rem;
-  font-weight: 800;
-  line-height: 1;
-`;
-
-export const ModalMetaRow = styled.div`
-  margin-top: 8px;
+/* 주소 */
+export const AddressRow = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-
-  & > div:first-child {
-    font-size: .75rem;
-    color: #777;
-  }
-
-  & > div:last-child {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  gap: 6px;
+  margin: 14px 2px 10px;
 `;
 
-export const AddressBtn = styled.button`
-  font-size: .8rem;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f6f6f6;
+export const AddressDot = styled.span`
+  font-size: 16px;
+`;
+
+export const AddressLink = styled.button`
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  color: #0b64d8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 800;
+  font-size: .95rem;
   cursor: pointer;
 
-  &:hover {
-    background: #efefef;
-  }
+  &:active { opacity: .85; }
+`;
+
+/* 카테고리 큰 배지 */
+export const CategoryBadgeLarge = styled.div`
+  display: inline-block;
+  margin-left: 2px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  color: #fff;
+  font-weight: 900;
+  font-size: .9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
 `;

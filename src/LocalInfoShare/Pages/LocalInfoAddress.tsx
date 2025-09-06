@@ -1,4 +1,3 @@
-// src/LocalInfoShare/Pages/LocalInfoAddress.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../../Styles/Icons/BackIcon";
@@ -10,15 +9,17 @@ import { BottomBar } from "../../Styles/Components/Navigation/BottomBar";
 
 import { Wrapper, Container } from "../Styles/LocalInfoForm.Styles";
 import {
-  SearchBar,
-  AddressInput,
+  SearchField,
+  SearchInput,
   SearchIconBtn,
   CurrentLocationBtn,
   ConfirmRow,
   ConfirmButton,
+  ScreenTitle,
 } from "../Styles/LocalInfoAddress.styles";
 
 import { loadKakaoOnce } from "../api/loadkakao";
+import styled from "styled-components";
 
 declare global {
   interface Window {
@@ -27,33 +28,32 @@ declare global {
   }
 }
 
-/** Daum Postcode 로더 */
 function loadDaumPostcode(): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (window.daum?.Postcode) return resolve();
     const exist = document.querySelector<HTMLScriptElement>(
       'script[src*="t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"]'
     );
     if (exist) {
       exist.addEventListener("load", () => resolve());
+      exist.addEventListener("error", () => reject(new Error("postcode load error")));
       return;
     }
     const script = document.createElement("script");
     script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
     script.async = true;
     script.addEventListener("load", () => resolve());
+    script.addEventListener("error", () => reject(new Error("postcode load error")));
     document.head.appendChild(script);
   });
 }
 
-/** 좌표 → 주소 */
 async function reverseGeocode(lat: number, lng: number): Promise<string> {
   await loadKakaoOnce();
   return new Promise<string>((resolve, reject) => {
     const svc = window.kakao?.maps?.services;
     if (!svc) return reject(new Error("kakao.maps.services not ready"));
     const geocoder = new svc.Geocoder();
-    // Kakao는 x=lng, y=lat 순서
     geocoder.coord2Address(lng, lat, (result: any[], status: any) => {
       if (status !== svc.Status.OK || !result?.length) {
         return reject(new Error("no reverse geocode result"));
@@ -67,10 +67,9 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
 
 type Coords = { lat: number; lng: number };
 
-/** 짧은 시간 동안 watch해서 가장 정확한 좌표 선택 */
 function watchBestPosition(
-  maxWaitMs = 10000,      // 최대 10초
-  targetAccM = 80,        // 이 이하 정확도면 즉시 종료
+  maxWaitMs = 10000,
+  targetAccM = 80,
   options: PositionOptions = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
 ): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
@@ -110,19 +109,39 @@ const LocalInfoAddress: React.FC = () => {
   const [coords, setCoords] = React.useState<Coords | null>(null);
   const [locLoading, setLocLoading] = React.useState(false);
 
-  const openPostcode = async () => {
-    await loadDaumPostcode();
-    const pc = new window.daum.Postcode({
-      oncomplete: (data: any) => {
-        const road = data.roadAddress || data.address || "";
-        setCoords(null);
-        setAddress(road);
-      },
-    });
-    pc.open({ autoClose: true });
-  };
+  const [showPostcode, setShowPostcode] = React.useState(false);
+  const embedRef = React.useRef<HTMLDivElement | null>(null);
 
-  /** 현재 위치(정확도 향상 포함) */
+  React.useEffect(() => {
+    let restoreOverflow = "";
+    let postcode: any;
+
+    if (!showPostcode) return;
+    restoreOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    loadDaumPostcode().then(() => {
+      if (!embedRef.current) return;
+      postcode = new window.daum.Postcode({
+        oncomplete: (data: any) => {
+          const road = data.roadAddress || data.address || "";
+          setCoords(null);
+          setAddress(road);
+          setShowPostcode(false);
+        },
+        width: "100%",
+        height: "100%",
+      });
+      postcode.embed(embedRef.current, { autoClose: false });
+    });
+
+    return () => {
+      document.body.style.overflow = restoreOverflow;
+    };
+  }, [showPostcode]);
+
+  const openPostcodeOverlay = () => setShowPostcode(true);
+
   const useMyLocation = () => {
     if (!navigator.geolocation) {
       alert("이 브라우저는 현재 위치를 지원하지 않아요.");
@@ -132,21 +151,17 @@ const LocalInfoAddress: React.FC = () => {
 
     const opts: PositionOptions = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
 
-    // 1) 빠르게 한 번
     navigator.geolocation.getCurrentPosition(
       async (first) => {
         try {
           let chosen = first;
           const acc1 = first.coords.accuracy ?? 999999;
 
-          // 2) 정확도가 떨어지면 10초간 watch로 더 좋은 값 대기
           if (acc1 > 150) {
             try {
               const better = await watchBestPosition(10000, 80, opts);
               chosen = better;
-            } catch {
-              // watch 실패/타임아웃은 무시하고 first 사용
-            }
+            } catch {}
           }
 
           const { latitude, longitude } = chosen.coords;
@@ -173,7 +188,6 @@ const LocalInfoAddress: React.FC = () => {
       alert("주소를 선택하거나 현재 위치를 설정하세요.");
       return;
     }
-    // LocalInfoForm으로 주소/좌표 전달
     navigate("/localinfoform", { state: { address, coords, from: "LocalInfoAddress" } });
   };
 
@@ -187,17 +201,19 @@ const LocalInfoAddress: React.FC = () => {
           <BellIcon />
         </IconRow>
 
-        <SearchBar>
-          <AddressInput
+        <ScreenTitle>주소를 선택해주세요.</ScreenTitle>
+
+        <SearchField>
+          <SearchInput
             placeholder="도로명, 건물명, 지번 입력"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && openPostcode()}
+            onKeyDown={(e) => e.key === "Enter" && openPostcodeOverlay()}
           />
-          <SearchIconBtn type="button" aria-label="주소 검색" onClick={openPostcode}>
-            <Search size={18} />
+          <SearchIconBtn type="button" aria-label="주소 검색" onClick={openPostcodeOverlay}>
+            <Search size={16} />
           </SearchIconBtn>
-        </SearchBar>
+        </SearchField>
 
         <CurrentLocationBtn type="button" onClick={useMyLocation} disabled={locLoading}>
           <Crosshair size={14} />
@@ -206,14 +222,83 @@ const LocalInfoAddress: React.FC = () => {
 
         <ConfirmRow>
           <ConfirmButton type="button" onClick={handleConfirm}>
-            이 주소로 등록
+            이 주소로 등록하기
           </ConfirmButton>
         </ConfirmRow>
 
         <BottomBar />
       </Container>
+
+      {showPostcode && (
+        <Overlay role="dialog" aria-modal="true">
+          <Sheet>
+            <SheetHeader>
+              <strong>주소 검색</strong>
+              <CloseBtn onClick={() => setShowPostcode(false)} aria-label="닫기">
+                ✕
+              </CloseBtn>
+            </SheetHeader>
+            <EmbedBox ref={embedRef} />
+          </Sheet>
+        </Overlay>
+      )}
     </Wrapper>
   );
 };
 
 export default LocalInfoAddress;
+
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overscroll-behavior: contain;
+`;
+
+const Sheet = styled.div`
+  width: 100%;
+  max-width: 420px;
+  height: 82dvh;
+  background: #fff;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+
+  @media (max-width: 420px) {
+    height: 88dvh;
+    border-radius: 14px;
+  }
+`;
+
+const SheetHeader = styled.div`
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+`;
+
+const CloseBtn = styled.button`
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  padding: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  cursor: pointer;
+`;
+
+const EmbedBox = styled.div`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+`;

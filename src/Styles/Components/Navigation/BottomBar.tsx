@@ -1,21 +1,34 @@
-import React from "react"; //BottomBar.tsx
+// BottomBar.tsx
+import React from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import { House, Star, Search, User } from "lucide-react";
 
-/* 아이콘 styled-components */
-const IconBase = `
+import HouseIcon from "../../../assets/HouseIcon.svg";
+import SearchIcon from "../../../assets/SearchIcon.svg";
+import CookieIcon from "../../../assets/CookieIcon.svg";
+import UserIcon from "../../../assets/UserIcon.svg";
+
+/* === 아이콘: mask로 칠하기 === */
+const MaskIcon = styled.span<{ $src: string; $active?: boolean }>`
   width: 30px;
   height: 30px;
-  stroke: gray;
+  display: inline-block;
+
+  /* 채울 색 (active면 주황, 아니면 회색) */
+  background-color: ${({ $active }) => ($active ? "#FB6767" : "gray")};
+
+  /* WebKit & 표준 마스크 */
+  -webkit-mask-image: url("${({ $src }) => $src}");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-image: url("${({ $src }) => $src}");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 `;
 
-const HouseIcon = styled(House)`${IconBase}`;
-const StarIcon = styled(Star)`${IconBase}`;
-const SearchIcon = styled(Search)`${IconBase}`;
-const AccountIcon = styled(User)`${IconBase}`;
-
-/* BottomBar 전체 컨테이너 */
 const BarContainer = styled.div`
   background-color: white;
   border-radius: 50px;
@@ -28,13 +41,10 @@ const BarContainer = styled.div`
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 `;
 
-/* 버튼 래퍼 */
-interface IconButtonProps {
-  $active?: boolean;
-}
+interface IconButtonProps { $active?: boolean; }
 
 const IconButton = styled.button<IconButtonProps>`
-  background: ${({ $active }) => ($active ? "#FB6767" : "transparent")};
+  background: ${({ $active }) => ($active ? "#FFE5E5" : "transparent")};
   border: none;
   cursor: pointer;
   display: flex;
@@ -44,61 +54,67 @@ const IconButton = styled.button<IconButtonProps>`
   height: 55px;
   border-radius: 50%;
   transition: background 0.2s;
-
-  &:active svg {
-    stroke: black; /* 눌렀을 때 아이콘 색 잠깐 바뀜 */
-  }
+  &:active { filter: brightness(0.95); }
 `;
 
 export const BottomBar: React.FC = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  // 현재 경로 기준으로 활성 여부 계산
-  const isHomeActive = pathname === "/home" || pathname === "/"; // 필요 시 조정
-  const isStarActive = pathname === "/LocalInfoShare";
-  const isAccountActive = pathname === "/Mypage";
-  // Search는 요구사항상 항상 비활성 배경
+  // ✅ 경로 소문자로 통일해서 비교
+  const path = pathname.toLowerCase();
+
+  // 홈: "/", "/home"
+  const isHomeActive = path === "/" || path === "/home";
+
+  // 로컬 정보 관련 화면 전체를 활성 처리
+  // ex) /localinfoshare, /localinfoform, /localinfoaddress ...
+  const isLocalInfoRoute =
+    path === "/localinfoshare" ||
+    path.startsWith("/localinfo");
+
+  // 마이페이지 묶음
+  const isAccountActive = path === "/mypage" || path.startsWith("/mypage/");
 
   return (
     <BarContainer>
       {/* Home */}
       <IconButton
         $active={isHomeActive}
-        onClick={() => {
-          // 필요 시 홈 라우트 지정
-          // navigate("/home");
-        }}
+        onClick={() => navigate("/home")}
         aria-label="Home"
+        aria-current={isHomeActive ? "page" : undefined}
       >
-        <HouseIcon />
+        <MaskIcon $src={HouseIcon} $active={isHomeActive} />
       </IconButton>
 
-      {/* Search: 배경색 없이 이동만 */}
+      {/* Search: 라우팅 필요 없으면 그대로, 필요하면 이동 연결 */}
       <IconButton
         $active={false}
-        onClick={() => navigate("/LocalInfoShare")}
+        onClick={() => navigate("/localinfoshare")}
         aria-label="Search"
       >
-        <SearchIcon />
+        <MaskIcon $src={SearchIcon} $active={false} />
       </IconButton>
 
-      {/* Star: /LocalInfoShare에 있을 땐 활성 배경 유지 */}
+      {/* Local info (쿠키) */}
       <IconButton
-        $active={isStarActive}
-        onClick={() => navigate("/LocalInfoShare")}
-        aria-label="Favorites"
+        $active={isLocalInfoRoute}
+        onClick={() => navigate("/localinfoshare")}
+        aria-label="Local Info"
+        aria-current={isLocalInfoRoute ? "page" : undefined}
       >
-        <StarIcon />
+        <MaskIcon $src={CookieIcon} $active={isLocalInfoRoute} />
       </IconButton>
 
-      {/* Account: /Mypage에 있을 땐 활성 배경 유지 */}
+      {/* Account */}
       <IconButton
         $active={isAccountActive}
-        onClick={() => navigate("/Mypage")}
+        onClick={() => navigate("/mypage")}
         aria-label="My Page"
+        aria-current={isAccountActive ? "page" : undefined}
       >
-        <AccountIcon />
+        <MaskIcon $src={UserIcon} $active={isAccountActive} />
       </IconButton>
     </BarContainer>
   );

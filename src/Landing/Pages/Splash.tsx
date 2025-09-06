@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Wrapper, Container, LogoBox } from "../Styles/Splash.Styles";
+import { FrontCharacterImg,LogoTextImg } from "../../Styles/Image/Imges";
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -23,7 +24,6 @@ export default function Splash() {
       return;
     }
 
-    // 미로그인 → 0.8초 후 /main
     const timer = setTimeout(() => {
       navigate("/main", { replace: true });
     }, 1000);
@@ -33,10 +33,11 @@ export default function Splash() {
 
   return (
     <Wrapper>
-      <Container>
+      <Container style={{ background: "linear-gradient(90deg, #FF6A25 0%, #FFA263 100%)"}}>
         <LogoBox>
-          <h1>스플래시</h1>
+          <LogoTextImg />
         </LogoBox>
+        <FrontCharacterImg />
       </Container>
     </Wrapper>
   );
