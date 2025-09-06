@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../auth/token";
 import { Wrapper, Container, LogoBox, MainText, LoginBtn, LoginText } from "../Styles/MainPage.Styles";
 import { TalkIcon } from "../../Styles/Icons/TalkIcon";
+import SessionTokenTest from "../../components/SessionTokenTest";
 
 
 
@@ -30,6 +31,9 @@ export default function MainPage() {
           <TalkIcon />
           <LoginText>카카오 로그인</LoginText>
         </LoginBtn>
+
+        {/* 개발용 세션 토큰 테스트 */}
+        <SessionTokenTest />
 
       </Container>
     </Wrapper>

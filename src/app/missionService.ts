@@ -1,4 +1,5 @@
 import type { MissionItem } from './MissionContext';
+import { api } from '../Landing/auth/api';
 
 const API_BASE = '/api/v1';
 const TIMEOUT_MS = 7000;
@@ -53,10 +54,10 @@ export const missionService = {
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
     try {
       const id = memberId ?? 1;
-      const res = await safeFetch(`${API_BASE}/members/${encodeURIComponent(id)}/missions/today`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const res = await api.get(`${API_BASE}/members/${id}/missions/today`);
+      return res.data;
     } catch (e) {
+      console.log('💥 오늘의 미션 조회 에러, 폴백 사용:', e);
       // 폴백: 로컬 최신
       if (localMissions.length === 0) return null;
       const latest = [...localMissions].sort((a,b)=>b.createdAt-a.createdAt)[0];
@@ -67,10 +68,10 @@ export const missionService = {
   async listAssignments(dateISO?: string) {
     try {
       const qs = dateISO ? `?date=${encodeURIComponent(dateISO)}` : '';
-      const res = await safeFetch(`${API_BASE}/missions/assignments${qs}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const res = await api.get(`${API_BASE}/missions/assignments${qs}`);
+      return res.data;
     } catch (e) {
+      console.log('💥 미션 목록 조회 에러, 폴백 사용:', e);
       return localMissions;
     }
   }

@@ -8,8 +8,8 @@ const BottomNavigation: React.FC = () => {
   const location = useLocation();
 
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname.startsWith('/feed-detail') || location.pathname.startsWith('/mission');
+    if (path === '/feed') {
+      return location.pathname === '/feed' || location.pathname.startsWith('/feed-detail') || location.pathname.startsWith('/mission');
     }
     return location.pathname.startsWith(path);
   };
@@ -17,8 +17,8 @@ const BottomNavigation: React.FC = () => {
   return (
     <NavContainer>
       <NavItem 
-        $isActive={isActive('/')}
-        onClick={() => navigate('/')}
+        $isActive={isActive('/feed')}
+        onClick={() => navigate('/feed')}
       >
         <Home size={24} />
         <NavLabel>홈</NavLabel>

@@ -1,4 +1,5 @@
 import type { FortuneCookieData } from './types';
+import { api } from '../Landing/auth/api';
 
 // -------- API + Fallback 설정 --------
 const API_BASE = '/api/v1/fortunes';
@@ -25,9 +26,8 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
-async function safeFetch(input: RequestInfo, init?: RequestInit) {
-  return withTimeout(fetch(input, init), REQUEST_TIMEOUT_MS);
-}
+// 메인 브랜치의 api 인스턴스 사용 (자동 토큰 처리)
+// safeFetch는 더 이상 필요하지 않음
 
 // -------- 로컬 더미 저장소 --------
 let localFortunes: Array<{ id: number; description: string }> = [];
@@ -59,12 +59,10 @@ export const fortuneService = {
   // 오늘의 포춘쿠키 랜덤 열기 (1일 1회) - POST /open?memberId
   async openFortune(memberId: number = getMemberId()): Promise<{ id: number; description: string }> {
     try {
-      const res = await safeFetch(`${API_BASE}/open?memberId=${encodeURIComponent(memberId)}`, {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const res = await api.post(`${API_BASE}/open?memberId=${memberId}`);
+      return res.data;
     } catch (e) {
+      console.log('💥 포춘쿠키 열기 에러, 폴백 사용:', e);
       // Fallback: 로컬 더미에서 하나 반환, 없으면 생성
       if (localFortunes.length === 0) pushDummyFortune('행운이 당신 곁에 머물 거예요.');
       return localFortunes[0];
@@ -74,10 +72,10 @@ export const fortuneService = {
   // 단일 조회 - GET /{fortuneId}
   async getFortuneById(fortuneId: number): Promise<{ id: number; description: string } | null> {
     try {
-      const res = await safeFetch(`${API_BASE}/${encodeURIComponent(fortuneId)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const res = await api.get(`${API_BASE}/${fortuneId}`);
+      return res.data;
     } catch (e) {
+      console.log('💥 포춘쿠키 조회 에러, 폴백 사용:', e);
       return localFortunes.find(f => f.id === fortuneId) ?? null;
     }
   },
@@ -88,10 +86,10 @@ export const fortuneService = {
       const params = new URLSearchParams();
       if (cursorId) params.set('cursorId', String(cursorId));
       if (size) params.set('size', String(size));
-      const res = await safeFetch(`${API_BASE}/cursor?${params.toString()}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const res = await api.get(`${API_BASE}/cursor?${params.toString()}`);
+      return res.data;
     } catch (e) {
+      console.log('💥 포춘쿠키 리스트 에러, 폴백 사용:', e);
       // Fallback: 로컬 배열을 cursorId 기준으로 슬라이싱
       const startIdx = cursorId ? localFortunes.findIndex(f => f.id === cursorId) + 1 : 0;
       return localFortunes.slice(startIdx, startIdx + size);
