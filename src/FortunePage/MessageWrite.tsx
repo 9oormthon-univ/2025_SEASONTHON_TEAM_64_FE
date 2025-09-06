@@ -12,8 +12,10 @@ const MessageWrite: React.FC = () => {
 
   const handleSend = async () => {
     if (message.trim()) {
+      console.log('📤 포춘쿠키 전송 시작:', message);
       try {
-        await fortuneService.sendFortune(undefined, message);
+        const result = await fortuneService.sendFortune(undefined, message);
+        console.log('✅ 포춘쿠키 전송 성공:', result);
         setShowToast(true);
         setMessage('');
         
@@ -22,7 +24,7 @@ const MessageWrite: React.FC = () => {
           navigate('/fortune');
         }, 2000);
       } catch (error) {
-        console.error('포춘쿠키 전송 실패:', error);
+        console.error('❌ 포춘쿠키 전송 실패:', error);
         // 에러 처리 로직 추가 가능
       }
     }

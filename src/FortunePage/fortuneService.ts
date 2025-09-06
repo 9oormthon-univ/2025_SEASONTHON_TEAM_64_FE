@@ -11,6 +11,37 @@ function getMemberId(): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1; // 기본 1
 }
 
+function getSenderInfo() {
+  // 세션스토리지에서 사용자 정보 가져오기
+  const accessToken = sessionStorage.getItem('accessToken');
+  const userInfo = localStorage.getItem('userInfo');
+  
+  // 기본 사용자 정보 (API 스펙에 맞춤)
+  const defaultSender = {
+    id: getMemberId(),
+    email: "user@example.com",
+    nickname: "사용자",
+    role: "ROLE_USER",
+    profileImageURL: "",
+    refreshToken: "",
+    fcmToken: "",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    lastOpenedDate: new Date().toISOString()
+  };
+  
+  if (userInfo) {
+    try {
+      const parsed = JSON.parse(userInfo);
+      return { ...defaultSender, ...parsed };
+    } catch (e) {
+      console.warn('사용자 정보 파싱 실패:', e);
+    }
+  }
+  
+  return defaultSender;
+}
+
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const id = setTimeout(() => reject(new Error('Request timed out')), ms);
@@ -42,15 +73,22 @@ function pushDummyFortune(description: string) {
 export const fortuneService = {
   // 오늘의 포춘쿠키 작성 (1일 1회) - POST /send?memberId
   async sendFortune(memberId: number = getMemberId(), description: string): Promise<{ id: number; description: string }> {
+    console.log('📝 sendFortune 호출 시작:', { memberId, description });
     try {
-      const res = await safeFetch(`${API_BASE}/send?memberId=${encodeURIComponent(memberId)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, sender: {} }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const url = `${API_BASE}/send?memberId=${memberId}`;
+      console.log('🌐 API 요청 URL:', url);
+      
+      const requestBody = {
+        description,
+        sender: getSenderInfo()
+      };
+      console.log('📦 요청 데이터:', requestBody);
+      
+      const res = await api.post(url, requestBody);
+      console.log('✅ API 응답 성공:', res.data);
+      return res.data;
     } catch (e) {
+      console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
       // Fallback: 로컬에 저장
       return pushDummyFortune(description);
     }
