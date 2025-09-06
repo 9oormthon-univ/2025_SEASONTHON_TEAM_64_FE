@@ -9,9 +9,15 @@ const FortunePage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleOpenTodayFortune = () => {
-    console.log('🎲 포춘쿠키 알림 페이지로 이동');
-    // 포춘쿠키 알림 페이지로 이동
-    navigate('/fortune-notification');
+    console.log('🎲 포춘쿠키 열기 페이지로 이동');
+    // 포춘쿠키 열기 페이지로 이동 (더미 데이터와 함께)
+    const dummyFortuneCookie = {
+      id: 1,
+      message: "오늘은 새로운 시작의 날입니다!",
+      sender: "운명",
+      createdAt: new Date().toISOString()
+    };
+    navigate('/fortune-open', { state: { fortuneCookie: dummyFortuneCookie } });
   };
 
   const handleSendFortune = () => {

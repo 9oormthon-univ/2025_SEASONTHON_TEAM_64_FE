@@ -10,10 +10,13 @@ const FortuneContent: React.FC = () => {
   const location = useLocation();
   const fortuneCookie = location.state?.fortuneCookie as FortuneCookieData;
 
-  if (!fortuneCookie) {
-    navigate('/fortune');
-    return null;
-  }
+  // fortuneCookie가 없으면 더미 데이터 사용
+  const displayData = fortuneCookie || {
+    id: 1,
+    message: "오늘은 새로운 시작의 날입니다! 모든 것이 잘 될 거예요.",
+    sender: "운명",
+    createdAt: new Date().toISOString()
+  };
 
   return (
     <Container>
@@ -42,7 +45,7 @@ const FortuneContent: React.FC = () => {
         </VideoContainer>
 
         <FortuneMessage>
-          {fortuneCookie.message}
+          {displayData.message}
         </FortuneMessage>
       </Content>
 
