@@ -1,0 +1,14 @@
+:root {
+  --max-width: 500px;
+  --min-width: 320px;
+}
+
+#root {
+  position: relative;
+  max-width: var(--max-width);
+  min-width: var(--min-width);
+  height: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: #fff;
+}
