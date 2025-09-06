@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { feedService } from '../TodayViewFeed/feedService';
+import { imageService } from '../services/imageService';
 
 export interface Post {
   id: number;
@@ -257,8 +258,22 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deletePost = useCallback(async (id: number) => {
     try {
+      // 삭제할 게시글 찾기
+      const postToDelete = posts.find(post => post.id === id);
+      
       // API 호출
       await feedService.deleteFeed(id);
+      
+      // 이미지가 있으면 이미지도 삭제
+      if (postToDelete && postToDelete.image && postToDelete.image !== '/placeholder-image.jpg') {
+        try {
+          await imageService.deleteImage(postToDelete.image);
+          console.log('✅ 이미지 삭제 완료');
+        } catch (imageError) {
+          console.error('이미지 삭제 실패:', imageError);
+          // 이미지 삭제 실패해도 게시글 삭제는 계속 진행
+        }
+      }
       
       // 성공 시 로컬에서도 제거
       setPosts(prev => prev.filter(post => post.id !== id));
@@ -270,7 +285,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setPendingActions(prev => [...prev, { type: 'DELETE_POST', data: { id }, timestamp: Date.now() }]);
       }
     }
-  }, [isOnline]);
+  }, [isOnline, posts]);
 
   const likePost = useCallback((id: number) => {
     setPosts(prev => prev.map(post => post.id === id ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked } : post));

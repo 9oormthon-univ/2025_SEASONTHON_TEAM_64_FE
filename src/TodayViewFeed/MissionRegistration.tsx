@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
 import { useFeed } from '../app/FeedContext';
 import { missionService } from '../app/missionService';
+import { imageService } from '../services/imageService';
 
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();
@@ -38,19 +39,35 @@ const MissionRegistration: React.FC = () => {
       alert('텍스트나 이미지를 입력해주세요.');
       return;
     }
-    // 피드에 게시글 추가 (이미지는 미리보기 dataURL 사용)
-    addPost({
-      user: '나',
-      content: text.trim(),
-      image: imagePreview || '/placeholder-image.jpg',
-      missionId: currentMission ? parseInt(currentMission.id) : 1
-    });
 
-    // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
-    try { await missionService.getTodayMission(); } catch {}
+    try {
+      let uploadedImageUrl = '/placeholder-image.jpg';
+      
+      // 이미지가 있으면 업로드
+      if (image) {
+        console.log('📤 이미지 업로드 시작...');
+        uploadedImageUrl = await imageService.uploadImage(image);
+        console.log('✅ 이미지 업로드 완료:', uploadedImageUrl);
+      }
 
-    // 성공 후 피드로 이동 (토스트는 피드/오버레이로 별도 처리 가능)
-    navigate('/');
+      // 피드에 게시글 추가
+      await addPost({
+        user: '나',
+        content: text.trim(),
+        image: uploadedImageUrl,
+        missionId: currentMission ? parseInt(currentMission.id) : 1
+      });
+
+      // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
+      try { await missionService.getTodayMission(); } catch {}
+
+      // 성공 후 피드로 이동
+      navigate('/');
+      
+    } catch (error) {
+      console.error('게시글 등록 실패:', error);
+      alert('게시글 등록에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
