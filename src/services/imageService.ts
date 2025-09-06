@@ -36,16 +36,18 @@ export const imageService = {
       
       console.log('🌐 API 요청 URL:', `${API_BASE}/upload`);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${API_BASE}/upload`);
+      console.log('📊 FormData 내용:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        hasFile: formData.has('file')
+      });
       console.log('📊 요청 헤더:', {
         'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음',
         'Content-Type': 'multipart/form-data'
       });
       
-      const res = await api.post(`${API_BASE}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const res = await api.post(`${API_BASE}/upload`, formData);
       
       console.log('✅ API 응답 성공:', res.data);
       console.log('📊 응답 상태:', res.status);
