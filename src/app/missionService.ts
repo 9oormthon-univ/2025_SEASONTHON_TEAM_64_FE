@@ -77,20 +77,9 @@ export const missionService = {
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
     console.log('🎯 getTodayMission 호출 시작:', { memberId });
     try {
-      // 먼저 회원 정보를 가져와서 memberId 확인
-      let targetMemberId = memberId;
-      if (!targetMemberId) {
-        try {
-          const memberRes = await api.get('/members');
-          targetMemberId = memberRes.data.memberId;
-          console.log('✅ 회원 정보에서 memberId 확인:', targetMemberId);
-        } catch (memberError) {
-          console.log('⚠️ 회원 정보 조회 실패, 기본값 사용:', memberError);
-          targetMemberId = 1; // 기본값
-        }
-      }
+      // 새로운 엔드포인트는 memberId를 URL에 포함하지 않음
 
-      const url = `/members/${targetMemberId}/missions/today`;
+      const url = `/members/missions/today`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
@@ -100,13 +89,17 @@ export const missionService = {
       // API 응답을 변환
       const data = res.data as any;
       if (data && data.mission) {
-        return {
-          id: data.mission.missionId ?? data.mission.id ?? Date.now(),
-          description: data.mission.title ?? '미션'
+        const mission = {
+          id: data.mission.id.toString(),
+          text: data.mission.title,
+          status: data.status || 'ASSIGNED'
         };
+        console.log('✅ 변환된 미션 데이터:', mission);
+        return mission;
+      } else {
+        console.log('⚠️ API 응답에 미션 데이터 없음:', data);
+        return null;
       }
-      
-      return null;
     } catch (e: any) {
       console.log('💥 오늘의 미션 조회 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
