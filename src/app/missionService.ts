@@ -73,19 +73,36 @@ export const missionService = {
     }
   },
 
-  // 오늘의 미션 조회 - 미션 목록에서 최신 미션 반환
+  // 회원의 오늘 미션 조회 - GET /api/v1/members/{memberId}/missions/today
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
     console.log('🎯 getTodayMission 호출 시작:', { memberId });
     try {
-      // 미션 목록을 조회해서 최신 미션 반환
-      const missions = await this.listMissions();
+      // 먼저 회원 정보를 가져와서 memberId 확인
+      let targetMemberId = memberId;
+      if (!targetMemberId) {
+        try {
+          const memberRes = await api.get('/members');
+          targetMemberId = memberRes.data.memberId;
+          console.log('✅ 회원 정보에서 memberId 확인:', targetMemberId);
+        } catch (memberError) {
+          console.log('⚠️ 회원 정보 조회 실패, 기본값 사용:', memberError);
+          targetMemberId = 1; // 기본값
+        }
+      }
+
+      const url = `/members/${targetMemberId}/missions/today`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
-      if (missions && missions.length > 0) {
-        // 최신 미션 반환 (createdAt 기준으로 정렬)
-        const latestMission = missions.sort((a, b) => b.createdAt - a.createdAt)[0];
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
+      
+      // API 응답을 변환
+      const data = res.data as any;
+      if (data && data.mission) {
         return {
-          id: Number.isFinite(Number(latestMission.id)) ? Number(latestMission.id) : Date.now(),
-          description: latestMission.description
+          id: data.mission.missionId ?? data.mission.id ?? Date.now(),
+          description: data.mission.title ?? '미션'
         };
       }
       
@@ -96,7 +113,9 @@ export const missionService = {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
-        message: e.message
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
       });
       
       // 폴백: 로컬 최신

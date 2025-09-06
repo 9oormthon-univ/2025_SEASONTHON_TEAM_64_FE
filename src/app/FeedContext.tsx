@@ -197,11 +197,30 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('로그인 상태를 확인할 수 없습니다.');
       }
 
+      // missionId가 없으면 미션 목록에서 첫 번째 미션 사용
+      let finalMissionId = postData.missionId;
+      if (!finalMissionId) {
+        try {
+          const missions = await missionService.listMissions();
+          if (missions && missions.length > 0) {
+            finalMissionId = parseInt(missions[0].id);
+            console.log('📝 기본 미션 ID 사용:', finalMissionId);
+          } else {
+            finalMissionId = 1; // 최후의 수단
+          }
+        } catch (missionError) {
+          console.log('⚠️ 미션 목록 조회 실패, 기본값 사용:', missionError);
+          finalMissionId = 1;
+        }
+      }
+
+      console.log('📝 최종 미션 ID:', finalMissionId);
+
       // API 호출
       const response = await feedService.createFeed({
         description: postData.content,
         imageUrl: postData.image,
-        missionId: postData.missionId || 1
+        missionId: finalMissionId
       });
 
       // API 응답을 Post 형태로 변환

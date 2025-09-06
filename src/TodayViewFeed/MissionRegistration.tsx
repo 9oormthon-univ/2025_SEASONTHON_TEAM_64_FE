@@ -74,11 +74,19 @@ const MissionRegistration: React.FC = () => {
       }
 
       // 피드에 게시글 추가
+      const missionId = currentMission ? parseInt(currentMission.id) : null;
+      console.log('📝 게시글 생성 데이터:', {
+        user: memberInfo.nickname || '나',
+        content: text.trim(),
+        image: uploadedImageUrl,
+        missionId: missionId
+      });
+      
       await addPost({
         user: memberInfo.nickname || '나',
         content: text.trim(),
         image: uploadedImageUrl,
-        missionId: currentMission ? parseInt(currentMission.id) : 1
+        missionId: missionId
       });
 
       // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
