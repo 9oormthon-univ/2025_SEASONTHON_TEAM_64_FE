@@ -85,3 +85,110 @@ export const GenenrateIcon = styled.img`
   flex-shrink: 0;
   cursor: pointer;
 `;
+
+// ===== Feed List (Infinite) =====
+export const FeedList = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 4rem);
+  align-items: center;
+  margin-top: 5.6rem;
+  padding-bottom: 10rem;
+
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  gap: 0.7rem;
+`;
+
+export const FeedCard = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: fit-content;
+
+  border-radius: 2rem;
+  background: #fff;
+  box-shadow: 0 0 4px 0 rgba(210, 210, 210, 0.3);
+`;
+
+export const FeedStatus = styled.div`
+  color: #7a7b7e;
+  text-align: center;
+  padding: 1rem 0 2rem;
+`;
+
+export const MemberLabel = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  width: fit-content;
+  height: fit-content;
+
+  padding: 1.7rem 0 0 1.7rem;
+  gap: 1.4rem;
+
+  align-items: center;
+  justify-content: center;
+`;
+
+export const MemberImage = styled.img`
+  width: 4.5rem;
+  height: 4.5rem;
+
+  border-radius: 50%;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+`;
+
+export const MemberTextSection = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.3rem;
+`;
+
+export const MemberText = styled.div`
+  color: #2b2c2f;
+  font-family: 'Apple SD Gothic Neo';
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.028rem;
+`;
+
+export const MemberNickname = styled.div`
+  color: #2b2c2f;
+  font-family: 'Apple SD Gothic Neo';
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: -0.028rem;
+`;
+
+export const FeedImage = styled.img`
+  width: calc(100% - 3rem);
+  aspect-ratio: 32.5 / 18.9;
+
+  margin: 1.5rem auto;
+  border-radius: 2rem;
+`;
+
+export const FeedIconSection = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  gap: 1.5rem;
+  margin-left: 1.5rem;
+`;
+
+export const FeedDescription = styled.div`
+  color: #2b2c2f;
+  font-family: 'Apple SD Gothic Neo';
+  font-size: 1.4rem;
+
+  margin-top: 1.8rem;
+  margin-bottom: 2.6rem;
+  margin-left: 1.5rem;
+`;

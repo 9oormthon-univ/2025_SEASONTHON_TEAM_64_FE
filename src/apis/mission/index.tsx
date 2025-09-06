@@ -1,5 +1,9 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
-import type { TodayMission, UploadImageResponse } from './index.type';
+import type {
+  CursorPageResponse,
+  TodayMission,
+  UploadImageResponse,
+} from './index.type';
 
 const getTodayMission = () => {
   return ApiBuilder.create<void, TodayMission>(
@@ -30,4 +34,22 @@ const generateFeed = ({
     .setData({ description, imageUrl, missionId });
 };
 
-export { getTodayMission, uploadImage, generateFeed };
+const getMissionByCursor = ({
+  cursorId,
+  size = 5,
+}: {
+  cursorId?: number;
+  size?: number;
+}) => {
+  // 커서 기반 페이징에서는 보통 size와 cursorId만 사용합니다.
+  const params: Record<string, any> = { size };
+  if (typeof cursorId !== 'undefined' && cursorId !== null) {
+    params.cursorId = cursorId;
+  }
+
+  return ApiBuilder.create<void, CursorPageResponse>('/api/v1/feeds/cursor')
+    .setParams(params)
+    .setMethod('GET');
+};
+
+export { getTodayMission, uploadImage, generateFeed, getMissionByCursor };

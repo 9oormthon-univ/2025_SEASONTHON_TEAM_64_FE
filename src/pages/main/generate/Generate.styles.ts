@@ -147,6 +147,7 @@ export const Button = styled.div`
 
 export const SuccessBackground = styled.div`
   position: absolute;
+  z-index: 9999;
 
   display: flex;
   flex-direction: column;
@@ -168,9 +169,9 @@ export const SuccessText = styled.div`
   font-weight: 700;
 `;
 
-export const SuccessImage = styled.img`
+export const SuccessVideo = styled.video`
   margin-top: 4.5rem;
-  width: 14.6rem;
-  height: 13.05rem;
+  width: 53.8rem;
+  height: 39.15rem;
   flex-shrink: 0;
 `;

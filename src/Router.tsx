@@ -10,9 +10,12 @@ const Generate = lazy(() => import('./pages/admin/generate/Generate'));
 const List = lazy(() => import('./pages/admin/list/List'));
 const Feed = lazy(() => import('./pages/main'));
 const FeedGenerate = lazy(() => import('./pages/main/generate/Generate'));
+const FortuneGenerate = lazy(() => import('./pages/fortune/generate/Generate'));
 const Fortune = lazy(() => import('./pages/fortune'));
 const Info = lazy(() => import('./pages/info'));
 const MyPage = lazy(() => import('./pages/my'));
+const FortuneOpen = lazy(() => import('./pages/fortune/open/Open'));
+const FortuneDetail = lazy(() => import('./pages/fortune/detail/Detail'));
 
 const withSuspense = (element: React.ReactNode) => (
   <Suspense fallback={<></>}>{element}</Suspense>
@@ -61,6 +64,18 @@ const router = createBrowserRouter([
   {
     path: '/generate',
     element: withSuspense(<FeedGenerate />),
+  },
+  {
+    path: '/fortune/generate',
+    element: withSuspense(<FortuneGenerate />),
+  },
+  {
+    path: '/fortune/open',
+    element: withSuspense(<FortuneOpen />),
+  },
+  {
+    path: '/fortune/detail',
+    element: withSuspense(<FortuneDetail />),
   },
 ]);
 

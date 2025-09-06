@@ -4,7 +4,7 @@ import * as S from './Generate.styles';
 import back from '../assets/BackIcon.svg';
 import notify from '../assets/notify.svg';
 import select from '../assets/SelectImage.svg';
-import success from '../assets/successImage.svg';
+import successVideo from '../assets/generateSuccess.webm';
 import { useNavigate } from 'react-router-dom';
 import {
   useApiMutation,
@@ -82,7 +82,7 @@ const Generate = () => {
         setTimeout(() => {
           navigate('/');
           setIsSuccess(false);
-        }, 3000);
+        }, 4000);
       })
       .catch((err) => {
         console.error('피드 등록 실패', err);
@@ -95,7 +95,7 @@ const Generate = () => {
       {isSuccess && (
         <S.SuccessBackground>
           <S.SuccessText>오늘의 시선을 공유했어요!</S.SuccessText>
-          <S.SuccessImage src={success} alt="Success" />
+          <S.SuccessVideo src={successVideo} autoPlay muted playsInline />
         </S.SuccessBackground>
       )}
       <S.Container>
