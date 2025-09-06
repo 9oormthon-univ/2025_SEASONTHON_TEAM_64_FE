@@ -1,8 +1,8 @@
 import styled from "styled-components";//BackIcon.tsx
-import { MoveLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
-const BackIcon = styled(MoveLeft)`
-  width: 20px;
+const BackIcon = styled(ChevronLeft)`
+  width: 40px;
   height: 35px;
   stroke: black;
 `;

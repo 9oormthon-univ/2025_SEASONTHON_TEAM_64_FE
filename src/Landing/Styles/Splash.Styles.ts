@@ -16,18 +16,15 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: 375px;
+  max-width: 480px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  border-radius: 50px;
 `;
 
 export const LogoBox = styled.div`
-  width: 150px;
-  height: 150px;
-  background-color: #bbb;
-  border-radius: 85px;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
+  position: relative;
+  top: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import Routers from "./Routers";
 import { loadKakaoOnce } from "../LocalInfoShare/api/loadkakao";
-
+import FcmRegistrar from "../components/FcmResister";
 // react-query
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -15,6 +15,7 @@ const rootEl = document.getElementById("root")!;
 createRoot(rootEl).render(
   //<React.StrictMode> 스트립모드 자꾸 떠서 주석처리
     <QueryClientProvider client={queryClient}>
+      <FcmRegistrar />
       <Routers />
     </QueryClientProvider>
   //</React.StrictMode>

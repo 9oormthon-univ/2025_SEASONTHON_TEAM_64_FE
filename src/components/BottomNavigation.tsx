@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Home, Star, Search, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HomeOn from '../assets/HomeOn.svg';
+import HomeOff from '../assets/HomeOff.svg';
+import InfoOn from '../assets/InfoOn.svg';
+import InfoOff from '../assets/InfoOff.svg';
+import FortuneIconOn from '../assets/FortuneIconOn.svg';
+import FortuneIconOff from '../assets/FortuneIconOff.svg';
+import MyOn from '../assets/MyOn.svg';
+import MyOff from '../assets/MyOff.svg';
 
 const BottomNavigation: React.FC = () => {
   const navigate = useNavigate();
@@ -29,29 +36,41 @@ const BottomNavigation: React.FC = () => {
         $isActive={isActive('/feed')}
         onClick={() => navigate('/feed')}
       >
-        <Home size={24} />
-        <NavLabel>내 피드</NavLabel>
+        <NavIcon 
+          $src={isActive('/feed') ? HomeOn : HomeOff}
+          $active={isActive('/feed')}
+        />
+        <NavLabel $isActive={isActive('/feed')}>홈</NavLabel>
       </NavItem>
       <NavItem 
         $isActive={isActive('/local-info-share')}
         onClick={() => navigate('/local-info-share')}
       >
-        <Search size={24} />
-        <NavLabel>지역정보</NavLabel>
+        <NavIcon 
+          $src={isActive('/local-info-share') ? InfoOn : InfoOff}
+          $active={isActive('/local-info-share')}
+        />
+        <NavLabel $isActive={isActive('/local-info-share')}>정보</NavLabel>
       </NavItem>
       <NavItem 
         $isActive={isActive('/fortune')}
         onClick={() => navigate('/fortune')}
       >
-        <Star size={24} />
-        <NavLabel>포춘쿠키</NavLabel>
+        <NavIcon 
+          $src={isActive('/fortune') ? FortuneIconOn : FortuneIconOff}
+          $active={isActive('/fortune')}
+        />
+        <NavLabel $isActive={isActive('/fortune')}>포춘쿠키</NavLabel>
       </NavItem>
       <NavItem 
         $isActive={isActive('/mypage')}
         onClick={() => navigate('/mypage')}
       >
-        <User size={24} />
-        <NavLabel>프로필</NavLabel>
+        <NavIcon 
+          $src={isActive('/mypage') ? MyOn : MyOff}
+          $active={isActive('/mypage')}
+        />
+        <NavLabel $isActive={isActive('/mypage')}>마이페이지</NavLabel>
       </NavItem>
     </NavContainer>
   );
@@ -66,10 +85,13 @@ const NavContainer = styled.nav`
   max-width: 480px;
   background-color: #ffffff;
   border-top: 1px solid #e9ecef;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
   z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 `;
 
 const NavItem = styled.div<{ $isActive: boolean }>`
@@ -79,17 +101,29 @@ const NavItem = styled.div<{ $isActive: boolean }>`
   gap: 4px;
   padding: 8px;
   cursor: pointer;
-  color: ${props => props.$isActive ? '#007bff' : '#666'};
-  transition: color 0.2s;
+  transition: all 0.2s;
 
   &:hover {
-    color: ${props => props.$isActive ? '#007bff' : '#333'};
+    transform: scale(1.05);
   }
 `;
 
-const NavLabel = styled.span`
+const NavLabel = styled.span<{ $isActive?: boolean }>`
   font-size: 12px;
   font-weight: 500;
+  color: ${({ $isActive }) => ($isActive ? "#FB6767" : "gray")};
 `;
+
+/* === 네비게이션 아이콘 === */
+const NavIcon = styled.div<{ $src: string; $active?: boolean }>`
+  width: 32px;
+  height: 32px;
+  background-image: url("${({ $src }) => $src}");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: all 0.2s;
+`;
+
 
 export default BottomNavigation;

@@ -67,7 +67,7 @@ const Container = styled.div`
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 60%, rgba(255,106,37,0.12) 90%, rgba(255,106,37,0) 100%);
+  background: linear-gradient(180deg, #Fafafa 0%, #FFFFFF 60%, rgba(255,106,37,0.12) 90%, rgba(255,106,37,0) 100%);
 `;
 
 const Header = styled.header`

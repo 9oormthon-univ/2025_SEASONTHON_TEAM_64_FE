@@ -119,7 +119,6 @@ const VideoOverlay = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
   padding: 16px 8px 8px;
   display: flex;
   flex-direction: column;
@@ -144,7 +143,7 @@ const VideoSubText = styled.div`
 `;
 
 const FortuneMessage = styled.div`
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   border-radius: 12px;
   padding: 24px;
   font-size: 16px;

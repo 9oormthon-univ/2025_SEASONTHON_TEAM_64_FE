@@ -12,30 +12,26 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: 375px;
+  max-width: 480px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  border-radius: 50px;
 `;
 
 export const LogoBox = styled.div`
-  width: 150px;
-  height: 150px;
-  background-color: #bbb;
-  border-radius: 85px;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
 `;
 
 export const MainText = styled.div`
-  font-size: 18px;
+  margin-top: -80px;
+  font-size: 16px;  
   font-weight: 700;
-  margin: 18px 0 20px;
   text-align: center;
 `;
 
@@ -58,8 +54,9 @@ export const LoginBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 201px;
+  width: 300px;
   height: 49px;
+  border-radius: 12px;
   background: yellow;
   border: none;
 `;
@@ -67,3 +64,6 @@ export const LoginText = styled.span`
   font-size: 15px;
   margin: 20px;
   `;
+export const BottomImgBox = styled.div`
+  display: flex;
+`;

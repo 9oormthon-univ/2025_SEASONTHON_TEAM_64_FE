@@ -46,7 +46,7 @@ const Wrapper = styled.div`
 `;
 const Container = styled.div`
   display: flex; flex-direction: column;
-  width: 100%; height: 100%; max-width: 375px;
+  width: 100%; height: 100%; max-width: 480px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
   border-radius: 50px; overflow: hidden;

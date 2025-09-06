@@ -7,6 +7,6 @@ export const BackIconBox = styled.button`
   width: 45px;
   height: 45px;
   font-size: 5px;
-  margin: 30px;
-  border: 2px solid black;
+  margin: 30px 0px 15px 10px;
+  border: none;
 `;
