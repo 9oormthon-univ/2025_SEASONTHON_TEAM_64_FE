@@ -11,7 +11,7 @@ export async function loadKakaoOnce(): Promise<void> {
     return;
   }
 
-  const APP_KEY = import.meta.env.VITE_KAKAO_MAP_KEY as string;
+  const APP_KEY = import.meta.env.VITE_KAKAO_MAP_KEY as string || "fb1e320763693968db7c5cb1eabf2e35";
   if (!APP_KEY) {
     console.warn("[KAKAO] VITE_KAKAO_MAP_KEY is empty");
   } else {
