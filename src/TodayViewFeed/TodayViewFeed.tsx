@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Bell, Wifi, WifiOff, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import MissionCard from './MissionCard';
 import { useMission } from '../app/MissionContext';
 import FeedPost from './FeedPost';
 import BottomNavigation from '../components/BottomNavigation';
@@ -57,7 +56,9 @@ const TodayViewFeed: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Logo>로고/아이콘</Logo>
+        <Logo>
+          <img src="/MaruLogo.svg" alt="마루 로고" width={88} height={21} />
+        </Logo>
         <HeaderRight>
           <ConnectionStatus>
             {isOnline ? <Wifi size={16} /> : <WifiOff size={16} />}
@@ -75,10 +76,12 @@ const TodayViewFeed: React.FC = () => {
       </Header>
 
       <MissionBar $show={showMissionBar}>
-        <MissionCardWrap>
+        <MissionCard>
           <MissionTitle>오늘의 시선 MISSION</MissionTitle>
-          <MissionDesc>{currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요!'}</MissionDesc>
-        </MissionCardWrap>
+          <MissionDescription>
+            {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요!'}
+          </MissionDescription>
+        </MissionCard>
         <BirdDecoration>
           <img src="/Maru_front.png" alt="마루" width={72} height={72} />
         </BirdDecoration>
@@ -143,15 +146,20 @@ const MissionBar = styled.div<{ $show: boolean }>`
   transition: transform 0.3s ease;
 `;
 
-const MissionCardWrap = styled.div`
+const MissionCard = styled.div`
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 16px;
-  padding: 12px 16px;
-  box-shadow: 0 10px 24px rgba(255,106,37,0.12);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 77%,   /* 위쪽: 완전 흰색 */
+    rgba(255, 255, 255, 0.7) 100% /* 아래쪽: 70% 불투명 */
+  ) !important;
+  border-radius: 20px !important;
+  padding: 16px 20px !important;
+  margin-bottom: 0px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  text-align: center !important;
 `;
 
 const BirdDecoration = styled.div`
@@ -162,18 +170,17 @@ const BirdDecoration = styled.div`
 `;
 
 const MissionTitle = styled.div`
-  font-size: 12px;
-  font-weight: 700;
-  color: #2F80ED;
-  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 4px 0;
 `;
 
-const MissionDesc = styled.div`
-  margin-top: 6px;
+const MissionDescription = styled.div`
   font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
 `;
 
 const Logo = styled.div`

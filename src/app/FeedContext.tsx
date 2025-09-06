@@ -389,8 +389,26 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setPosts(apiPosts);
           console.log('✅ 초기 피드 데이터 로딩 완료:', apiPosts.length, '개');
         } else {
-          console.log('⚠️ API 응답이 유효하지 않음, 로컬 데이터 사용');
+          console.log('⚠️ API 응답이 유효하지 않음, 더미 데이터 사용');
           console.log('📊 응답 구조:', response);
+          
+          // 더미 데이터 추가
+          const dummyPosts: Post[] = [
+            {
+              id: Date.now(),
+              user: '마루',
+              content: '날씨가 좋아요',
+              image: '/placeholder-image.jpg',
+              likes: 5,
+              comments: 2,
+              isLiked: false,
+              createdAt: Date.now(),
+              isOffline: false,
+              missionId: 1
+            }
+          ];
+          setPosts(dummyPosts);
+          console.log('✅ 더미 데이터 설정 완료');
         }
       } catch (error) {
         console.error('❌ 초기 피드 데이터 로딩 실패:', error);
