@@ -9,7 +9,7 @@ declare module "axios" {
 }
 
 export const api = axios.create({
-  baseURL: "https://api.planhub.site", // ✅ 백엔드 서버 주소 + v1 포함
+  baseURL: "https://api.planhub.site/api/v1", // ✅ 백엔드 서버 주소 + v1 포함
   timeout: 15000,
 });
 
@@ -50,7 +50,7 @@ api.interceptors.response.use(
         const rt = sessionStorage.getItem("refreshToken");
         if (!rt) throw new Error("no refresh token");
 
-        const { data }: any = await api.post("/api/v1/auth/reissue", { refreshToken: rt });
+        const { data }: any = await api.post("/auth/reissue", { refreshToken: rt });
         if (data?.accessToken) sessionStorage.setItem("accessToken", data.accessToken);
         if (data?.refreshToken) sessionStorage.setItem("refreshToken", data.refreshToken);
 

@@ -16,7 +16,7 @@ export const missionService = {
       const requestBody = { title };
       console.log('🌐 API 요청 URL:', url);
       console.log('📦 요청 데이터:', requestBody);
-      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api/v1${url}`);
+      console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
@@ -121,7 +121,7 @@ export const missionService = {
     try {
       const url = `/missions`;
       console.log('🌐 API 요청 URL:', url);
-      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api/v1${url}`);
+      console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
