@@ -14,31 +14,42 @@ function getMemberId(): number {
 function getSenderInfo() {
   // 세션스토리지에서 사용자 정보 가져오기
   const accessToken = sessionStorage.getItem('accessToken');
+  const refreshToken = sessionStorage.getItem('refreshToken');
   const userInfo = localStorage.getItem('userInfo');
   
-  // 기본 사용자 정보 (API 스펙에 맞춤)
+  // 스웨거 스펙에 정확히 맞춘 기본 사용자 정보
   const defaultSender = {
     id: getMemberId(),
     email: "user@example.com",
     nickname: "사용자",
     role: "ROLE_USER",
     profileImageURL: "",
-    refreshToken: "",
+    refreshToken: refreshToken || "",
     fcmToken: "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    lastOpenedDate: new Date().toISOString()
+    lastOpenedDate: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
   };
+  
+  console.log('👤 Sender 정보 생성:', { 
+    memberId: getMemberId(), 
+    hasAccessToken: !!accessToken,
+    hasRefreshToken: !!refreshToken,
+    hasUserInfo: !!userInfo 
+  });
   
   if (userInfo) {
     try {
       const parsed = JSON.parse(userInfo);
-      return { ...defaultSender, ...parsed };
+      const mergedSender = { ...defaultSender, ...parsed };
+      console.log('✅ 사용자 정보 병합 완료:', mergedSender);
+      return mergedSender;
     } catch (e) {
-      console.warn('사용자 정보 파싱 실패:', e);
+      console.warn('❌ 사용자 정보 파싱 실패:', e);
     }
   }
   
+  console.log('📝 기본 Sender 정보 사용:', defaultSender);
   return defaultSender;
 }
 
@@ -71,22 +82,28 @@ function pushDummyFortune(description: string) {
 }
 
 export const fortuneService = {
-  // 오늘의 포춘쿠키 작성 (1일 1회) - POST /send?memberId
+  // 오늘의 포춘쿠키 작성 (1일 1회) - POST /api/v1/fortunes/send?memberId
   async sendFortune(memberId: number = getMemberId(), description: string): Promise<{ id: number; description: string }> {
     console.log('📝 sendFortune 호출 시작:', { memberId, description });
     try {
       const url = `${API_BASE}/send?memberId=${memberId}`;
+      const fullUrl = `https://api.planhub.site/api${url}`;
       console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 전체 요청 URL:', fullUrl);
       
       const requestBody = {
         description,
         sender: getSenderInfo()
       };
       console.log('📦 요청 데이터:', requestBody);
+      console.log('📊 요청 헤더:', {
+        'Content-Type': 'application/json',
+        'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
+      });
       
-      // 서버 응답 상세 정보 로깅
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 응답 상태:', res.status);
       return res.data;
     } catch (e: any) {
       console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
@@ -94,7 +111,10 @@ export const fortuneService = {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
-        message: e.message
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url,
+        requestData: e.config?.data
       });
       // Fallback: 로컬에 저장
       return pushDummyFortune(description);
@@ -106,10 +126,16 @@ export const fortuneService = {
     console.log('🎯 openFortune 호출 시작:', { memberId, API_BASE });
     try {
       const url = `${API_BASE}/open?memberId=${memberId}`;
+      const fullUrl = `https://api.planhub.site/api${url}`;
       console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 전체 요청 URL:', fullUrl);
+      console.log('📊 요청 헤더:', {
+        'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
+      });
       
       const res = await api.post(url);
       console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 응답 상태:', res.status);
       return res.data;
     } catch (e: any) {
       console.log('💥 포춘쿠키 열기 에러, 폴백 사용:', e);
@@ -117,7 +143,9 @@ export const fortuneService = {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
-        message: e.message
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
       });
       
       // Fallback: 로컬 더미에서 하나 반환, 없으면 생성
@@ -127,27 +155,57 @@ export const fortuneService = {
     }
   },
 
-  // 단일 조회 - GET /{fortuneId}
+  // 단일 조회 - GET /api/v1/fortunes/{fortuneId}
   async getFortuneById(fortuneId: number): Promise<{ id: number; description: string } | null> {
+    console.log('🔍 getFortuneById 호출 시작:', { fortuneId });
     try {
-      const res = await api.get(`${API_BASE}/${fortuneId}`);
+      const url = `${API_BASE}/${fortuneId}`;
+      const fullUrl = `https://api.planhub.site/api${url}`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 전체 요청 URL:', fullUrl);
+      
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
       return res.data;
-    } catch (e) {
+    } catch (e: any) {
       console.log('💥 포춘쿠키 조회 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
+      });
       return localFortunes.find(f => f.id === fortuneId) ?? null;
     }
   },
 
-  // 커서 기반 리스트 - GET /cursor?cursorId&size
+  // 커서 기반 리스트 - GET /api/v1/fortunes/cursor?cursorId&size
   async listFortunesCursor(cursorId?: number, size: number = 10): Promise<Array<{ id: number; description: string }>> {
+    console.log('📋 listFortunesCursor 호출 시작:', { cursorId, size });
     try {
       const params = new URLSearchParams();
       if (cursorId) params.set('cursorId', String(cursorId));
       if (size) params.set('size', String(size));
-      const res = await api.get(`${API_BASE}/cursor?${params.toString()}`);
+      const url = `${API_BASE}/cursor?${params.toString()}`;
+      const fullUrl = `https://api.planhub.site/api${url}`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 전체 요청 URL:', fullUrl);
+      
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
       return res.data;
-    } catch (e) {
+    } catch (e: any) {
       console.log('💥 포춘쿠키 리스트 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
+      });
       // Fallback: 로컬 배열을 cursorId 기준으로 슬라이싱
       const startIdx = cursorId ? localFortunes.findIndex(f => f.id === cursorId) + 1 : 0;
       return localFortunes.slice(startIdx, startIdx + size);
