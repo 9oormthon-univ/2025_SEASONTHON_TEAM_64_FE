@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LogoButton } from "../../Styles/Components/Atoms/LogoButton";
-import { BottomBar } from "../../Styles/Components/Navigation/BottomBar";
+import BottomNavigation from "../../components/BottomNavigation";
 import { AddInfoButton } from "../../Styles/Components/Atoms/AddInfoButton";
 import UserIcon from "../../Styles/Icons/UserIcon";
 import { TextBox as RawTextBox, TitleField as RawTitleField } from "../../Styles/Text/TextBox";
@@ -192,10 +192,10 @@ const LocalInfoShare: React.FC = () => {
 
         <AddInfoRow>
           {/* ✅ 라우트 경로 소문자로 통일 */}
-          <AddInfoButton onClick={() => navigate("/localinfoform")}>정보 등록</AddInfoButton>
+          <AddInfoButton onClick={() => navigate("/local-info-form")}>정보 등록</AddInfoButton>
         </AddInfoRow>
 
-        <BottomBar />
+        <BottomNavigation />
       </Container>
 
       {/* ===== 모달 ===== */}

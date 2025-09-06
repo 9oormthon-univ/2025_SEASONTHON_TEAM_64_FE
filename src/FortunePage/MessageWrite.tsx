@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { fortuneService } from './fortuneService';
-import BottomNavigation from '../TodayViewFeed/BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 
 const MessageWrite: React.FC = () => {
   const navigate = useNavigate();

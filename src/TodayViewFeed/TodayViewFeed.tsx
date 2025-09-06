@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import MissionCard from './MissionCard';
 import { useMission } from '../app/MissionContext';
 import FeedPost from './FeedPost';
-import BottomNavigation from './BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 import { useFeed } from '../app/FeedContext';
 
 const TodayViewFeed: React.FC = () => {

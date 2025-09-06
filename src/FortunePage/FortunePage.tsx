@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { fortuneService } from './fortuneService';
-import BottomNavigation from '../TodayViewFeed/BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 
 const FortunePage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,17 +32,17 @@ const FortunePage: React.FC = () => {
 
       <Content>
         <TopCookie>
-          <img src="/Fortune_Cookie.svg" alt="포춘쿠키" />
+          <img src="/Fortune_cookie.svg" alt="포춘쿠키" />
         </TopCookie>
 
         <ButtonsArea>
           <img
-            src="/Fortune_Butoon1.svg"
+            src="/Fortune_butoon1.svg"
             alt="오늘의 포춘쿠키 보러가기"
             onClick={handleOpenTodayFortune}
           />
           <img
-            src="/Fortune_Butoon2.svg"
+            src="/Fortune_butoon2.svg"
             alt="포춘쿠키 전하기"
             onClick={handleSendFortune}
           />

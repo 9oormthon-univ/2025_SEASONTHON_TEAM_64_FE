@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HeaderRow from "../../Styles/Components/Layout/HeaderRow";
 import { LogoButton } from "../../Styles/Components/Atoms/LogoButton";
 import BellIcon from "../../Styles/Icons/BellIcon";
-import { BottomBar } from "../../Styles/Components/Navigation/BottomBar";
+import BottomNavigation from "../../components/BottomNavigation";
 
 import {
   Wrapper,
@@ -52,7 +52,7 @@ const Mypage: React.FC = () => {
           포춘쿠키 모아보기
         </FortuneCookieButton>
 
-        <BottomBar />
+        <BottomNavigation />
       </Container>
     </Wrapper>
   );

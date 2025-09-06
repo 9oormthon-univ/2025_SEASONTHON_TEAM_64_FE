@@ -93,4 +93,3 @@ const NavLabel = styled.span`
 `;
 
 export default BottomNavigation;
-
