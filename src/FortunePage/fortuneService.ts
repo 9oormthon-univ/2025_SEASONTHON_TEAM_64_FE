@@ -11,47 +11,48 @@ function getMemberId(): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1; // 기본 1
 }
 
-function getSenderInfo() {
-  // 세션스토리지에서 사용자 정보 가져오기
-  const accessToken = sessionStorage.getItem('accessToken');
-  const refreshToken = sessionStorage.getItem('refreshToken');
-  const userInfo = localStorage.getItem('userInfo');
-  
-  // 스웨거 스펙에 정확히 맞춘 기본 사용자 정보
-  const defaultSender = {
-    id: getMemberId(),
-    email: "user@example.com",
-    nickname: "사용자",
-    role: "ROLE_USER",
-    profileImageURL: "",
-    refreshToken: refreshToken || "",
-    fcmToken: "",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    lastOpenedDate: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
-  };
-  
-  console.log('👤 Sender 정보 생성:', { 
-    memberId: getMemberId(), 
-    hasAccessToken: !!accessToken,
-    hasRefreshToken: !!refreshToken,
-    hasUserInfo: !!userInfo 
-  });
-  
-  if (userInfo) {
-    try {
-      const parsed = JSON.parse(userInfo);
-      const mergedSender = { ...defaultSender, ...parsed };
-      console.log('✅ 사용자 정보 병합 완료:', mergedSender);
-      return mergedSender;
-    } catch (e) {
-      console.warn('❌ 사용자 정보 파싱 실패:', e);
-    }
-  }
-  
-  console.log('📝 기본 Sender 정보 사용:', defaultSender);
-  return defaultSender;
-}
+// getSenderInfo 함수는 현재 사용하지 않음 (스웨거 스펙에 맞게 단순화)
+// function getSenderInfo() {
+//   // 세션스토리지에서 사용자 정보 가져오기
+//   const accessToken = sessionStorage.getItem('accessToken');
+//   const refreshToken = sessionStorage.getItem('refreshToken');
+//   const userInfo = localStorage.getItem('userInfo');
+//   
+//   // 스웨거 스펙에 정확히 맞춘 기본 사용자 정보
+//   const defaultSender = {
+//     id: getMemberId(),
+//     email: "user@example.com",
+//     nickname: "사용자",
+//     role: "ROLE_USER",
+//     profileImageURL: "",
+//     refreshToken: refreshToken || "",
+//     fcmToken: "",
+//     createdAt: new Date().toISOString(),
+//     updatedAt: new Date().toISOString(),
+//     lastOpenedDate: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
+//   };
+//   
+//   console.log('👤 Sender 정보 생성:', { 
+//     memberId: getMemberId(), 
+//     hasAccessToken: !!accessToken,
+//     hasRefreshToken: !!refreshToken,
+//     hasUserInfo: !!userInfo 
+//   });
+//   
+//   if (userInfo) {
+//     try {
+//       const parsed = JSON.parse(userInfo);
+//       const mergedSender = { ...defaultSender, ...parsed };
+//       console.log('✅ 사용자 정보 병합 완료:', mergedSender);
+//       return mergedSender;
+//     } catch (e) {
+//       console.warn('❌ 사용자 정보 파싱 실패:', e);
+//     }
+//   }
+//   
+//   console.log('📝 기본 Sender 정보 사용:', defaultSender);
+//   return defaultSender;
+// }
 
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
@@ -86,18 +87,26 @@ export const fortuneService = {
   async sendFortune(memberId: number = getMemberId(), description: string): Promise<{ id: number; description: string }> {
     console.log('📝 sendFortune 호출 시작:', { memberId, description });
     try {
+      // 방법 1: Body에 description 포함 (기본)
       const url = `${API_BASE}/send?memberId=${memberId}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
+      // 스웨거 스펙에 맞는 간단한 요청 형식
       const requestBody = {
-        description,
-        sender: getSenderInfo()
+        description
       };
-      console.log('📦 요청 데이터:', requestBody);
+      console.log('📦 요청 데이터 (Body):', requestBody);
       console.log('📊 요청 헤더:', {
         'Content-Type': 'application/json',
         'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
+      });
+      console.log('🔍 요청 상세 정보:', {
+        method: 'POST',
+        url: url,
+        memberId: memberId,
+        description: description,
+        hasToken: !!sessionStorage.getItem('accessToken')
       });
       
       const res = await api.post(url, requestBody);
@@ -105,8 +114,31 @@ export const fortuneService = {
       console.log('📊 응답 상태:', res.status);
       return res.data;
     } catch (e: any) {
-      console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
-      console.log('🔍 에러 상세 정보:', {
+      console.log('💥 포춘쿠키 전송 에러 (방법 1 실패), 방법 2 시도:', e);
+      
+      // 방법 2: description을 쿼리 파라미터로 전송
+      try {
+        const url2 = `${API_BASE}/send?memberId=${memberId}&description=${encodeURIComponent(description)}`;
+        console.log('🔄 방법 2 시도 - URL:', url2);
+        console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url2}`);
+        
+        const res2 = await api.post(url2);
+        console.log('✅ 방법 2 API 응답 성공:', res2.data);
+        console.log('📊 응답 상태:', res2.status);
+        return res2.data;
+      } catch (e2: any) {
+        console.log('💥 방법 2도 실패, 폴백 사용:', e2);
+        console.log('🔍 방법 2 에러 상세 정보:', {
+          status: e2.response?.status,
+          statusText: e2.response?.statusText,
+          data: e2.response?.data,
+          message: e2.message,
+          url: e2.config?.url,
+          fullUrl: e2.config?.baseURL + e2.config?.url
+        });
+      }
+      
+      console.log('🔍 방법 1 에러 상세 정보:', {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
