@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { feedService } from '../TodayViewFeed/feedService';
 import { imageService } from '../services/imageService';
+import { authService } from '../services/authService';
 
 export interface Post {
   id: number;
@@ -180,7 +181,20 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [posts]);
 
   const addPost = useCallback(async (postData: Omit<Post, 'id' | 'likes' | 'comments' | 'isLiked' | 'createdAt'>) => {
+    // 인증 상태 확인
+    if (!authService.isAuthenticated()) {
+      console.log('❌ 인증되지 않은 사용자');
+      throw new Error('로그인이 필요합니다.');
+    }
+
     try {
+      // 회원 정보 확인
+      const memberInfo = await authService.getMemberInfo();
+      if (!memberInfo) {
+        console.log('❌ 회원 정보 조회 실패');
+        throw new Error('로그인 상태를 확인할 수 없습니다.');
+      }
+
       // API 호출
       const response = await feedService.createFeed({
         description: postData.content,
@@ -219,6 +233,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setPosts(prev => [newPost, ...prev]);
         setPendingActions(prev => [...prev, { type: 'ADD_POST', data: newPost, timestamp: Date.now() }]);
       }
+      throw error; // 에러를 다시 던져서 상위에서 처리할 수 있도록
     }
   }, [getNextId, isOnline]);
 

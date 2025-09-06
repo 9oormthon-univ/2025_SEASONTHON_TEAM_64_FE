@@ -6,6 +6,7 @@ import { useMission } from '../app/MissionContext';
 import { useFeed } from '../app/FeedContext';
 import { missionService } from '../app/missionService';
 import { imageService } from '../services/imageService';
+import { authService } from '../services/authService';
 
 const MissionRegistration: React.FC = () => {
   const navigate = useNavigate();
@@ -40,7 +41,26 @@ const MissionRegistration: React.FC = () => {
       return;
     }
 
+    // 인증 상태 확인
+    if (!authService.isAuthenticated()) {
+      console.log('❌ 인증되지 않은 사용자, 로그인 페이지로 이동');
+      alert('로그인이 필요합니다.');
+      navigate('/main');
+      return;
+    }
+
     try {
+      // 회원 정보 확인 (인증 상태 재검증)
+      const memberInfo = await authService.getMemberInfo();
+      if (!memberInfo) {
+        console.log('❌ 회원 정보 조회 실패, 로그인 페이지로 이동');
+        alert('로그인 상태를 확인할 수 없습니다. 다시 로그인해주세요.');
+        navigate('/main');
+        return;
+      }
+
+      console.log('✅ 인증 확인 완료:', memberInfo);
+
       let uploadedImageUrl = '/placeholder-image.jpg';
       
       // 이미지가 있으면 업로드
@@ -52,7 +72,7 @@ const MissionRegistration: React.FC = () => {
 
       // 피드에 게시글 추가
       await addPost({
-        user: '나',
+        user: memberInfo.nickname || '나',
         content: text.trim(),
         image: uploadedImageUrl,
         missionId: currentMission ? parseInt(currentMission.id) : 1
