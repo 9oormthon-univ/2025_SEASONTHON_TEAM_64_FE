@@ -2,7 +2,7 @@ import type { FortuneCookieData } from './types';
 import { api } from '../Landing/auth/api';
 
 // -------- API + Fallback 설정 --------
-const API_BASE = '/api/v1/fortunes';
+const API_BASE = '/v1/fortunes';
 const REQUEST_TIMEOUT_MS = 7000;
 
 function getMemberId(): number {

@@ -1,7 +1,7 @@
 import type { MissionItem } from './MissionContext';
 import { api } from '../Landing/auth/api';
 
-const API_BASE = '/api/v1';
+const API_BASE = '/v1';
 const TIMEOUT_MS = 7000;
 
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
