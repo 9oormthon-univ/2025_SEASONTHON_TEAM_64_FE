@@ -4,23 +4,30 @@ import { Bell, Wifi, WifiOff, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMission } from '../app/MissionContext';
 import FeedPost from './FeedPost';
+import FeedDetailModal from './FeedDetailModal';
 import BottomNavigation from '../components/BottomNavigation';
 import { useFeed } from '../app/FeedContext';
+import type { Post } from '../app/FeedContext';
 
 const TodayViewFeed: React.FC = () => {
   const navigate = useNavigate();
-  const { posts, likePost, deletePost, isOnline, pendingActions } = useFeed();
+  const { posts, likePost, deletePost, addComment, isOnline, pendingActions } = useFeed();
   const { currentMission } = useMission();
   const [showMissionBar, setShowMissionBar] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLike = (postId: number) => {
     likePost(postId);
   };
 
   const handleComment = (postId: number) => {
-    // 댓글 페이지로 이동 (카운트 증가 없이)
-    navigate(`/feed-detail/${postId}`);
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setSelectedPost(post);
+      setIsModalOpen(true);
+    }
   };
 
 
@@ -34,6 +41,15 @@ const TodayViewFeed: React.FC = () => {
 
   const handleEditPost = (postId: number) => {
     navigate('/mission-registration', { state: { editPostId: postId } });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleModalComment = (postId: number) => {
+    addComment(postId);
   };
 
   useEffect(() => {
@@ -101,6 +117,7 @@ const TodayViewFeed: React.FC = () => {
               onComment={handleComment}
               onDelete={handleDeletePost}
               onEdit={handleEditPost}
+              onPostClick={handleComment}
             />
           ))}
         </FeedSection>
@@ -111,6 +128,16 @@ const TodayViewFeed: React.FC = () => {
       </FloatingAddButton>
 
       <BottomNavigation />
+
+      {selectedPost && (
+        <FeedDetailModal
+          post={selectedPost}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onLike={handleLike}
+          onComment={handleModalComment}
+        />
+      )}
     </Container>
   );
 };

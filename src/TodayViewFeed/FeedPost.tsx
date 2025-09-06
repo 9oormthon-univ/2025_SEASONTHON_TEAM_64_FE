@@ -9,9 +9,10 @@ interface FeedPostProps {
   onComment: (postId: number) => void;
   onDelete: (postId: number) => void;
   onEdit?: (postId: number) => void;
+  onPostClick?: (postId: number) => void;
 }
 
-const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete, onEdit }) => {
+const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete, onEdit, onPostClick }) => {
   const isMyPost = post.user === '나' || post.user === '사용자1'; // 임시로 사용자1을 내 포스트로 설정
   const [showMenu, setShowMenu] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -31,8 +32,12 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, onLike, onComment, onDelete, 
     setShowDeleteConfirm(false);
   };
 
+  const handlePostClick = () => {
+    onPostClick?.(post.id);
+  };
+
   return (
-    <PostCard>
+    <PostCard onClick={handlePostClick}>
       {isMyPost && (
         <PostMenu>
           <MenuButton onClick={() => setShowMenu(!showMenu)}>
@@ -105,6 +110,11 @@ const PostCard = styled.div`
   padding: 16px;
   margin-bottom: 16px;
   border: 1px solid #e9ecef;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: relative;
 `;
