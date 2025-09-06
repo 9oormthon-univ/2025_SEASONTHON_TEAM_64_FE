@@ -77,10 +77,14 @@ const TodayViewFeed: React.FC = () => {
 
       <MissionBar $show={showMissionBar}>
         <MissionCard>
-          <MissionTitle>오늘의 시선 MISSION</MissionTitle>
-          <MissionDescription>
-            {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요!'}
-          </MissionDescription>
+            <MissionTitle style={{ color: "#3D8AFF", fontSize: "0.9rem" }}>
+              오늘의 시선_MISSION
+            </MissionTitle>
+            <MissionDescription
+              style={{ fontSize: "1.1rem", fontWeight: "bold" }}
+            >
+              {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
+            </MissionDescription>
         </MissionCard>
         <BirdDecoration>
           <img src="/Maru_front.png" alt="마루" width={72} height={72} />
@@ -125,22 +129,20 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: linear-gradient(180deg, #FF6A25 0%, #FFA66F 40%, rgba(255,255,255,0) 100%);
-  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient( #FF6A25 100%, #FFA66F 40%, rgba(255,255,255,0) 100%);
+  border-bottom: 0px solid #f0f0f0;ㅣ
   position: sticky;
-  top: 0;
   z-index: 100;
 `;
 
 const MissionBar = styled.div<{ $show: boolean }>`
   position: sticky;
-  top: 73px;
+  top: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 20px 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 20px 50px;
+  background: linear-gradient(180deg, #FF6A25 0%, #FFA66F 40%, rgba(255,255,255,0) 100%);
   z-index: 120;
   transform: translateY(${props => props.$show ? '0' : '-100%'});
   transition: transform 0.3s ease;
@@ -172,13 +174,13 @@ const BirdDecoration = styled.div`
 const MissionTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
-  color: #333;
+  color: #3D8AFF;
   margin: 0 0 4px 0;
 `;
 
 const MissionDescription = styled.div`
   font-size: 14px;
-  color: #666;
+  color: #2B2C2F;
   margin: 0;
   line-height: 1.4;
 `;

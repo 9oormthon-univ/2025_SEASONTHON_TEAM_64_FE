@@ -235,7 +235,7 @@ const MissionTitle = styled.h2`
 
 const MissionDescription = styled.p`
   font-size: 14px;
-  color: #666;
+  color: #2B2C2F;
   margin: 0;
   line-height: 1.4;
 `;
