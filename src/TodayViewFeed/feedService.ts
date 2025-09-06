@@ -39,6 +39,18 @@ export interface UpdateFeedRequest {
   missionId: number;
 }
 
+export interface FeedLikeResponse {
+  feedId: number;
+  liked: boolean;
+  likeCount: number;
+}
+
+export interface FeedLikeMember {
+  memberId: number;
+  nickname: string;
+  profileImageUrl: string;
+}
+
 // 로컬 폴백 데이터
 let localFeeds: FeedResponse[] = [];
 
@@ -269,6 +281,80 @@ export const feedService = {
       }
       
       return { message: '정상적으로 삭제되었습니다.' };
+    }
+  },
+
+  // 피드 좋아요 토글 - POST /api/v1/feed-likes/{feedId}/toggle
+  async toggleFeedLike(feedId: number): Promise<FeedLikeResponse> {
+    console.log('❤️ toggleFeedLike 호출 시작:', { feedId });
+    try {
+      const url = `/feed-likes/${feedId}/toggle`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
+      console.log('📊 요청 헤더:', {
+        'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
+      });
+      
+      const res = await api.post(url);
+      console.log('✅ API 응답 성공:', res.data);
+      return res.data as FeedLikeResponse;
+    } catch (e: any) {
+      console.log('💥 피드 좋아요 토글 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
+      });
+      
+      // Fallback: 로컬 데이터에서 좋아요 상태 토글
+      const feed = localFeeds.find(f => f.feedId === feedId);
+      if (feed) {
+        feed.likeCount = feed.likeCount + 1; // 간단히 증가
+        return {
+          feedId: feed.feedId,
+          liked: true,
+          likeCount: feed.likeCount
+        };
+      }
+      
+      return {
+        feedId,
+        liked: false,
+        likeCount: 0
+      };
+    }
+  },
+
+  // 피드 좋아요 리스트 조회 - GET /api/v1/feed-likes/list/{feedId}
+  async getFeedLikeList(feedId: number): Promise<FeedLikeMember[]> {
+    console.log('👥 getFeedLikeList 호출 시작:', { feedId });
+    try {
+      const url = `/feed-likes/list/${feedId}`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
+      console.log('📊 요청 헤더:', {
+        'Authorization': sessionStorage.getItem('accessToken') ? 'Bearer ' + sessionStorage.getItem('accessToken') : '없음'
+      });
+      
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
+      return res.data as FeedLikeMember[];
+    } catch (e: any) {
+      console.log('💥 피드 좋아요 리스트 조회 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
+      });
+      
+      // Fallback: 빈 배열 반환
+      return [];
     }
   }
 };

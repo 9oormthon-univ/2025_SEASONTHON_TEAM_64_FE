@@ -323,10 +323,42 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [isOnline, posts]);
 
-  const likePost = useCallback((id: number) => {
-    setPosts(prev => prev.map(post => post.id === id ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked } : post));
-    if (!isOnline) {
-      setPendingActions(prev => [...prev, { type: 'LIKE_POST', data: { id }, timestamp: Date.now() }]);
+  const likePost = useCallback(async (id: number) => {
+    try {
+      console.log('❤️ 좋아요 토글 시작:', { postId: id });
+      
+      // API 호출
+      const response = await feedService.toggleFeedLike(id);
+      console.log('✅ 좋아요 토글 성공:', response);
+      
+      // 로컬 상태 업데이트
+      setPosts(prev => prev.map(post => 
+        post.id === id 
+          ? { 
+              ...post, 
+              likes: response.likeCount, 
+              isLiked: response.liked 
+            } 
+          : post
+      ));
+      
+    } catch (error) {
+      console.error('❌ 좋아요 토글 실패:', error);
+      
+      // 폴백: 로컬 상태만 업데이트
+      setPosts(prev => prev.map(post => 
+        post.id === id 
+          ? { 
+              ...post, 
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1, 
+              isLiked: !post.isLiked 
+            } 
+          : post
+      ));
+      
+      if (!isOnline) {
+        setPendingActions(prev => [...prev, { type: 'LIKE_POST', data: { id }, timestamp: Date.now() }]);
+      }
     }
   }, [isOnline]);
 
