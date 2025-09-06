@@ -9,8 +9,14 @@ const FortunePage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleOpenTodayFortune = async () => {
-    const opened = await fortuneService.openFortune();
-    navigate('/fortune-content', { state: { fortuneCookie: { id: opened.id, message: opened.description, category: '' } } });
+    console.log('🎲 포춘쿠키 열기 시작');
+    try {
+      const opened = await fortuneService.openFortune();
+      console.log('✅ 포춘쿠키 열기 성공:', opened);
+      navigate('/fortune-content', { state: { fortuneCookie: { id: opened.id, message: opened.description, category: '' } } });
+    } catch (error) {
+      console.error('❌ 포춘쿠키 열기 실패:', error);
+    }
   };
 
   const handleSendFortune = () => {

@@ -58,13 +58,18 @@ export const fortuneService = {
 
   // 오늘의 포춘쿠키 랜덤 열기 (1일 1회) - POST /open?memberId
   async openFortune(memberId: number = getMemberId()): Promise<{ id: number; description: string }> {
+    console.log('🎯 openFortune 호출 시작:', { memberId, API_BASE });
     try {
-      const res = await api.post(`${API_BASE}/open?memberId=${memberId}`);
+      const url = `${API_BASE}/open?memberId=${memberId}`;
+      console.log('🌐 API 요청 URL:', url);
+      const res = await api.post(url);
+      console.log('✅ API 응답 성공:', res.data);
       return res.data;
     } catch (e) {
       console.log('💥 포춘쿠키 열기 에러, 폴백 사용:', e);
       // Fallback: 로컬 더미에서 하나 반환, 없으면 생성
       if (localFortunes.length === 0) pushDummyFortune('행운이 당신 곁에 머물 거예요.');
+      console.log('🔄 폴백 데이터 반환:', localFortunes[0]);
       return localFortunes[0];
     }
   },

@@ -15,8 +15,10 @@ export const api = axios.create({
 
 // 요청 인터셉터: 토큰 자동 첨부
 api.interceptors.request.use((config) => {
+  console.log('🚀 API 요청 시작:', { url: config.url, method: config.method });
   if (config.authRequired !== false) {
     const at = sessionStorage.getItem("accessToken");
+    console.log('🔐 토큰 상태:', { hasToken: !!at, tokenLength: at?.length });
     config.headers = config.headers ?? {};
     if (at) (config.headers as any).Authorization = `Bearer ${at}`;
   }
