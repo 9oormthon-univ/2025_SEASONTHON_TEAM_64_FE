@@ -9,7 +9,7 @@ declare module "axios" {
 }
 
 export const api = axios.create({
-  baseURL: "https://api.planhub.site/api/v1", // ✅ 백엔드 서버 주소 + v1 포함
+  baseURL: "https://api.planhub.site", // ✅ 백엔드 서버 주소 + v1 포함
   timeout: 15000,
 });
 

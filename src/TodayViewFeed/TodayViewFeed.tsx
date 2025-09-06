@@ -11,7 +11,7 @@ import { useFeed } from '../app/FeedContext';
 const TodayViewFeed: React.FC = () => {
   const navigate = useNavigate();
   const { posts, likePost, addComment, deletePost, isOnline, pendingActions } = useFeed();
-  const { currentMission } = useMission();
+  const { currentMission, refreshMission } = useMission();
   const [showMissionBar, setShowMissionBar] = useState(true);
   const [scrollY, setScrollY] = useState(0);
 

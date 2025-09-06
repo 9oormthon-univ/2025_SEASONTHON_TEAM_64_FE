@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import { useMission } from '../app/MissionContext';
 
 interface MissionCardProps {
@@ -8,16 +8,26 @@ interface MissionCardProps {
 }
 
 const MissionCard: React.FC<MissionCardProps> = ({ onAddMission }) => {
-  const { currentMission } = useMission();
+  const { currentMission, refreshMission } = useMission();
+  
+  const handleRefresh = async () => {
+    console.log('🔄 MissionCard: 미션 새로고침 버튼 클릭');
+    await refreshMission();
+  };
   return (
     <Card>
       <MissionTitle>&lt;오늘의 시선_MISSION&gt;</MissionTitle>
       <MissionDescription>
         {currentMission ? currentMission.text : '오늘 가장 인상적인 풍경을 공유해봐요.'}
       </MissionDescription>
-      <AddButton onClick={onAddMission}>
-        <Plus size={20} />
-      </AddButton>
+      <ButtonGroup>
+        <RefreshButton onClick={handleRefresh} title="미션 새로고침">
+          <RefreshCw size={16} />
+        </RefreshButton>
+        <AddButton onClick={onAddMission}>
+          <Plus size={20} />
+        </AddButton>
+      </ButtonGroup>
     </Card>
   );
 };
@@ -46,24 +56,60 @@ const MissionDescription = styled.p`
   line-height: 1.4;
 `;
 
-const AddButton = styled.button`
+const ButtonGroup = styled.div`
   position: absolute;
-  top: 20px;
-  right: 20px;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const RefreshButton = styled.button`
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  background-color: #007bff;
-  color: white;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #666;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background: #e0e0e0;
+    color: #333;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const AddButton = styled.button`
+  background: #FF6A25;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 106, 37, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #ff7f47;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 `;
 
