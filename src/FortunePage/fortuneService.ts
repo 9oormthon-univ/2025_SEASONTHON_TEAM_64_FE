@@ -75,8 +75,35 @@ export const fortuneService = {
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 최종 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
+      // 실제 회원 정보 가져오기
+      let memberInfo = null;
+      try {
+        const memberRes = await api.get('/members');
+        memberInfo = memberRes.data;
+        console.log('✅ 회원 정보 조회 성공:', memberInfo);
+      } catch (memberError) {
+        console.log('⚠️ 회원 정보 조회 실패, 기본값 사용:', memberError);
+      }
+      
+      // Swagger 스펙에 맞는 sender 객체 생성
+      const refreshToken = sessionStorage.getItem('refreshToken') || '';
+      const now = new Date().toISOString();
+      const today = now.split('T')[0];
+      
       const requestBody = {
-        description
+        description,
+        sender: {
+          id: memberId,
+          email: memberInfo?.email || `user${memberId}@example.com`,
+          nickname: memberInfo?.nickname || `사용자${memberId}`,
+          role: memberInfo?.role || "ROLE_USER",
+          profileImageURL: memberInfo?.profileImageUrl || "",
+          refreshToken: refreshToken,
+          fcmToken: "",
+          createdAt: now,
+          updatedAt: now,
+          lastOpenedDate: today
+        }
       };
       console.log('📦 요청 데이터:', requestBody);
       console.log('📊 요청 헤더:', {

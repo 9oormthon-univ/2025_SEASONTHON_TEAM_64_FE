@@ -8,24 +8,10 @@ import BottomNavigation from '../components/BottomNavigation';
 const FortunePage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleOpenTodayFortune = async () => {
-    console.log('🎲 포춘쿠키 열기 시작');
-    try {
-      const opened = await fortuneService.openFortune();
-      console.log('✅ 포춘쿠키 열기 성공:', opened);
-      navigate('/fortune-content', { state: { fortuneCookie: { id: opened.id, message: opened.description, category: '' } } });
-    } catch (error: any) {
-      console.error('❌ 포춘쿠키 열기 실패:', error);
-      
-      // 사용자에게 친화적인 메시지 표시
-      if (error.response?.status === 400) {
-        alert('오늘 이미 포춘쿠키를 열어보셨거나 열 수 있는 포춘쿠키가 없습니다.');
-      } else if (error.response?.status === 404) {
-        alert('포춘쿠키 서비스에 일시적인 문제가 발생했습니다. 다시 시도해주세요.');
-      } else {
-        alert('포춘쿠키 열기에 실패했습니다. 다시 시도해주세요.');
-      }
-    }
+  const handleOpenTodayFortune = () => {
+    console.log('🎲 포춘쿠키 알림 페이지로 이동');
+    // 포춘쿠키 알림 페이지로 이동
+    navigate('/fortune-notification');
   };
 
   const handleSendFortune = () => {

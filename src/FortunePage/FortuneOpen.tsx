@@ -31,10 +31,18 @@ const FortuneOpen: React.FC = () => {
           새로운 <OrangeText>포춘쿠키</OrangeText>가 도착했어요!{'\n'}열어보시겠습니까?
         </Message>
 
-        <VideoPlaceholder>
-          <VideoText>동영상전달예정</VideoText>
-          <VideoText>포춘mp4_1</VideoText>
-        </VideoPlaceholder>
+        <VideoContainer>
+          <VideoPlayer
+            src="/FortuneMove1.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          <VideoOverlay>
+            <VideoText>포춘무브1</VideoText>
+          </VideoOverlay>
+        </VideoContainer>
 
         <OpenButton onClick={handleOpen}>
           받기
@@ -103,22 +111,40 @@ const OrangeText = styled.span`
   color: #FF6A25;
 `;
 
-const VideoPlaceholder = styled.div`
+const VideoContainer = styled.div`
   width: 200px;
   height: 200px;
-  background-color: #f0f0f0;
   border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+`;
+
+const VideoPlayer = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 16px 8px 8px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
+  align-items: flex-end;
 `;
 
 const VideoText = styled.div`
   font-size: 14px;
-  color: #666;
+  color: white;
   text-align: center;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 `;
 
 const OpenButton = styled.button`

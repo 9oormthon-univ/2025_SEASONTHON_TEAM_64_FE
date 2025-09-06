@@ -41,15 +41,18 @@ const MissionRegistration: React.FC = () => {
       return;
     }
 
-    // 인증 상태 확인
-    if (!authService.isAuthenticated()) {
-      console.log('❌ 인증되지 않은 사용자, 로그인 페이지로 이동');
-      alert('로그인이 필요합니다.');
-      navigate('/main');
-      return;
-    }
-
     try {
+      // 토큰 상태 디버깅
+      authService.debugTokenStatus();
+      
+      // 인증 상태 확인
+      if (!authService.isAuthenticated()) {
+        console.log('❌ 인증되지 않은 사용자, 로그인 페이지로 이동');
+        alert('로그인이 필요합니다.');
+        navigate('/main');
+        return;
+      }
+
       // 회원 정보 확인 (인증 상태 재검증)
       const memberInfo = await authService.getMemberInfo();
       if (!memberInfo) {
@@ -79,7 +82,12 @@ const MissionRegistration: React.FC = () => {
       });
 
       // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
-      try { await missionService.getTodayMission(); } catch {}
+      try { 
+        await missionService.getTodayMission(); 
+        console.log('✅ 미션 동기화 완료');
+      } catch (missionError) {
+        console.log('⚠️ 미션 동기화 실패 (무시):', missionError);
+      }
 
       // 성공 후 피드로 이동
       navigate('/');

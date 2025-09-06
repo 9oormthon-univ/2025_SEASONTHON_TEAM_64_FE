@@ -73,23 +73,19 @@ export const missionService = {
     }
   },
 
-  // 회원의 오늘 미션 조회 - GET /api/v1/members/{memberId}/missions/today
+  // 오늘의 미션 조회 - 미션 목록에서 최신 미션 반환
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
     console.log('🎯 getTodayMission 호출 시작:', { memberId });
     try {
-      const id = memberId ?? 1;
-      const url = `/members/${id}/missions/today`;
-      console.log('🌐 API 요청 URL:', url);
+      // 미션 목록을 조회해서 최신 미션 반환
+      const missions = await this.listMissions();
       
-      const res = await api.get(url);
-      console.log('✅ API 응답 성공:', res.data);
-      
-      // 스웨거 응답 형식에 맞춰 변환
-      const data = res.data as any;
-      if (data && data.mission) {
+      if (missions && missions.length > 0) {
+        // 최신 미션 반환 (createdAt 기준으로 정렬)
+        const latestMission = missions.sort((a, b) => b.createdAt - a.createdAt)[0];
         return {
-          id: data.mission.missionId ?? data.mission.id ?? Date.now(),
-          description: data.mission.title ?? '미션'
+          id: Number.isFinite(Number(latestMission.id)) ? Number(latestMission.id) : Date.now(),
+          description: latestMission.description
         };
       }
       

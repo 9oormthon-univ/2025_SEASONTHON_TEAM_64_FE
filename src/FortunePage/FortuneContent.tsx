@@ -27,9 +27,19 @@ const FortuneContent: React.FC = () => {
       </Header>
 
       <Content>
-        <StarIcon>
-          <Star size={80} strokeWidth={1} />
-        </StarIcon>
+        <VideoContainer>
+          <VideoPlayer
+            src="/FortuneMove2.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          <VideoOverlay>
+            <VideoText>반짝포춘쿠키</VideoText>
+            <VideoSubText>영상</VideoSubText>
+          </VideoOverlay>
+        </VideoContainer>
 
         <FortuneMessage>
           {fortuneCookie.message}
@@ -85,8 +95,49 @@ const Content = styled.main`
   margin-top: 60px;
 `;
 
-const StarIcon = styled.div`
-  color: #333;
+const VideoContainer = styled.div`
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+`;
+
+const VideoPlayer = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 16px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const VideoText = styled.div`
+  font-size: 14px;
+  color: white;
+  text-align: center;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const VideoSubText = styled.div`
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-top: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 `;
 
 const FortuneMessage = styled.div`

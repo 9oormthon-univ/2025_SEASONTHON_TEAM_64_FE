@@ -177,8 +177,10 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [pendingActions]);
 
   const getNextId = useCallback(() => {
-    return Math.max(...posts.map(p => p.id), 0) + 1;
-  }, [posts]);
+    const timestamp = Date.now();
+    const randomSuffix = Math.floor(Math.random() * 1000);
+    return timestamp + randomSuffix;
+  }, []);
 
   const addPost = useCallback(async (postData: Omit<Post, 'id' | 'likes' | 'comments' | 'isLiked' | 'createdAt'>) => {
     // 인증 상태 확인
@@ -333,22 +335,27 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('🔄 초기 피드 데이터 로딩 시작');
         const response = await feedService.getFeedsCursor(undefined, 10);
         
-        // API 응답을 Post 형태로 변환
-        const apiPosts: Post[] = response.items.map(feed => ({
-          id: feed.feedId,
-          user: feed.member.nickname,
-          content: feed.description,
-          image: feed.imageUrl,
-          likes: feed.likeCount,
-          comments: feed.commentCount,
-          isLiked: false,
-          createdAt: Date.now(),
-          isOffline: false,
-          missionId: feed.missionId
-        }));
+        // API 응답이 유효한지 확인
+        if (response && response.items && Array.isArray(response.items)) {
+          // API 응답을 Post 형태로 변환
+          const apiPosts: Post[] = response.items.map(feed => ({
+            id: feed.feedId,
+            user: feed.member.nickname,
+            content: feed.description,
+            image: feed.imageUrl,
+            likes: feed.likeCount,
+            comments: feed.commentCount,
+            isLiked: false,
+            createdAt: Date.now(),
+            isOffline: false,
+            missionId: feed.missionId
+          }));
 
-        setPosts(apiPosts);
-        console.log('✅ 초기 피드 데이터 로딩 완료:', apiPosts.length, '개');
+          setPosts(apiPosts);
+          console.log('✅ 초기 피드 데이터 로딩 완료:', apiPosts.length, '개');
+        } else {
+          console.log('⚠️ API 응답이 유효하지 않음, 로컬 데이터 사용');
+        }
       } catch (error) {
         console.error('❌ 초기 피드 데이터 로딩 실패:', error);
         console.log('📝 로컬 데이터 사용');

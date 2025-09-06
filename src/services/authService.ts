@@ -34,11 +34,14 @@ export const authService = {
         fullUrl: e.config?.baseURL + e.config?.url
       });
       
-      // 인증 실패 시 로그인 페이지로 리다이렉트
+      // 인증 실패 시 로그인 페이지로 리다이렉트 (무한 루프 방지)
       if (e.response?.status === 401) {
         console.log('❌ 인증 실패, 로그인 페이지로 이동');
         sessionStorage.clear();
-        window.location.href = '/main';
+        // 현재 페이지가 이미 로그인 페이지가 아닐 때만 이동
+        if (!window.location.pathname.includes('/main')) {
+          window.location.href = '/main';
+        }
       }
       
       return null;
@@ -72,11 +75,14 @@ export const authService = {
         fullUrl: e.config?.baseURL + e.config?.url
       });
       
-      // 인증 실패 시 로그인 페이지로 리다이렉트
+      // 인증 실패 시 로그인 페이지로 리다이렉트 (무한 루프 방지)
       if (e.response?.status === 401) {
         console.log('❌ 인증 실패, 로그인 페이지로 이동');
         sessionStorage.clear();
-        window.location.href = '/main';
+        // 현재 페이지가 이미 로그인 페이지가 아닐 때만 이동
+        if (!window.location.pathname.includes('/main')) {
+          window.location.href = '/main';
+        }
       }
       
       return false;
@@ -104,5 +110,21 @@ export const authService = {
     sessionStorage.clear();
     localStorage.removeItem('memberId');
     window.location.href = '/main';
+  },
+
+  // 토큰 상태 디버깅용 함수
+  debugTokenStatus(): void {
+    const accessToken = sessionStorage.getItem('accessToken');
+    const refreshToken = sessionStorage.getItem('refreshToken');
+    
+    console.log('🔍 토큰 상태 디버깅:', {
+      hasAccessToken: !!accessToken,
+      accessTokenLength: accessToken?.length,
+      accessTokenPreview: accessToken ? accessToken.substring(0, 30) + '...' : '없음',
+      hasRefreshToken: !!refreshToken,
+      refreshTokenLength: refreshToken?.length,
+      refreshTokenPreview: refreshToken ? refreshToken.substring(0, 30) + '...' : '없음',
+      currentPath: window.location.pathname
+    });
   }
 };

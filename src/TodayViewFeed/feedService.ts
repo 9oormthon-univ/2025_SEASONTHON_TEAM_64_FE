@@ -170,6 +170,8 @@ export const feedService = {
       const items = localFeeds.slice(startIdx, startIdx + size);
       const nextCursorId = items.length > 0 ? items[items.length - 1].feedId : 0;
       
+      console.log('🔄 폴백 데이터 반환:', { itemsCount: items.length, nextCursorId, hasNext: startIdx + size < localFeeds.length });
+      
       return {
         items,
         nextCursorId,
