@@ -23,9 +23,26 @@ const MessageWrite: React.FC = () => {
           setShowToast(false);
           navigate('/fortune');
         }, 2000);
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ 포춘쿠키 전송 실패:', error);
-        // 에러 처리 로직 추가 가능
+        
+        // 사용자에게 친화적인 메시지 표시
+        if (error.response?.status === 500) {
+          alert('서버에 일시적인 문제가 발생했습니다. 로컬에 저장되었습니다!');
+        } else if (error.response?.status === 400) {
+          alert('오늘 이미 포춘쿠키를 작성하셨습니다.');
+        } else {
+          alert('포춘쿠키 전송에 실패했습니다. 다시 시도해주세요.');
+        }
+        
+        // 에러가 발생해도 성공 토스트 표시 (폴백으로 로컬에 저장됨)
+        setShowToast(true);
+        setMessage('');
+        
+        setTimeout(() => {
+          setShowToast(false);
+          navigate('/fortune');
+        }, 2000);
       }
     }
   };

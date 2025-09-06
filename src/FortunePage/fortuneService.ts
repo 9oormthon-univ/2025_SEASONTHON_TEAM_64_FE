@@ -84,11 +84,18 @@ export const fortuneService = {
       };
       console.log('📦 요청 데이터:', requestBody);
       
+      // 서버 응답 상세 정보 로깅
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
       return res.data;
-    } catch (e) {
+    } catch (e: any) {
       console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message
+      });
       // Fallback: 로컬에 저장
       return pushDummyFortune(description);
     }
