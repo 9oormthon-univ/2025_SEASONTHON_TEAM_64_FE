@@ -2,7 +2,7 @@ import type { FortuneCookieData } from './types';
 import { api } from '../Landing/auth/api';
 
 // -------- API + Fallback 설정 --------
-const API_BASE = '/v1/fortunes';
+const API_BASE = '/fortunes'; // ✅ v1은 baseURL에 포함되어 있음
 const REQUEST_TIMEOUT_MS = 7000;
 
 function getMemberId(): number {
@@ -87,7 +87,7 @@ export const fortuneService = {
     console.log('📝 sendFortune 호출 시작:', { memberId, description });
     try {
       const url = `${API_BASE}/send?memberId=${memberId}`;
-      const fullUrl = `https://api.planhub.site/api${url}`;
+      const fullUrl = `https://api.planhub.site/api/v1${url}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 전체 요청 URL:', fullUrl);
       
@@ -126,7 +126,7 @@ export const fortuneService = {
     console.log('🎯 openFortune 호출 시작:', { memberId, API_BASE });
     try {
       const url = `${API_BASE}/open?memberId=${memberId}`;
-      const fullUrl = `https://api.planhub.site/api${url}`;
+      const fullUrl = `https://api.planhub.site/api/v1${url}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 전체 요청 URL:', fullUrl);
       console.log('📊 요청 헤더:', {
@@ -160,7 +160,7 @@ export const fortuneService = {
     console.log('🔍 getFortuneById 호출 시작:', { fortuneId });
     try {
       const url = `${API_BASE}/${fortuneId}`;
-      const fullUrl = `https://api.planhub.site/api${url}`;
+      const fullUrl = `https://api.planhub.site/api/v1${url}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 전체 요청 URL:', fullUrl);
       
@@ -189,7 +189,7 @@ export const fortuneService = {
       if (cursorId) params.set('cursorId', String(cursorId));
       if (size) params.set('size', String(size));
       const url = `${API_BASE}/cursor?${params.toString()}`;
-      const fullUrl = `https://api.planhub.site/api${url}`;
+      const fullUrl = `https://api.planhub.site/api/v1${url}`;
       console.log('🌐 API 요청 URL:', url);
       console.log('🔗 전체 요청 URL:', fullUrl);
       

@@ -1,7 +1,7 @@
 import type { MissionItem } from './MissionContext';
 import { api } from '../Landing/auth/api';
 
-const API_BASE = '/v1';
+const API_BASE = ''; // ✅ v1은 baseURL에 포함되어 있음
 const TIMEOUT_MS = 7000;
 
 // 로컬 폴백 저장소
@@ -12,11 +12,11 @@ export const missionService = {
   async createMission(title: string) {
     console.log('📝 createMission 호출 시작:', { title });
     try {
-      const url = `${API_BASE}/missions/upload`;
+      const url = `/missions/upload`;
       const requestBody = { title };
       console.log('🌐 API 요청 URL:', url);
       console.log('📦 요청 데이터:', requestBody);
-      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${url}`);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
@@ -52,7 +52,7 @@ export const missionService = {
   async deleteMission(id: string | number) {
     console.log('🗑 deleteMission 호출 시작:', { id });
     try {
-      const url = `${API_BASE}/missions/${id}`;
+      const url = `/missions/${id}`;
       console.log('🌐 API 요청 URL:', url);
       
       const res = await api.delete(url);
@@ -81,7 +81,7 @@ export const missionService = {
     console.log('🎯 getTodayMission 호출 시작:', { memberId });
     try {
       const id = memberId ?? 1;
-      const url = `${API_BASE}/members/${id}/missions/today`;
+      const url = `/members/${id}/missions/today`;
       console.log('🌐 API 요청 URL:', url);
       
       const res = await api.get(url);
@@ -119,9 +119,9 @@ export const missionService = {
   async listMissions() {
     console.log('📋 listMissions 호출 시작 (관리자용)');
     try {
-      const url = `${API_BASE}/missions`;
+      const url = `/missions`;
       console.log('🌐 API 요청 URL:', url);
-      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${url}`);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api/v1${url}`);
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
@@ -186,11 +186,11 @@ export const missionService = {
   async listAssignments(dateISO?: string) {
     console.log('📋 listAssignments 호출 시작:', { dateISO });
     try {
-      const url = `${API_BASE}/missions/assignments`;
+      const url = `/missions/assignments`;
       const params = dateISO ? `?date=${encodeURIComponent(dateISO)}` : '';
       const fullUrl = url + params;
       console.log('🌐 API 요청 URL:', fullUrl);
-      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${fullUrl}`);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api/v1${fullUrl}`);
       
       const res = await api.get(fullUrl);
       console.log('✅ API 응답 성공:', res.data);
