@@ -16,9 +16,23 @@ const MissionListPage: React.FC = () => {
   };
 
   const confirmDelete = async (id: string) => {
-    await missionService.deleteMission(id).catch(() => {});
-    deleteMission(id);
-    setShowDeleteConfirm(null);
+    console.log('🗑 삭제 확인:', { id, type: typeof id });
+    
+    if (!id || id === 'undefined') {
+      console.error('❌ 삭제할 미션 ID가 없습니다:', id);
+      alert('삭제할 미션을 찾을 수 없습니다.');
+      setShowDeleteConfirm(null);
+      return;
+    }
+    
+    try {
+      await missionService.deleteMission(id);
+      deleteMission(id);
+      setShowDeleteConfirm(null);
+    } catch (error) {
+      console.error('❌ 미션 삭제 실패:', error);
+      alert('미션 삭제에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const cancelDelete = () => {
@@ -59,8 +73,8 @@ const MissionListPage: React.FC = () => {
           </ListHeader>
           
           <MissionItems>
-            {missions.map(m => (
-              <MissionItem key={m.id}>
+            {missions.map((m, index) => (
+              <MissionItem key={m.id || `mission-${index}`}>
                 <MissionText>{m.text}</MissionText>
                 <ActionMenu>
                   <ActionButton onClick={() => handleEdit(m.id)}>

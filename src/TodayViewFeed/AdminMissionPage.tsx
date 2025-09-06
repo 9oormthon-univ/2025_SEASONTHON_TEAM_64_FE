@@ -31,19 +31,25 @@ const AdminMissionPage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (canSubmit) {
-      if (isEditMode && editMissionId) {
-        updateMission(editMissionId, text.trim());
-      } else {
-        // 서버 등록 시도 후 실패하면 로컬에 추가
-        await missionService.createMission(text.trim()).catch(() => {});
-        addMission(text.trim());
+      try {
+        if (isEditMode && editMissionId) {
+          updateMission(editMissionId, text.trim());
+        } else {
+          // 서버 등록 시도 후 실패하면 로컬에 추가
+          console.log('📝 미션 등록 시도:', text.trim());
+          await missionService.createMission(text.trim());
+          addMission(text.trim());
+        }
+        setText('');
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate('/mission-list');
+        }, 2000);
+      } catch (error) {
+        console.error('❌ 미션 등록 실패:', error);
+        alert('미션 등록에 실패했습니다. 다시 시도해주세요.');
       }
-      setText('');
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        navigate('/mission-list');
-      }, 2000);
     }
   };
 

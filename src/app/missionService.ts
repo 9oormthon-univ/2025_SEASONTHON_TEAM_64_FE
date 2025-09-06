@@ -4,49 +4,70 @@ import { api } from '../Landing/auth/api';
 const API_BASE = '/v1';
 const TIMEOUT_MS = 7000;
 
-async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const id = setTimeout(() => reject(new Error('Request timed out')), ms);
-    promise
-      .then((res) => { clearTimeout(id); resolve(res); })
-      .catch((err) => { clearTimeout(id); reject(err); });
-  });
-}
-
-async function safeFetch(url: string, init?: RequestInit) {
-  return withTimeout(fetch(url, init), TIMEOUT_MS);
-}
-
 // 로컬 폴백 저장소
 let localMissions: Array<{ id: string; description: string; createdAt: number }>= [];
 
 export const missionService = {
-  async createMission(description: string) {
+  // 미션 등록 - POST /api/v1/missions/upload
+  async createMission(title: string) {
+    console.log('📝 createMission 호출 시작:', { title });
     try {
-      const res = await safeFetch(`${API_BASE}/missions/assignments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description })
+      const url = `${API_BASE}/missions/upload`;
+      const requestBody = { title };
+      console.log('🌐 API 요청 URL:', url);
+      console.log('📦 요청 데이터:', requestBody);
+      
+      const res = await api.post(url, requestBody);
+      console.log('✅ API 응답 성공:', res.data);
+      
+      // 로컬에도 저장
+      const item = { 
+        id: String(res.data.id ?? crypto.randomUUID()), 
+        description: res.data.title ?? title, 
+        createdAt: Date.now() 
+      };
+      localMissions.unshift(item);
+      return res.data;
+    } catch (e: any) {
+      console.log('💥 미션 등록 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      localMissions.unshift({ id: String(data.id ?? crypto.randomUUID()), description: data.description ?? description, createdAt: Date.now() });
-      return data;
-    } catch (e) {
-      const item = { id: crypto.randomUUID(), description, createdAt: Date.now() };
+      
+      // 폴백: 로컬에 저장
+      const item = { id: crypto.randomUUID(), description: title, createdAt: Date.now() };
       localMissions.unshift(item);
       return item;
     }
   },
 
-  async deleteMission(id: string) {
+  // 미션 삭제 - DELETE /api/v1/missions/{id}
+  async deleteMission(id: string | number) {
+    console.log('🗑 deleteMission 호출 시작:', { id });
     try {
-      const res = await safeFetch(`${API_BASE}/missions/assignments/${encodeURIComponent(id)}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      localMissions = localMissions.filter(m => m.id !== id);
+      const url = `${API_BASE}/missions/${id}`;
+      console.log('🌐 API 요청 URL:', url);
+      
+      const res = await api.delete(url);
+      console.log('✅ API 응답 성공:', res.status);
+      
+      // 로컬에서도 삭제
+      localMissions = localMissions.filter(m => m.id !== String(id));
       return true;
-    } catch (e) {
-      localMissions = localMissions.filter(m => m.id !== id);
+    } catch (e: any) {
+      console.log('💥 미션 삭제 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message
+      });
+      
+      // 폴백: 로컬에서만 삭제
+      localMissions = localMissions.filter(m => m.id !== String(id));
       return true;
     }
   },
@@ -65,13 +86,34 @@ export const missionService = {
     }
   },
 
+  // 미션 목록 조회 - GET /api/v1/missions
   async listAssignments(dateISO?: string) {
+    console.log('📋 listAssignments 호출 시작:', { dateISO });
     try {
-      const qs = dateISO ? `?date=${encodeURIComponent(dateISO)}` : '';
-      const res = await api.get(`${API_BASE}/missions/assignments${qs}`);
-      return res.data;
-    } catch (e) {
+      const url = `${API_BASE}/missions`;
+      console.log('🌐 API 요청 URL:', url);
+      
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
+      
+      // 응답 데이터를 로컬 형식으로 변환
+      const missions = Array.isArray(res.data) ? res.data.map((m: any) => ({
+        id: String(m.id ?? crypto.randomUUID()),
+        description: m.title ?? m.description ?? '미션',
+        createdAt: new Date(m.createdAt ?? Date.now()).getTime()
+      })) : [];
+      
+      // 로컬 저장소 업데이트
+      localMissions = missions;
+      return missions;
+    } catch (e: any) {
       console.log('💥 미션 목록 조회 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message
+      });
       return localMissions;
     }
   }
