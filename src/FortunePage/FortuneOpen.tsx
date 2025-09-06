@@ -152,7 +152,8 @@ const OpenButton = styled.button`
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 16px 48px;
+  padding: 14px 180px;
+  margin-top: 240px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
