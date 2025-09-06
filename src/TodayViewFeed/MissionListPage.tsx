@@ -45,13 +45,35 @@ const MissionListPage: React.FC = () => {
     loadMissions();
   }, [localMissions]);
 
-  // 서버 미션과 로컬 미션을 합쳐서 사용
-  const missions = serverMissions.length > 0 ? serverMissions : localMissions.map(m => ({
+  // 서버 미션과 로컬 미션을 합쳐서 사용 (중복 제거)
+  const allMissions = serverMissions.length > 0 ? serverMissions : localMissions.map(m => ({
     id: m.id,
     text: m.text,
     createdAt: m.createdAt,
     finalized: m.finalized
   }));
+
+  // 중복 제거: id 기준으로 중복된 미션 제거
+  const missions = allMissions.reduce((acc: any[], mission: any) => {
+    const existingIndex = acc.findIndex(m => m.id === mission.id);
+    if (existingIndex === -1) {
+      acc.push(mission);
+    } else {
+      console.log('🔄 로컬 중복 미션 발견, 최신 것으로 교체:', { 
+        id: mission.id, 
+        old: acc[existingIndex], 
+        new: mission 
+      });
+      acc[existingIndex] = mission; // 최신 것으로 교체
+    }
+    return acc;
+  }, []);
+
+  console.log('📊 최종 미션 목록:', { 
+    서버미션: serverMissions.length, 
+    로컬미션: localMissions.length, 
+    최종미션: missions.length 
+  });
 
   const handleDelete = (id: string) => {
     setShowDeleteConfirm(id);
@@ -120,22 +142,28 @@ const MissionListPage: React.FC = () => {
             ) : missions.length === 0 ? (
               <EmptyText>등록된 미션이 없습니다.</EmptyText>
             ) : (
-              missions.map((m, index) => (
-                <MissionItem key={m.id || `mission-${index}`}>
-                  <MissionText>{(m as any).text || (m as any).description}</MissionText>
-                  <ActionMenu>
-                    <ActionButton onClick={() => handleEdit(m.id)}>
-                      수정하기
-                    </ActionButton>
-                    <ActionButton 
-                      onClick={() => handleDelete(m.id)}
-                      disabled={isFinalizedMission(m.id)}
-                    >
-                      삭제하기
-                    </ActionButton>
-                  </ActionMenu>
-                </MissionItem>
-              ))
+              missions.map((m, index) => {
+                // 안전한 key 생성: id + index 조합으로 중복 방지
+                const safeKey = `${m.id || 'unknown'}-${index}`;
+                console.log('🔑 Mission key 생성:', { id: m.id, index, safeKey });
+                
+                return (
+                  <MissionItem key={safeKey}>
+                    <MissionText>{(m as any).text || (m as any).description}</MissionText>
+                    <ActionMenu>
+                      <ActionButton onClick={() => handleEdit(m.id)}>
+                        수정하기
+                      </ActionButton>
+                      <ActionButton 
+                        onClick={() => handleDelete(m.id)}
+                        disabled={isFinalizedMission(m.id)}
+                      >
+                        삭제하기
+                      </ActionButton>
+                    </ActionMenu>
+                  </MissionItem>
+                );
+              })
             )}
           </MissionItems>
         </MissionList>

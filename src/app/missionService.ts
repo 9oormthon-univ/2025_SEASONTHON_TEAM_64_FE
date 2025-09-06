@@ -136,14 +136,35 @@ export const missionService = {
           member: mission.member
         }));
         
+        // 중복 제거: id 기준으로 중복된 미션 제거
+        const uniqueMissions = missions.reduce((acc: any[], mission: any) => {
+          const existingIndex = acc.findIndex(m => m.id === mission.id);
+          if (existingIndex === -1) {
+            acc.push(mission);
+          } else {
+            console.log('🔄 중복 미션 발견, 최신 것으로 교체:', { 
+              id: mission.id, 
+              old: acc[existingIndex], 
+              new: mission 
+            });
+            acc[existingIndex] = mission; // 최신 것으로 교체
+          }
+          return acc;
+        }, []);
+        
+        console.log('📊 미션 중복 제거 결과:', { 
+          원본: missions.length, 
+          중복제거후: uniqueMissions.length 
+        });
+        
         // 로컬 저장소 업데이트 (기존 형식 유지)
-        localMissions = missions.map(m => ({
+        localMissions = uniqueMissions.map(m => ({
           id: m.id,
           description: m.description,
           createdAt: m.createdAt
         }));
         
-        return missions;
+        return uniqueMissions;
       }
       
       return [];
