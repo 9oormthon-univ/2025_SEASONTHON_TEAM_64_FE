@@ -58,8 +58,11 @@ const Main = () => {
             )}
           </S.MissionContent>
         </S.TodayMissionBox>
+        <S.GenenrateIcon
+          src={genenrateIcon}
+          onClick={() => navigate('/generate')}
+        />
       </S.Container>
-      <S.GenenrateIcon src={genenrateIcon} />
     </>
   );
 };

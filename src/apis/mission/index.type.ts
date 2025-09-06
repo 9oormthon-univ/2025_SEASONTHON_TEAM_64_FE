@@ -2,8 +2,12 @@ export interface TodayMission {
   memberId: number;
   date: string;
   mission: {
-    missionId: number;
+    id: number;
     title: string;
   };
   status: 'ASSIGNED' | 'COMPLETED';
+}
+
+export interface UploadImageResponse {
+  imageUrl: string;
 }

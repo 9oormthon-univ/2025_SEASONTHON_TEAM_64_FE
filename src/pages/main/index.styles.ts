@@ -44,7 +44,7 @@ export const TodayMissionBox = styled.div`
 
   margin-top: 3.5rem;
 
-  width: 35.3rem;
+  width: calc(100% - 4rem);
   height: 8.5rem;
   padding: 2rem 3.4rem;
 
@@ -83,4 +83,5 @@ export const GenenrateIcon = styled.img`
   width: 6rem;
   height: 6rem;
   flex-shrink: 0;
+  cursor: pointer;
 `;
