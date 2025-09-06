@@ -27,6 +27,7 @@ export const Container = styled.div`
 /* 입력 */
 export const TitleInput = styled.input`
   width: 310px;
+  height: 54px;
   margin: 0 auto 20px;
   padding: 20px;
   font-size: 20px;
@@ -64,6 +65,27 @@ export const CharCounter = styled.div`
   font-size: 12px;
   color: #555;
   pointer-events: none;
+`;
+
+export const AddressBox = styled.div<{ $isEmpty: boolean }>`
+  width: 267px;
+  margin: 0 auto 20px;
+  height: 11px;
+  border-radius: 30px;
+  border: 2px solid #191919;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  background: #fff;
+  color: ${({ $isEmpty }) => ($isEmpty ? "#7a7a7a" : "#111")};
+  font-size: 1rem;
+
+  &:focus {
+    outline: 3px solid #a3c5ff;
+    outline-offset: 2px;
+  }
 `;
 
 export const AddressInput = styled.input`

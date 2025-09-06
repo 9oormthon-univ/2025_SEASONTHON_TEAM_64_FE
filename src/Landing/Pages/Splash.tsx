@@ -1,23 +1,43 @@
-import React, { useEffect } from "react";
+// src/pages/Splash.tsx
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Wrapper, Container, LogoBox } from "../Styles/Splash.Styles";
 
-/** 단순 스플래시: 일정 시간 후 메인으로 이동 */
-const Splash: React.FC = () => {
+export default function Splash() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const t = setTimeout(() => navigate("/MainPage"), 1200);
-    return () => clearTimeout(t);
+    const qs = new URLSearchParams(window.location.search);
+    const access = qs.get("accessToken");
+    const refresh = qs.get("refreshToken");
+
+    if (access && refresh) {
+      sessionStorage.setItem("accessToken", access);
+      sessionStorage.setItem("refreshToken", refresh);
+
+      // URL 정리 (쿼리 제거)
+      window.history.replaceState(null, "", "/");
+
+      // 로그인 성공 → 바로 마이페이지
+      navigate("/mypage", { replace: true });
+      return;
+    }
+
+    // 미로그인 → 0.8초 후 /main
+    const timer = setTimeout(() => {
+      navigate("/main", { replace: true });
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
     <Wrapper>
       <Container>
-        <LogoBox>로고/아이콘</LogoBox>
+        <LogoBox>
+          <h1>스플래시</h1>
+        </LogoBox>
       </Container>
     </Wrapper>
   );
-};
-
-export default Splash;
+}
