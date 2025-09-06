@@ -10,8 +10,8 @@ import { useFeed } from '../app/FeedContext';
 
 const TodayViewFeed: React.FC = () => {
   const navigate = useNavigate();
-  const { posts, likePost, addComment, deletePost, isOnline, pendingActions } = useFeed();
-  const { currentMission, refreshMission } = useMission();
+  const { posts, likePost, deletePost, isOnline, pendingActions } = useFeed();
+  const { currentMission } = useMission();
   const [showMissionBar, setShowMissionBar] = useState(true);
   const [scrollY, setScrollY] = useState(0);
 
@@ -24,10 +24,6 @@ const TodayViewFeed: React.FC = () => {
     navigate(`/feed-detail/${postId}`);
   };
 
-  const handleAddMission = () => {
-    // 미션 등록 페이지로 이동
-    navigate('/mission-registration');
-  };
 
   const handleDeletePost = (postId: number) => {
     deletePost(postId);

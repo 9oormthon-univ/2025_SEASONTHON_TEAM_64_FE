@@ -1,8 +1,4 @@
-import type { MissionItem } from './MissionContext';
 import { api } from '../Landing/auth/api';
-
-const API_BASE = ''; // ✅ v1은 baseURL에 포함되어 있음
-const TIMEOUT_MS = 7000;
 
 // 로컬 폴백 저장소
 let localMissions: Array<{ id: string; description: string; createdAt: number }>= [];
@@ -23,9 +19,10 @@ export const missionService = {
       console.log('📊 응답 상태:', res.status);
       
       // 로컬에도 저장
+      const data = res.data as any;
       const item = { 
-        id: String(res.data.id ?? crypto.randomUUID()), 
-        description: res.data.title ?? title, 
+        id: String(data.id ?? crypto.randomUUID()), 
+        description: data.title ?? title, 
         createdAt: Date.now() 
       };
       localMissions.unshift(item);
@@ -88,10 +85,11 @@ export const missionService = {
       console.log('✅ API 응답 성공:', res.data);
       
       // 스웨거 응답 형식에 맞춰 변환
-      if (res.data && res.data.mission) {
+      const data = res.data as any;
+      if (data && data.mission) {
         return {
-          id: res.data.mission.missionId ?? res.data.mission.id ?? Date.now(),
-          description: res.data.mission.title ?? '미션'
+          id: data.mission.missionId ?? data.mission.id ?? Date.now(),
+          description: data.mission.title ?? '미션'
         };
       }
       
@@ -196,18 +194,19 @@ export const missionService = {
       console.log('✅ API 응답 성공:', res.data);
       
       // 스웨거 응답 형식에 맞춰 변환
-      if (res.data && res.data.items && Array.isArray(res.data.items)) {
-        const missions = res.data.items.map((item: any) => ({
+      const data = res.data as any;
+      if (data && data.items && Array.isArray(data.items)) {
+        const missions = data.items.map((item: any) => ({
           id: String(item.missionId ?? crypto.randomUUID()),
           description: item.missionTitle ?? '미션',
-          createdAt: new Date(res.data.date ?? Date.now()).getTime(),
+          createdAt: new Date(data.date ?? Date.now()).getTime(),
           memberId: item.memberId,
           memberNickname: item.memberNickname,
           status: item.status
         }));
         
         // 로컬 저장소 업데이트 (기존 형식 유지)
-        localMissions = missions.map(m => ({
+        localMissions = missions.map((m: any) => ({
           id: m.id,
           description: m.description,
           createdAt: m.createdAt

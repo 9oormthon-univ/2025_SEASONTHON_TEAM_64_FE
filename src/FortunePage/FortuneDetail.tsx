@@ -58,7 +58,7 @@ const FortuneDetail: React.FC = () => {
     setIsBookmarked(!isBookmarked);
   };
 
-  const handleAddComment = (postId: number, content: string) => {
+  const handleAddComment = (_postId: number, content: string) => {
     const newComment: Comment = {
       id: Date.now(),
       user: '나',
@@ -68,7 +68,7 @@ const FortuneDetail: React.FC = () => {
     setComments([...comments, newComment]);
   };
 
-  const handleDeleteComment = (postId: number, commentId: number) => {
+  const handleDeleteComment = (_postId: number, commentId: number) => {
     setComments(comments.filter(comment => comment.id !== commentId));
   };
 

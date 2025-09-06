@@ -1,9 +1,7 @@
-import type { FortuneCookieData } from './types';
 import { api } from '../Landing/auth/api';
 
 // -------- API + Fallback 설정 --------
 const API_BASE = '/fortunes'; // ✅ baseURL에 이미 /api/v1이 포함되어 있음
-const REQUEST_TIMEOUT_MS = 7000;
 
 function getMemberId(): number {
   const saved = localStorage.getItem('memberId');
@@ -54,20 +52,6 @@ function getMemberId(): number {
 //   return defaultSender;
 // }
 
-async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const id = setTimeout(() => reject(new Error('Request timed out')), ms);
-    promise
-      .then((res) => {
-        clearTimeout(id);
-        resolve(res);
-      })
-      .catch((err) => {
-        clearTimeout(id);
-        reject(err);
-      });
-  });
-}
 
 // 메인 브랜치의 api 인스턴스 사용 (자동 토큰 처리)
 // safeFetch는 더 이상 필요하지 않음
@@ -103,7 +87,7 @@ export const fortuneService = {
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
       console.log('📊 응답 상태:', res.status);
-      return res.data;
+      return res.data as { id: number; description: string };
     } catch (e: any) {
       console.log('💥 포춘쿠키 전송 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
@@ -134,7 +118,7 @@ export const fortuneService = {
       const res = await api.post(url);
       console.log('✅ API 응답 성공:', res.data);
       console.log('📊 응답 상태:', res.status);
-      return res.data;
+      return res.data as { id: number; description: string };
     } catch (e: any) {
       console.log('💥 포춘쿠키 열기 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
@@ -163,7 +147,7 @@ export const fortuneService = {
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
-      return res.data;
+      return res.data as { id: number; description: string };
     } catch (e: any) {
       console.log('💥 포춘쿠키 조회 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
@@ -191,7 +175,7 @@ export const fortuneService = {
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
-      return res.data;
+      return res.data as Array<{ id: number; description: string }>;
     } catch (e: any) {
       console.log('💥 포춘쿠키 리스트 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
@@ -209,7 +193,7 @@ export const fortuneService = {
   },
 
   // Back-compat: 이전 컴포넌트에서 사용하는 메시지 전송 API 호환
-  async sendFortuneMessage(content: string, sender: string): Promise<{ id: number; description: string }> {
+  async sendFortuneMessage(content: string): Promise<{ id: number; description: string }> {
     return this.sendFortune(getMemberId(), content);
   }
 };

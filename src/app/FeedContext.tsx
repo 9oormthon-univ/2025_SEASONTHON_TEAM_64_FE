@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { feedService } from '../TodayViewFeed/feedService';
 
 export interface Post {
   id: number;
@@ -10,6 +11,7 @@ export interface Post {
   isLiked: boolean;
   createdAt: number;
   isOffline?: boolean;
+  missionId?: number;
 }
 
 interface FeedContextValue {
@@ -176,33 +178,97 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return Math.max(...posts.map(p => p.id), 0) + 1;
   }, [posts]);
 
-  const addPost = useCallback((postData: Omit<Post, 'id' | 'likes' | 'comments' | 'isLiked' | 'createdAt'>) => {
-    const newPost: Post = {
-      ...postData,
-      id: getNextId(),
-      likes: 0,
-      comments: 0,
-      isLiked: false,
-      createdAt: Date.now(),
-      isOffline: !isOnline
-    };
-    setPosts(prev => [newPost, ...prev]);
-    if (!isOnline) {
-      setPendingActions(prev => [...prev, { type: 'ADD_POST', data: newPost, timestamp: Date.now() }]);
+  const addPost = useCallback(async (postData: Omit<Post, 'id' | 'likes' | 'comments' | 'isLiked' | 'createdAt'>) => {
+    try {
+      // API 호출
+      const response = await feedService.createFeed({
+        description: postData.content,
+        imageUrl: postData.image,
+        missionId: postData.missionId || 1
+      });
+
+      // API 응답을 Post 형태로 변환
+      const newPost: Post = {
+        id: response.feedId,
+        user: response.member.nickname,
+        content: response.description,
+        image: response.imageUrl,
+        likes: response.likeCount,
+        comments: response.commentCount,
+        isLiked: false,
+        createdAt: Date.now(),
+        isOffline: false,
+        missionId: response.missionId
+      };
+
+      setPosts(prev => [newPost, ...prev]);
+    } catch (error) {
+      console.error('게시글 추가 실패:', error);
+      // 오프라인 상태라면 대기 액션에 추가
+      if (!isOnline) {
+        const newPost: Post = {
+          ...postData,
+          id: getNextId(),
+          likes: 0,
+          comments: 0,
+          isLiked: false,
+          createdAt: Date.now(),
+          isOffline: true
+        };
+        setPosts(prev => [newPost, ...prev]);
+        setPendingActions(prev => [...prev, { type: 'ADD_POST', data: newPost, timestamp: Date.now() }]);
+      }
     }
   }, [getNextId, isOnline]);
 
-  const updatePost = useCallback((id: number, updates: Partial<Post>) => {
-    setPosts(prev => prev.map(post => post.id === id ? { ...post, ...updates } : post));
-    if (!isOnline) {
-      setPendingActions(prev => [...prev, { type: 'UPDATE_POST', data: { id, updates }, timestamp: Date.now() }]);
+  const updatePost = useCallback(async (id: number, updates: Partial<Post>) => {
+    try {
+      // API 호출
+      const response = await feedService.updateFeed(id, {
+        description: updates.content || '',
+        imageUrl: updates.image || '',
+        missionId: updates.missionId || 1
+      });
+
+      // API 응답을 Post 형태로 변환하여 업데이트
+      const updatedPost: Post = {
+        id: response.feedId,
+        user: response.member.nickname,
+        content: response.description,
+        image: response.imageUrl,
+        likes: response.likeCount,
+        comments: response.commentCount,
+        isLiked: false,
+        createdAt: Date.now(),
+        isOffline: false,
+        missionId: response.missionId
+      };
+
+      setPosts(prev => prev.map(post => post.id === id ? updatedPost : post));
+    } catch (error) {
+      console.error('게시글 수정 실패:', error);
+      // 오프라인 상태라면 로컬에서만 업데이트
+      if (!isOnline) {
+        setPosts(prev => prev.map(post => post.id === id ? { ...post, ...updates } : post));
+        setPendingActions(prev => [...prev, { type: 'UPDATE_POST', data: { id, updates }, timestamp: Date.now() }]);
+      }
     }
   }, [isOnline]);
 
-  const deletePost = useCallback((id: number) => {
-    setPosts(prev => prev.filter(post => post.id !== id));
-    if (!isOnline) {
-      setPendingActions(prev => [...prev, { type: 'DELETE_POST', data: { id }, timestamp: Date.now() }]);
+  const deletePost = useCallback(async (id: number) => {
+    try {
+      // API 호출
+      await feedService.deleteFeed(id);
+      
+      // 성공 시 로컬에서도 제거
+      setPosts(prev => prev.filter(post => post.id !== id));
+    } catch (error) {
+      console.error('게시글 삭제 실패:', error);
+      // 오프라인 상태라면 로컬에서만 삭제
+      if (!isOnline) {
+        setPosts(prev => prev.filter(post => post.id !== id));
+        setPendingActions(prev => [...prev, { type: 'DELETE_POST', data: { id }, timestamp: Date.now() }]);
+      }
     }
   }, [isOnline]);
 
@@ -229,6 +295,38 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('동기화 실패:', error);
     }
   }, [isOnline, pendingActions]);
+
+  // 초기 데이터 로딩
+  useEffect(() => {
+    const loadInitialFeeds = async () => {
+      try {
+        console.log('🔄 초기 피드 데이터 로딩 시작');
+        const response = await feedService.getFeedsCursor(undefined, 10);
+        
+        // API 응답을 Post 형태로 변환
+        const apiPosts: Post[] = response.items.map(feed => ({
+          id: feed.feedId,
+          user: feed.member.nickname,
+          content: feed.description,
+          image: feed.imageUrl,
+          likes: feed.likeCount,
+          comments: feed.commentCount,
+          isLiked: false,
+          createdAt: Date.now(),
+          isOffline: false,
+          missionId: feed.missionId
+        }));
+
+        setPosts(apiPosts);
+        console.log('✅ 초기 피드 데이터 로딩 완료:', apiPosts.length, '개');
+      } catch (error) {
+        console.error('❌ 초기 피드 데이터 로딩 실패:', error);
+        console.log('📝 로컬 데이터 사용');
+      }
+    };
+
+    loadInitialFeeds();
+  }, []);
 
   useEffect(() => {
     if (isOnline && pendingActions.length > 0) {

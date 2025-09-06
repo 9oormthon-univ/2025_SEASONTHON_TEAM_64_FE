@@ -15,7 +15,7 @@ interface ServerMission {
 
 const MissionListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { missions: localMissions, deleteMission, finalizeMission } = useMission();
+  const { missions: localMissions, deleteMission } = useMission();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [serverMissions, setServerMissions] = useState<ServerMission[]>([]);
   const [loading, setLoading] = useState(true);

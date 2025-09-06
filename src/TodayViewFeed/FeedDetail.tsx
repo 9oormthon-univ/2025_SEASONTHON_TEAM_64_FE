@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ArrowLeft, Bell, Heart, MessageCircle, Send } from 'lucide-react';
+import { ArrowLeft, Bell, Heart, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CommentSection from './CommentSection';
 
@@ -70,7 +70,7 @@ const FeedDetail: React.FC = () => {
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
   };
 
-  const handleAddComment = (postId: number, content: string) => {
+  const handleAddComment = (_postId: number, content: string) => {
     const newComment: Comment = {
       id: Date.now(),
       user: '나',
@@ -80,7 +80,7 @@ const FeedDetail: React.FC = () => {
     setComments([...comments, newComment]);
   };
 
-  const handleDeleteComment = (postId: number, commentId: number) => {
+  const handleDeleteComment = (_postId: number, commentId: number) => {
     setComments(comments.filter(comment => comment.id !== commentId));
   };
 

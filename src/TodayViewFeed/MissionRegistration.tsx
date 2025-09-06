@@ -42,7 +42,8 @@ const MissionRegistration: React.FC = () => {
     addPost({
       user: '나',
       content: text.trim(),
-      image: imagePreview || '/placeholder-image.jpg'
+      image: imagePreview || '/placeholder-image.jpg',
+      missionId: currentMission ? parseInt(currentMission.id) : 1
     });
 
     // 오늘의 미션 문구 동기화를 위해 서버 최신 미션 시도 (실패해도 무시)
