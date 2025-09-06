@@ -16,9 +16,11 @@ export const missionService = {
       const requestBody = { title };
       console.log('🌐 API 요청 URL:', url);
       console.log('📦 요청 데이터:', requestBody);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${url}`);
       
       const res = await api.post(url, requestBody);
       console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 응답 상태:', res.status);
       
       // 로컬에도 저장
       const item = { 
@@ -34,7 +36,9 @@ export const missionService = {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
-        message: e.message
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
       });
       
       // 폴백: 로컬에 저장
@@ -111,6 +115,52 @@ export const missionService = {
     }
   },
 
+  // 미션 목록 조회 (관리자용) - GET /api/v1/missions
+  async listMissions() {
+    console.log('📋 listMissions 호출 시작 (관리자용)');
+    try {
+      const url = `${API_BASE}/missions`;
+      console.log('🌐 API 요청 URL:', url);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${url}`);
+      
+      const res = await api.get(url);
+      console.log('✅ API 응답 성공:', res.data);
+      console.log('📊 응답 상태:', res.status);
+      
+      // 스웨거 응답 형식에 맞춰 변환 (배열)
+      if (Array.isArray(res.data)) {
+        const missions = res.data.map((mission: any) => ({
+          id: String(mission.id ?? crypto.randomUUID()),
+          description: mission.title ?? '미션',
+          createdAt: new Date(mission.createdAt ?? Date.now()).getTime(),
+          member: mission.member
+        }));
+        
+        // 로컬 저장소 업데이트 (기존 형식 유지)
+        localMissions = missions.map(m => ({
+          id: m.id,
+          description: m.description,
+          createdAt: m.createdAt
+        }));
+        
+        return missions;
+      }
+      
+      return [];
+    } catch (e: any) {
+      console.log('💥 미션 목록 조회 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
+      });
+      return localMissions;
+    }
+  },
+
   // 미션 배정 현황 조회 - GET /api/v1/missions/assignments
   async listAssignments(dateISO?: string) {
     console.log('📋 listAssignments 호출 시작:', { dateISO });
@@ -119,6 +169,7 @@ export const missionService = {
       const params = dateISO ? `?date=${encodeURIComponent(dateISO)}` : '';
       const fullUrl = url + params;
       console.log('🌐 API 요청 URL:', fullUrl);
+      console.log('🔗 전체 요청 URL:', `https://api.planhub.site/api${fullUrl}`);
       
       const res = await api.get(fullUrl);
       console.log('✅ API 응답 성공:', res.data);
@@ -151,7 +202,9 @@ export const missionService = {
         status: e.response?.status,
         statusText: e.response?.statusText,
         data: e.response?.data,
-        message: e.message
+        message: e.message,
+        url: e.config?.url,
+        fullUrl: e.config?.baseURL + e.config?.url
       });
       return localMissions;
     }

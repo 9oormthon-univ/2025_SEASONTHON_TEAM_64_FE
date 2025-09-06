@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,10 +6,52 @@ import { useMission } from '../app/MissionContext';
 import { missionService } from '../app/missionService';
 import BottomNavigation from '../components/BottomNavigation';
 
+interface ServerMission {
+  id: string;
+  description: string;
+  createdAt: number;
+  member?: any;
+}
+
 const MissionListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { missions, deleteMission, finalizeMission } = useMission();
+  const { missions: localMissions, deleteMission, finalizeMission } = useMission();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [serverMissions, setServerMissions] = useState<ServerMission[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 서버에서 미션 목록 가져오기
+  useEffect(() => {
+    const loadMissions = async () => {
+      try {
+        setLoading(true);
+        console.log('📋 관리자 미션 목록 로드 시작');
+        const missions = await missionService.listMissions();
+        console.log('✅ 서버 미션 목록:', missions);
+        setServerMissions(missions);
+      } catch (error) {
+        console.error('❌ 미션 목록 로드 실패:', error);
+        // 서버 실패 시 로컬 미션 사용
+        setServerMissions(localMissions.map(m => ({
+          id: m.id,
+          description: m.text,
+          createdAt: m.createdAt
+        })));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMissions();
+  }, [localMissions]);
+
+  // 서버 미션과 로컬 미션을 합쳐서 사용
+  const missions = serverMissions.length > 0 ? serverMissions : localMissions.map(m => ({
+    id: m.id,
+    text: m.text,
+    createdAt: m.createdAt,
+    finalized: m.finalized
+  }));
 
   const handleDelete = (id: string) => {
     setShowDeleteConfirm(id);
@@ -73,22 +115,28 @@ const MissionListPage: React.FC = () => {
           </ListHeader>
           
           <MissionItems>
-            {missions.map((m, index) => (
-              <MissionItem key={m.id || `mission-${index}`}>
-                <MissionText>{m.text}</MissionText>
-                <ActionMenu>
-                  <ActionButton onClick={() => handleEdit(m.id)}>
-                    수정하기
-                  </ActionButton>
-                  <ActionButton 
-                    onClick={() => handleDelete(m.id)}
-                    disabled={isFinalizedMission(m.id)}
-                  >
-                    삭제하기
-                  </ActionButton>
-                </ActionMenu>
-              </MissionItem>
-            ))}
+            {loading ? (
+              <LoadingText>미션 목록을 불러오는 중...</LoadingText>
+            ) : missions.length === 0 ? (
+              <EmptyText>등록된 미션이 없습니다.</EmptyText>
+            ) : (
+              missions.map((m, index) => (
+                <MissionItem key={m.id || `mission-${index}`}>
+                  <MissionText>{(m as any).text || (m as any).description}</MissionText>
+                  <ActionMenu>
+                    <ActionButton onClick={() => handleEdit(m.id)}>
+                      수정하기
+                    </ActionButton>
+                    <ActionButton 
+                      onClick={() => handleDelete(m.id)}
+                      disabled={isFinalizedMission(m.id)}
+                    >
+                      삭제하기
+                    </ActionButton>
+                  </ActionMenu>
+                </MissionItem>
+              ))
+            )}
           </MissionItems>
         </MissionList>
 
@@ -293,6 +341,20 @@ const DeleteButton = styled.button`
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
+`;
+
+const LoadingText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+`;
+
+const EmptyText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 14px;
 `;
 
 export default MissionListPage;
