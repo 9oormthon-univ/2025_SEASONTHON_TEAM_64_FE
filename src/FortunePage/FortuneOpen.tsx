@@ -4,7 +4,7 @@ import { ArrowLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // 타입 전용 사용 시 런타임 번들 제거
 import type { FortuneCookieData } from './types';
-import BottomNavigation from '../TodayViewFeed/BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation';
 
 const FortuneOpen: React.FC = () => {
   const navigate = useNavigate();
