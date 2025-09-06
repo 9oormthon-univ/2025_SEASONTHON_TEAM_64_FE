@@ -72,42 +72,81 @@ export const missionService = {
     }
   },
 
+  // 회원의 오늘 미션 조회 - GET /api/v1/members/{memberId}/missions/today
   async getTodayMission(memberId?: number): Promise<{ id: number; description: string } | null> {
+    console.log('🎯 getTodayMission 호출 시작:', { memberId });
     try {
       const id = memberId ?? 1;
-      const res = await api.get(`${API_BASE}/members/${id}/missions/today`);
-      return res.data;
-    } catch (e) {
-      console.log('💥 오늘의 미션 조회 에러, 폴백 사용:', e);
-      // 폴백: 로컬 최신
-      if (localMissions.length === 0) return null;
-      const latest = [...localMissions].sort((a,b)=>b.createdAt-a.createdAt)[0];
-      return { id: Number.isFinite(Number(latest.id)) ? Number(latest.id) : Date.now(), description: latest.description };
-    }
-  },
-
-  // 미션 목록 조회 - GET /api/v1/missions
-  async listAssignments(dateISO?: string) {
-    console.log('📋 listAssignments 호출 시작:', { dateISO });
-    try {
-      const url = `${API_BASE}/missions`;
+      const url = `${API_BASE}/members/${id}/missions/today`;
       console.log('🌐 API 요청 URL:', url);
       
       const res = await api.get(url);
       console.log('✅ API 응답 성공:', res.data);
       
-      // 응답 데이터를 로컬 형식으로 변환
-      const missions = Array.isArray(res.data) ? res.data.map((m: any) => ({
-        id: String(m.id ?? crypto.randomUUID()),
-        description: m.title ?? m.description ?? '미션',
-        createdAt: new Date(m.createdAt ?? Date.now()).getTime()
-      })) : [];
+      // 스웨거 응답 형식에 맞춰 변환
+      if (res.data && res.data.mission) {
+        return {
+          id: res.data.mission.missionId ?? res.data.mission.id ?? Date.now(),
+          description: res.data.mission.title ?? '미션'
+        };
+      }
       
-      // 로컬 저장소 업데이트
-      localMissions = missions;
-      return missions;
+      return null;
     } catch (e: any) {
-      console.log('💥 미션 목록 조회 에러, 폴백 사용:', e);
+      console.log('💥 오늘의 미션 조회 에러, 폴백 사용:', e);
+      console.log('🔍 에러 상세 정보:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message
+      });
+      
+      // 폴백: 로컬 최신
+      if (localMissions.length === 0) return null;
+      const latest = [...localMissions].sort((a,b)=>b.createdAt-a.createdAt)[0];
+      return { 
+        id: Number.isFinite(Number(latest.id)) ? Number(latest.id) : Date.now(), 
+        description: latest.description 
+      };
+    }
+  },
+
+  // 미션 배정 현황 조회 - GET /api/v1/missions/assignments
+  async listAssignments(dateISO?: string) {
+    console.log('📋 listAssignments 호출 시작:', { dateISO });
+    try {
+      const url = `${API_BASE}/missions/assignments`;
+      const params = dateISO ? `?date=${encodeURIComponent(dateISO)}` : '';
+      const fullUrl = url + params;
+      console.log('🌐 API 요청 URL:', fullUrl);
+      
+      const res = await api.get(fullUrl);
+      console.log('✅ API 응답 성공:', res.data);
+      
+      // 스웨거 응답 형식에 맞춰 변환
+      if (res.data && res.data.items && Array.isArray(res.data.items)) {
+        const missions = res.data.items.map((item: any) => ({
+          id: String(item.missionId ?? crypto.randomUUID()),
+          description: item.missionTitle ?? '미션',
+          createdAt: new Date(res.data.date ?? Date.now()).getTime(),
+          memberId: item.memberId,
+          memberNickname: item.memberNickname,
+          status: item.status
+        }));
+        
+        // 로컬 저장소 업데이트 (기존 형식 유지)
+        localMissions = missions.map(m => ({
+          id: m.id,
+          description: m.description,
+          createdAt: m.createdAt
+        }));
+        
+        return missions;
+      }
+      
+      return [];
+    } catch (e: any) {
+      console.log('💥 미션 배정 현황 조회 에러, 폴백 사용:', e);
       console.log('🔍 에러 상세 정보:', {
         status: e.response?.status,
         statusText: e.response?.statusText,
