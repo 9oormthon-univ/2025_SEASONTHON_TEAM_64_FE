@@ -2,8 +2,9 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../auth/token";
-import { Wrapper, Container, LogoBox, MainText, LoginBtn, LoginText } from "../Styles/MainPage.Styles";
+import { Wrapper, Container, LogoBox, MainText, LoginBtn, LoginText,BottomImgBox } from "../Styles/MainPage.Styles";
 import { TalkIcon } from "../../Styles/Icons/TalkIcon";
+import { LogoTextOrangeImg, CapCharacterImg, ScarfCharacterImg } from "../../Styles/Image/Imges";
 
 
 
@@ -23,14 +24,17 @@ export default function MainPage() {
   return (
     <Wrapper>
       <Container>
-        <LogoBox>로고</LogoBox>
-        <MainText>청년과 노인이 마음을 나누는 따뜻한 디지털 마루</MainText>
+        <LogoBox><LogoTextOrangeImg/></LogoBox>
+        <MainText>청년과 노인이 마음을 나누는<br/> 따뜻한 디지털 마루</MainText>
 
         <LoginBtn onClick={handleKakaoLogin}>
           <TalkIcon />
           <LoginText>카카오 로그인</LoginText>
         </LoginBtn>
-
+        <BottomImgBox>
+        <CapCharacterImg />
+        <ScarfCharacterImg />
+        </BottomImgBox>
       </Container>
     </Wrapper>
   );
