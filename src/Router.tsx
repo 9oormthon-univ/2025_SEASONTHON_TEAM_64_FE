@@ -8,6 +8,10 @@ const Main = lazy(() => import('./pages/main'));
 const Admin = lazy(() => import('./pages/admin'));
 const Generate = lazy(() => import('./pages/admin/generate/Generate'));
 const List = lazy(() => import('./pages/admin/list/List'));
+const Feed = lazy(() => import('./pages/main'));
+const Fortune = lazy(() => import('./pages/fortune'));
+const Info = lazy(() => import('./pages/info'));
+const MyPage = lazy(() => import('./pages/my'));
 
 const withSuspense = (element: React.ReactNode) => (
   <Suspense fallback={<></>}>{element}</Suspense>
@@ -21,6 +25,18 @@ const router = createBrowserRouter([
       {
         element: withSuspense(<Main />),
         index: true,
+      },
+      {
+        path: '/fortune',
+        element: withSuspense(<Fortune />),
+      },
+      {
+        path: '/info',
+        element: withSuspense(<Info />),
+      },
+      {
+        path: '/my-page',
+        element: withSuspense(<MyPage />),
       },
     ],
   },
@@ -41,6 +57,9 @@ const router = createBrowserRouter([
     path: '/admin/list',
     element: withSuspense(<List />),
   },
+  {
+    path:
+  }
 ]);
 
 export default router;
