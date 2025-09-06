@@ -13,11 +13,11 @@ const queryClient = new QueryClient();
 // 1) 먼저 즉시 렌더 (앱이 바로 뜨도록)
 const rootEl = document.getElementById("root")!;
 createRoot(rootEl).render(
-  <React.StrictMode>
+  //<React.StrictMode> 스트립모드 자꾸 떠서 주석처리
     <QueryClientProvider client={queryClient}>
       <Routers />
     </QueryClientProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 );
 
 // 2) 렌더 후에 카카오 SDK 비동기 프리로드 (실패해도 앱은 유지)
