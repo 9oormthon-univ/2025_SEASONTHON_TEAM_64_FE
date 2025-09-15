@@ -53,7 +53,7 @@ const getInformationList = (
   category?: string,
   sortByRecent?: boolean,
 ) => {
-  return ApiBuilder.create<void, InformationResponse>('/api/v1/informations')
+  return ApiBuilder.create<void, InformationResponse[]>('/api/v1/informations')
     .setMethod('GET')
     .setParams({
       lastId,
@@ -63,7 +63,9 @@ const getInformationList = (
 };
 
 const getMyInformationList = (lastId?: number) => {
-  return ApiBuilder.create<void, InformationResponse>('/api/v1/informations/my')
+  return ApiBuilder.create<void, InformationResponse[]>(
+    '/api/v1/informations/my',
+  )
     .setMethod('GET')
     .setParams({
       lastId,
