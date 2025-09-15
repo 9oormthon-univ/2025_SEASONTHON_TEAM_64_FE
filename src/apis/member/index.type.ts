@@ -2,7 +2,7 @@ interface MemberDetailResponse {
   memberId: number;
   nickname: string;
   email: string;
-  profileImageUrl: string;
+  profileImageUrl?: string;
   role: string;
   mode: string;
 }
