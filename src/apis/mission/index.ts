@@ -5,18 +5,18 @@ import type {
   MissionResponse,
 } from './index.type';
 
-const createMission = (description: string) => {
+const createMission = (request: MissionCreateRequest) => {
   return ApiBuilder.create<MissionCreateRequest, number>(
     '/api/v1/missions/admin',
   )
     .setMethod('POST')
-    .setData({ description });
+    .setData(request);
 };
 
-const modifyMission = (missionId: number, description: string) => {
+const modifyMission = (request: MissionModifyRequest) => {
   return ApiBuilder.create<MissionModifyRequest, void>(`/api/v1/missions/admin`)
     .setMethod('PUT')
-    .setData({ missionId, description });
+    .setData(request);
 };
 
 const getMissionList = () => {

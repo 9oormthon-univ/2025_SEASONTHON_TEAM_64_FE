@@ -1,12 +1,12 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
 import type { CommentCreateRequest, CommentResponse } from './index.type';
 
-const createComment = (feedId: number, description: string) => {
+const createComment = (feedId: number, request: CommentCreateRequest) => {
   return ApiBuilder.create<CommentCreateRequest, number>(
     `/api/v1/feeds/${feedId}/comments`,
   )
     .setMethod('POST')
-    .setData({ description });
+    .setData(request);
 };
 
 const deleteComment = (feedId: number, commentId: number) => {

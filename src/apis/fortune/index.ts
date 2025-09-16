@@ -1,10 +1,10 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
 import type { FortuneResponse, FortuneCreateRequest } from './index.type';
 
-const createFortune = (description: string) => {
+const createFortune = (request: FortuneCreateRequest) => {
   return ApiBuilder.create<FortuneCreateRequest, number>('/api/v1/fortunes')
     .setMethod('POST')
-    .setData({ description });
+    .setData(request);
 };
 
 const assignFortune = () => {

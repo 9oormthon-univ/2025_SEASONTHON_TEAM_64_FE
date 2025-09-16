@@ -7,8 +7,8 @@ interface MemberDetailResponse {
   mode: string;
 }
 
-interface MemberDeviceTokenResponse {
+interface MemberDeviceTokenRequest {
   deviceToken: string;
 }
 
-export { MemberDetailResponse, MemberDeviceTokenResponse };
+export { MemberDetailResponse, MemberDeviceTokenRequest };

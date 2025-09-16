@@ -1,7 +1,7 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
 import type {
   MemberDetailResponse,
-  MemberDeviceTokenResponse,
+  MemberDeviceTokenRequest,
 } from '../member/index.type';
 
 const getMemberDetail = () => {
@@ -16,11 +16,11 @@ const updateMemberMode = (mode: string) => {
     .setParams({ mode });
 };
 
-const updateMemberDeviceToken = (deviceToken: string) => {
-  return ApiBuilder.create<MemberDeviceTokenResponse, void>(
+const updateMemberDeviceToken = (request: MemberDeviceTokenRequest) => {
+  return ApiBuilder.create<MemberDeviceTokenRequest, void>(
     `/api/v1/members/device-token`,
   )
-    .setData({ deviceToken })
+    .setData(request)
     .setMethod('PUT');
 };
 
