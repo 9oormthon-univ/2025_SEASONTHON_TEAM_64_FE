@@ -1,6 +1,6 @@
 import React from 'react';
 import * as S from './AdminInfo.styles';
-import nonImage from '../../assets/admin/non-image.svg';
+import nonImage from '../../../assets/admin/non-image.svg';
 
 interface AdminInfoProps {
   profileImageUrl?: string;

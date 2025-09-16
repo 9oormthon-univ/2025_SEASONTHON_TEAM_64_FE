@@ -6,7 +6,7 @@ export const ROUTE_PATHS = {
   ADMIN: '/admin',
   ADMIN_GENERATE: '/admin/generate',
   ADMIN_LIST: '/admin/list',
-  ADMIN_MODIFY: '/admin/modify',
+  ADMIN_MODIFY: '/admin/modify/:missionId',
   USER: '/user',
 } as const;
 
