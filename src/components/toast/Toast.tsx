@@ -46,6 +46,7 @@ const ToastBox = styled.div<{ t?: 'error' | 'info'; delay?: number }>`
   padding: 1.4rem 0rem;
 
   ${({ theme }) => theme.fonts.bold}
+  font-size: 1.5rem;
   color: white;
   background: ${(p) => (p.t === 'error' ? '#e74c3c' : '#000')};
 
