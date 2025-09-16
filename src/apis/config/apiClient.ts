@@ -41,14 +41,20 @@ apiClient.interceptors.response.use(
         return apiClient.request(originalConfig);
       } catch (reissueError) {
         console.error('토큰 재발급 실패:', reissueError);
+        redirectToLogin();
         sessionStorage.clear();
       }
     } else if (error.response && error.response.status === 401) {
       sessionStorage.clear();
+      redirectToLogin();
     }
 
     return Promise.reject(error);
   },
 );
+
+function redirectToLogin() {
+  window.location.href = '/login';
+}
 
 export default apiClient;
