@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import * as S from './index.styles';
-import nonImage from '../../../assets/admin/non-image.svg';
 import { useNavigate } from 'react-router-dom';
 import { useApiQuery } from '../../../apis/config/builder/ApiBuilder';
 import { getMemberDetail } from '../../../apis/member';
 import { createMission } from '../../../apis/mission';
+import SuccessAlert from '../../../components/successAlert/SuccessAlert';
+import AdminInfo from '../../../components/adminInfo/AdminInfo';
 
 const AdminGenerate = () => {
   const navigate = useNavigate();
@@ -33,11 +34,7 @@ const AdminGenerate = () => {
 
   return (
     <>
-      {isSuccess && (
-        <S.SuccessAlertContainer>
-          <S.SuccessPopUp>오늘의 미션이 등록되었습니다.</S.SuccessPopUp>
-        </S.SuccessAlertContainer>
-      )}
+      <SuccessAlert open={isSuccess} message="오늘의 미션이 등록되었습니다." />
       <S.Conatiner>
         <S.TopTextBox>
           <S.TopTextTitle>오늘의 미션을 등록하세요!</S.TopTextTitle>
@@ -46,20 +43,10 @@ const AdminGenerate = () => {
           </S.TopTextDescription>
         </S.TopTextBox>
         <S.TextAreaSection>
-          <S.AdminInfoSection>
-            <S.AdminProfileImage
-              src={
-                memberData?.profileImageUrl
-                  ? memberData.profileImageUrl
-                  : nonImage
-              }
-              alt="admin profile"
-            />
-            <S.AdminNameSection>
-              <S.AdminNameText>관리자</S.AdminNameText>
-              <S.AdminNickname>{memberData?.nickname}</S.AdminNickname>
-            </S.AdminNameSection>
-          </S.AdminInfoSection>
+          <AdminInfo
+            profileImageUrl={memberData?.profileImageUrl}
+            nickname={memberData?.nickname}
+          />
           <S.TextArea
             placeholder="미션 내용을 입력해주세요."
             value={title}
