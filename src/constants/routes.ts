@@ -18,6 +18,8 @@ export const ROUTE_PATHS = {
   INFORMATION: '/info',
   INFORMATION_GENERATE: '/info/create',
   INFORMATION_DETAIL: '/info/:informationId',
+  MY_PAGE: '/my-page',
+  MY_PAGE_EDIT: '/my-page/edit',
 } as const;
 
 export type RouteKey = keyof typeof ROUTE_PATHS;
