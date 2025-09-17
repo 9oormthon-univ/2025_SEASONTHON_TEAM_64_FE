@@ -20,6 +20,9 @@ const Feed = lazy(() => import('./pages/feed'));
 const FeedGenerate = lazy(() => import('./pages/feed/generate'));
 const FeedModify = lazy(() => import('./pages/feed/modify'));
 const Fortune = lazy(() => import('./pages/fortune'));
+const FortuneReceive = lazy(() => import('./pages/fortune/receive'));
+const FortuneSend = lazy(() => import('./pages/fortune/send'));
+const FortuneDetail = lazy(() => import('./pages/fortune/detail'));
 const Login = lazy(() => import('./pages/login'));
 const OnBoarding = lazy(() => import('./pages/onboarding'));
 const Admin = lazy(() => import('./pages/admin'));
@@ -52,6 +55,18 @@ const routes: RouteObject[] = [
   {
     path: ROUTE_PATHS.FEED_MODIFY,
     element: buildElement(<FeedModify />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.FORTUNE_RECEIVE,
+    element: buildElement(<FortuneReceive />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.FORTUNE_SEND,
+    element: buildElement(<FortuneSend />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.FORTUNE_DETAIL,
+    element: buildElement(<FortuneDetail />, { auth: true }),
   },
   { path: ROUTE_PATHS.ADMIN, element: buildElement(<Admin />, { auth: true }) },
   {

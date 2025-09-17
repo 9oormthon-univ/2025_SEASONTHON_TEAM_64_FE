@@ -18,6 +18,12 @@ export const Text = styled.div`
   ${({ theme }) => theme.fonts.bold}
   color: #fff;
   font-size: 2.4rem;
+  text-align: center;
+  line-height: 2.8rem;
+
+  span {
+    color: #ffa263;
+  }
 `;
 
 export const Image = styled.img`

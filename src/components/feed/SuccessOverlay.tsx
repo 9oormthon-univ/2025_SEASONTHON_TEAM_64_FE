@@ -3,7 +3,7 @@ import * as S from './SuccessOverlay.styles';
 
 interface SuccessOverlayProps {
   imageSrc: string;
-  message?: string;
+  message?: React.ReactNode;
 }
 
 const SuccessOverlay: React.FC<SuccessOverlayProps> = ({

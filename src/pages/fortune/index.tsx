@@ -22,11 +22,11 @@ const Fortune = () => {
         <img src={notification ? notify : nonNotify} />
       </S.Header>
       <S.FortuneCookieImage src={fortuneCookie} />
-      <S.ButtonImage src={receiver} onClick={() => navigate('/fortune/open')} />
       <S.ButtonImage
-        src={sender}
-        onClick={() => navigate('/fortune/generate')}
+        src={receiver}
+        onClick={() => navigate('/fortune/receive')}
       />
+      <S.ButtonImage src={sender} onClick={() => navigate('/fortune/send')} />
     </S.Container>
   );
 };
