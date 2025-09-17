@@ -49,9 +49,17 @@ export const Actions = styled.div`
 `;
 
 export const LikeBtn = styled.img`
-  width: 2.4rem;
-  height: 2.2rem;
+  width: 2.2rem;
+  height: 2rem;
+  display: inline-block;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
   cursor: pointer;
+  vertical-align: middle;
+
+  &[data-animating='true'] {
+    transform: scale(2);
+  }
 `;
 
 export const CommentBtn = styled.img`

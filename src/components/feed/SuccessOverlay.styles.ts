@@ -18,11 +18,16 @@ export const Text = styled.div`
   ${({ theme }) => theme.fonts.bold}
   color: #fff;
   font-size: 2.4rem;
+  text-align: center;
+  line-height: 2.8rem;
+
+  span {
+    color: #ffa263;
+  }
 `;
 
-export const Video = styled.video`
-  margin-top: 4.5rem;
-  width: 53.8rem;
-  height: 39.15rem;
+export const Image = styled.img`
+  max-width: 16.3rem;
+  transform: scale(2);
   flex-shrink: 0;
 `;

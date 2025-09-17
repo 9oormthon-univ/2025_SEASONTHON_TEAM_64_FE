@@ -1,5 +1,7 @@
 import React from 'react';
 import * as S from './index.styles';
+import youngGif from '../../assets/gif/young_maru.gif';
+import oldGif from '../../assets/gif/old_maru.gif';
 import young from '../../assets/user/young_maru.svg';
 import old from '../../assets/user/old_maru.svg';
 import tip from '../../assets/user/tip.svg';
@@ -42,7 +44,11 @@ const UserPage = () => {
           isSelected={selectedMode === 'OLD'}
           onClick={() => handleSelectMode('OLD')}
         >
-          <S.ModeBoxImage src={old} alt="노인모드" mode="OLD" />
+          <S.ModeBoxImage
+            src={selectedMode === 'OLD' ? oldGif : old}
+            alt="노인모드"
+            mode="OLD"
+          />
 
           <S.ModeBoxText>노인</S.ModeBoxText>
         </S.ModeBox>
@@ -51,7 +57,11 @@ const UserPage = () => {
           isSelected={selectedMode === 'YOUNG'}
           onClick={() => handleSelectMode('YOUNG')}
         >
-          <S.ModeBoxImage src={young} alt="청년모드" mode="YOUNG" />
+          <S.ModeBoxImage
+            src={selectedMode === 'YOUNG' ? youngGif : young}
+            alt="청년모드"
+            mode="YOUNG"
+          />
           <S.ModeBoxText>청년</S.ModeBoxText>
         </S.ModeBox>
       </S.ModeBoxWrapper>

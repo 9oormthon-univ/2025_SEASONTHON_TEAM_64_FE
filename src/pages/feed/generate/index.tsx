@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApiQuery } from '../../../apis/config/builder/ApiBuilder';
 import { createFeed } from '../../../apis/feed';
 import { getUserMission } from '../../../apis/mission';
-import successVideo from '../../../assets/feed/generateSuccess.webm';
+import successVideo from '../../../assets/gif/feed_generate.gif';
 import back from '../../../assets/feed/left-arrow.svg';
 import select from '../../../assets/feed/select-image.svg';
 import { useToastContext } from '../../../components/toast/Toast';
@@ -87,7 +87,7 @@ const FeedGenerate: React.FC = () => {
 
   return (
     <>
-      {isSuccess && <SuccessOverlay videoSrc={successVideo} />}
+      {isSuccess && <SuccessOverlay imageSrc={successVideo} />}
       <S.Container>
         <Header backIcon={back} onBack={() => navigate(-1)} />
         <MissionBox description={userMission?.description} />
@@ -101,6 +101,7 @@ const FeedGenerate: React.FC = () => {
           onChangeText={setText}
         />
         <SubmitButton
+          text="등록하기"
           onClick={handleSubmit}
           disabled={!imageFile || !text.trim() || !userMission?.id}
           isSubmitting={isSubmitting}

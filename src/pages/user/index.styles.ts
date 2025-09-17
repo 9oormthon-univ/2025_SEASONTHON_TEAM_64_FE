@@ -49,6 +49,7 @@ export const ModeBox = styled.div<{
 `;
 
 export const ModeBoxImage = styled.img<{ mode?: 'OLD' | 'YOUNG' }>`
+  max-width: 60%;
   aspect-ratio: 9.8 / 8.9;
   margin-top: ${({ mode }) => (mode === 'OLD' ? '5rem' : '6.1rem')};
   margin-bottom: ${({ mode }) => (mode === 'OLD' ? '0rem' : '0.8rem')};
