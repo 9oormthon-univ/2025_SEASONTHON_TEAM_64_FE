@@ -7,14 +7,11 @@ import receiver from '../../assets/fortune/receiver.svg';
 import sender from '../../assets/fortune/sender.svg';
 import notify from '../../assets/fortune/notification.svg';
 import nonNotify from '../../assets/fortune/non-notification.svg';
-import { useApiQuery } from '../../apis/config/builder/ApiBuilder';
-import { checkNotification } from '../../apis/notification';
+import useNotificationStatus from '../../hooks/useNotificationStatus';
 
 const Fortune = () => {
   const navigate = useNavigate();
-  const { data: notification } = useApiQuery(checkNotification(), [
-    'notification',
-  ]);
+  const notification = useNotificationStatus();
 
   return (
     <S.Container>

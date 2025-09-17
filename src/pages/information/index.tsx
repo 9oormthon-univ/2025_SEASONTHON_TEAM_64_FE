@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import * as S from './index.styles';
-import notify from '../../assets/information/notification.svg';
-import nonNotify from '../../assets/information/non-notification.svg';
 import createIcon from '../../assets/information/plus.svg';
 import { useNavigate } from 'react-router-dom';
-import { useApiQuery } from '../../apis/config/builder/ApiBuilder';
-import { checkNotification } from '../../apis/notification';
+import useInfiniteInformation from '../../hooks/useInfiniteInformation';
+import NotificationIcon from '../../components/information/NotificationIcon';
+import CategoryTabs from '../../components/information/CategoryTabs';
+import InformationItem from '../../components/information/InformationItem';
+import useNotificationStatus from '../../hooks/useNotificationStatus';
 
 const categories = [
   { label: '전체', value: null },
@@ -16,31 +17,40 @@ const categories = [
 
 const Information = () => {
   const navigate = useNavigate();
-  const { data: notification } = useApiQuery(checkNotification(), [
-    'notification',
-  ]);
+  const notification = useNotificationStatus();
   const [category, setCategory] = useState<string | null>(null);
+  const { items, isLoading, isFetchingNextPage, sentinelRef, containerRef } =
+    useInfiniteInformation(category);
 
   return (
     <>
       <S.Container>
         <S.Header>
-          <img
-            src={notification ? notify : nonNotify}
+          <NotificationIcon
+            enabled={notification}
             onClick={() => navigate('/notification')}
           />
         </S.Header>
-        <S.CategoryBox>
-          {categories.map((cat, index) => (
-            <S.Category
-              key={index}
-              selected={category === cat.value}
-              onClick={() => setCategory(cat.value)}
-            >
-              {cat.label}
-            </S.Category>
+        <CategoryTabs
+          categories={categories}
+          selected={category}
+          onChange={setCategory}
+        />
+        <S.InfoList ref={containerRef}>
+          {items.map((info) => (
+            <InformationItem
+              key={info.informationId}
+              item={info}
+              onClick={() => navigate(`/info/${info.informationId}`)}
+            />
           ))}
-        </S.CategoryBox>
+          <div ref={sentinelRef} style={{ height: 1 }} />
+          {(isLoading || isFetchingNextPage) && (
+            <div style={{ padding: '1rem 0', color: '#8b8b8b' }}>
+              불러오는 중…
+            </div>
+          )}
+        </S.InfoList>
       </S.Container>
       <S.CreateIcon src={createIcon} onClick={() => navigate('/info/create')} />
     </>

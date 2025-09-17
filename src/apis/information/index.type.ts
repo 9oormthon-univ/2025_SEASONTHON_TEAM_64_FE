@@ -15,6 +15,7 @@ interface InformationModifyRequest {
 interface InformationResponse {
   informationId: number;
   title: string;
+  description: string;
   category: string;
   address: string;
   imageUrl?: string;
