@@ -15,8 +15,11 @@ const NavContainer = styled.nav`
   border-top-right-radius: 30px;
 
   padding: 8px 0;
-  z-index: 100;
+  z-index: 1200;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
 `;
 
 const NavItem = styled.div<{ $isActive: boolean }>`
