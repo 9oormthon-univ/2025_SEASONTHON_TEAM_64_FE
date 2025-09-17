@@ -17,6 +17,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import CommentBottomSheet from '../../components/feed/CommentBottomSheet';
 import MissionBox from '../../components/feed/MissionBox';
 import FeedCard from '../../components/feed/FeedCard';
+import OldModeGuide from '../../components/common/OldModeGuide';
+import feedGuide from '../../assets/oldmode/feed_main_guide.jpg';
+import feedCommentGuide from '../../assets/oldmode/feed_comment_guide.jpg';
 
 const FeedPage = () => {
   const navigate = useNavigate();
@@ -156,6 +159,14 @@ const FeedPage = () => {
 
   return (
     <>
+      <OldModeGuide pageKey="feed-main" imageSrc={feedGuide} version="v1" />
+      {activeFeedId !== null && (
+        <OldModeGuide
+          pageKey="feed-comment"
+          imageSrc={feedCommentGuide}
+          version="v1"
+        />
+      )}
       <S.Container>
         <S.CreateIcon src={create} onClick={() => navigate('/create')} />
         <S.ImageWrapper>

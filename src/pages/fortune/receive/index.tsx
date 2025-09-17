@@ -5,6 +5,8 @@ import cookie from '../../../assets/gif/fortune_cookie.gif';
 import { useNavigate } from 'react-router-dom';
 import { assignFortune } from '../../../apis/fortune';
 import { useToastContext } from '../../../components/toast/Toast';
+import OldModeGuide from '../../../components/common/OldModeGuide';
+import fortuneGuide from '../../../assets/oldmode/fortune_guide.jpg';
 
 const FortuneReceive = () => {
   const navigate = useNavigate();
@@ -27,17 +29,24 @@ const FortuneReceive = () => {
   };
 
   return (
-    <S.Container>
-      <S.Header>
-        <img src={back} alt="back" onClick={() => navigate(-1)} />
-      </S.Header>
-      <S.Text>
-        새로운 <span>포춘쿠키</span>가 도착했어요! <br />
-        열어보시겠습니까?
-      </S.Text>
-      <S.Image src={cookie} alt="fortune cookie" />
-      <S.Button onClick={handleNavigate}>받기</S.Button>
-    </S.Container>
+    <>
+      <OldModeGuide
+        pageKey="fortune-receive"
+        imageSrc={fortuneGuide}
+        version="v1"
+      />
+      <S.Container>
+        <S.Header>
+          <img src={back} alt="back" onClick={() => navigate(-1)} />
+        </S.Header>
+        <S.Text>
+          새로운 <span>포춘쿠키</span>가 도착했어요! <br />
+          열어보시겠습니까?
+        </S.Text>
+        <S.Image src={cookie} alt="fortune cookie" />
+        <S.Button onClick={handleNavigate}>받기</S.Button>
+      </S.Container>
+    </>
   );
 };
 

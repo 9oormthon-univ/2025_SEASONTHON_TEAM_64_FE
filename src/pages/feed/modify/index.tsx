@@ -13,6 +13,8 @@ import MissionBox from '../../../components/feed/MissionBox';
 import ContentBox from '../../../components/feed/ContentBox';
 import SubmitButton from '../../../components/feed/SubmitButton';
 import SuccessOverlay from '../../../components/feed/SuccessOverlay';
+import OldModeGuide from '../../../components/common/OldModeGuide';
+import feedGuide from '../../../assets/oldmode/feed_main_guide.jpg';
 
 const FeedModify: React.FC = () => {
   const navigate = useNavigate();
@@ -126,6 +128,7 @@ const FeedModify: React.FC = () => {
 
   return (
     <>
+      <OldModeGuide pageKey="feed-modify" imageSrc={feedGuide} version="v1" />
       {isSuccess && (
         <SuccessOverlay
           imageSrc={successVideo}

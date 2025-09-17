@@ -9,6 +9,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import globalStyles from './styles/globalStyle';
 import './App.css';
 import ToastProvider from './components/toast/Toast';
+import OldModeFontBoost from './components/common/OldModeFontBoost';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <ToastProvider>
           <Suspense fallback={<div>Loading...</div>}>
             <Global styles={globalStyles} />
+            <OldModeFontBoost />
             <RouterProvider router={router} />
           </Suspense>
         </ToastProvider>
