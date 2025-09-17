@@ -7,6 +7,8 @@ import NotificationIcon from '../../components/information/NotificationIcon';
 import CategoryTabs from '../../components/information/CategoryTabs';
 import InformationItem from '../../components/information/InformationItem';
 import useNotificationStatus from '../../hooks/useNotificationStatus';
+import OldModeGuide from '../../components/common/OldModeGuide';
+import infoGuide from '../../assets/oldmode/information_guide.jpg';
 
 const categories = [
   { label: '전체', value: null },
@@ -24,6 +26,7 @@ const Information = () => {
 
   return (
     <>
+      <OldModeGuide pageKey="information" imageSrc={infoGuide} version="v1" />
       <S.Container>
         <S.Header>
           <NotificationIcon

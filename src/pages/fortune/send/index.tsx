@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToastContext } from '../../../components/toast/Toast';
 import { createFortune } from '../../../apis/fortune';
 import SuccessOverlay from '../../../components/feed/SuccessOverlay';
+import OldModeGuide from '../../../components/common/OldModeGuide';
+import fortuneSendGuide from '../../../assets/oldmode/fortune_guide.jpg';
 
 const FortuneSend = () => {
   const navigate = useNavigate();
@@ -34,6 +36,11 @@ const FortuneSend = () => {
 
   return (
     <>
+      <OldModeGuide
+        pageKey="fortune-send"
+        imageSrc={fortuneSendGuide}
+        version="v1"
+      />
       {isSuccess && (
         <SuccessOverlay
           imageSrc={successVideo}

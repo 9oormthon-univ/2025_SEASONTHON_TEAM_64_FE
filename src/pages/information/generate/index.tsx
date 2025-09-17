@@ -14,6 +14,8 @@ import AddressSearch, {
 import { createInformation } from '../../../apis/information';
 import { useToastContext } from '../../../components/toast/Toast';
 import SuccessOverlay from '../../../components/feed/SuccessOverlay';
+import OldModeGuide from '../../../components/common/OldModeGuide';
+import infoGenerateGuide from '../../../assets/oldmode/information_generate_guide.jpg';
 
 const categories = [
   { label: '병원/시설', value: 'HOSPITAL_FACILITIES' },
@@ -59,12 +61,14 @@ const InformationGenerate = () => {
     }
 
     setIsSubmitting(true);
+    const safeAddress = address as AddressSearchValue;
+    const safeCategory = category as string;
     createInformation(
       {
         title: title.trim(),
         description: description.trim(),
-        address: address.displayName,
-        category,
+        address: safeAddress.displayName,
+        category: safeCategory,
       },
       imageFile ? [imageFile] : null,
     )
@@ -109,6 +113,11 @@ const InformationGenerate = () => {
 
   return (
     <>
+      <OldModeGuide
+        pageKey="information-generate"
+        imageSrc={infoGenerateGuide}
+        version="v1"
+      />
       {isSuccess && (
         <SuccessOverlay
           imageSrc={success}
