@@ -34,6 +34,8 @@ const Notification = lazy(() => import('./pages/notification'));
 const Information = lazy(() => import('./pages/information'));
 const InformationGenerate = lazy(() => import('./pages/information/generate'));
 const InformationDetail = lazy(() => import('./pages/information/detail'));
+const MyPage = lazy(() => import('./pages/mypage'));
+const MyPageEdit = lazy(() => import('./pages/mypage/edit'));
 
 const routes: RouteObject[] = [
   {
@@ -58,7 +60,15 @@ const routes: RouteObject[] = [
         path: ROUTE_PATHS.INFORMATION_DETAIL,
         element: buildElement(<InformationDetail />, { auth: true }),
       },
+      {
+        path: ROUTE_PATHS.MY_PAGE,
+        element: buildElement(<MyPage />, { auth: true }),
+      },
     ],
+  },
+  {
+    path: ROUTE_PATHS.MY_PAGE_EDIT,
+    element: buildElement(<MyPageEdit />, { auth: true }),
   },
   {
     path: ROUTE_PATHS.FEED_GENERATE,
