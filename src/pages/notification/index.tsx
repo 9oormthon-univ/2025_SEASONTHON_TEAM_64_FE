@@ -1,18 +1,24 @@
 import React from 'react';
 import * as S from './index.styles';
 import back from '../../assets/notification/left-arrow.svg';
-import NotificationList from '../../components/notification/NotificationList';
+import NotificationList from './NotificationList';
 import useInfiniteNotifications from '../../hooks/useInfiniteNotifications';
 import { useNavigate } from 'react-router-dom';
 
 const Notification = () => {
-  const { items, isLoading, isFetchingNextPage, sentinelRef } =
-    useInfiniteNotifications();
+  const {
+    items,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    sentinelRef,
+    containerRef,
+  } = useInfiniteNotifications();
 
   const navigate = useNavigate();
 
   return (
-    <S.Container>
+    <S.Container ref={containerRef}>
       <S.Header>
         <img src={back} alt="back" onClick={() => navigate(-1)} />
       </S.Header>
@@ -21,6 +27,7 @@ const Notification = () => {
         items={items}
         sentinelRef={sentinelRef}
         loading={isLoading || isFetchingNextPage}
+        hasNextPage={hasNextPage}
       />
     </S.Container>
   );
