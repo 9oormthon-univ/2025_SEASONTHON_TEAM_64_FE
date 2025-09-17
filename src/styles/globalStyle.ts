@@ -75,15 +75,25 @@ const globalStyles = css`
     font-size: 62.5%;
   }
 
+  html.old-mode {
+    font-size: 75%;
+  }
+
   @media (max-width: 450px) {
     html {
       font-size: 56.25%; /* 9px */
+    }
+    html.old-mode {
+      font-size: 68.75%; /* 11px (9px + 2px) */
     }
   }
 
   @media (max-width: 350px) {
     html {
       font-size: 50%; /* 8px */
+    }
+    html.old-mode {
+      font-size: 62.5%; /* 10px (8px + 2px) */
     }
   }
 `;
