@@ -163,7 +163,10 @@ const FeedPage = () => {
         <S.ImageWrapper>
           <S.Logo src={logo} />
           <S.Front src={front} />
-          <S.Notify src={notification ? notify : nonNotify} />
+          <S.Notify
+            src={notification ? notify : nonNotify}
+            onClick={() => navigate('/notification')}
+          />
         </S.ImageWrapper>
         {activeFeed && activeFeedId ? (
           <div

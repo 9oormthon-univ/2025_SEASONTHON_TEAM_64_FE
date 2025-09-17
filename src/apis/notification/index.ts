@@ -7,11 +7,11 @@ const checkNotification = () => {
   );
 };
 
-const getMyNotifications = (lastId: number) => {
+const getMyNotifications = (lastId: number | null) => {
   return ApiBuilder.create<void, NotificationResponse[]>(
     `/api/v1/notifications`,
   )
-    .setMethod('GET')
+    .setMethod('PUT')
     .setParams({ lastId });
 };
 export { checkNotification, getMyNotifications };
