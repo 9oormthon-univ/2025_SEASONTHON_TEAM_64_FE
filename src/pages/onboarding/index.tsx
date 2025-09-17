@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as S from './index.styles';
 import logo from '../../assets/onboarding/logo.svg';
-import maru from '../../assets/onboarding/onboarding_maru.svg';
+import maru from '../../assets/gif/onboarding_maru.gif';
 import { setOnboardingDone, hasToken } from '../../utils/authState';
 import { useNavigate } from 'react-router-dom';
 

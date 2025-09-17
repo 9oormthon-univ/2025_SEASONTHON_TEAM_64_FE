@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useApiQuery } from '../../../apis/config/builder/ApiBuilder';
 import { getFeedDetail, modifyFeed } from '../../../apis/feed';
 import { getUserMission } from '../../../apis/mission';
-import successVideo from '../../../assets/feed/generateSuccess.webm';
+import successVideo from '../../../assets/gif/feed_edit.gif';
 import back from '../../../assets/feed/left-arrow.svg';
 import select from '../../../assets/feed/select-image.svg';
 import { useToastContext } from '../../../components/toast/Toast';
@@ -129,7 +129,7 @@ const FeedModify: React.FC = () => {
     <>
       {isSuccess && (
         <SuccessOverlay
-          videoSrc={successVideo}
+          imageSrc={successVideo}
           message="수정이 완료되었습니다!"
         />
       )}
@@ -146,6 +146,7 @@ const FeedModify: React.FC = () => {
           onChangeText={setText}
         />
         <SubmitButton
+          text="수정하기"
           onClick={handleSubmit}
           disabled={!canSubmit || isSubmitting}
           isSubmitting={isSubmitting}

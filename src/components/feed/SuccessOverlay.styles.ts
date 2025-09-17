@@ -20,9 +20,8 @@ export const Text = styled.div`
   font-size: 2.4rem;
 `;
 
-export const Video = styled.video`
-  margin-top: 4.5rem;
-  width: 53.8rem;
-  height: 39.15rem;
+export const Image = styled.img`
+  max-width: 16.3rem;
+  transform: scale(2);
   flex-shrink: 0;
 `;

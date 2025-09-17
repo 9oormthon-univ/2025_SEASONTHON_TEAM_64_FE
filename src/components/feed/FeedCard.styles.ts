@@ -49,9 +49,21 @@ export const Actions = styled.div`
 `;
 
 export const LikeBtn = styled.img`
-  width: 2.4rem;
-  height: 2.2rem;
+  /* 고정 박스 사이즈를 지정하여 GIF / SVG intrinsic 차이를 제거 */
+  width: 2.2rem;
+  height: 2rem; /* 비슷한 비율 유지 (필요시 조정) */
+  display: inline-block;
+  object-fit: contain; /* GIF가 살짝 다른 비율이어도 맞춰서 표시 */
+  image-rendering: -webkit-optimize-contrast;
   cursor: pointer;
+  /* 애니메이션 중 layout shift 방지 */
+  vertical-align: middle;
+
+  /* data-animating 속성으로 미세 스타일 조정 가능 */
+  &[data-animating='true'] {
+    /* 필요 시 살짝 scale 효과를 주고 싶다면 아래 주석 해제 */
+    transform: scale(2);
+  }
 `;
 
 export const CommentBtn = styled.img`

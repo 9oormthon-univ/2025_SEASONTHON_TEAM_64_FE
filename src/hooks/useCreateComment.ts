@@ -45,7 +45,6 @@ export function useCreateComment(feedId: number) {
       return { optimisticId: optimistic.commentId } as const;
     },
     onError: (_err, _vars, context) => {
-      // rollback - easiest is to invalidate or remove optimistic by id
       if (context) {
         queryClient.setQueryData<InfiniteCommentData>(
           ['comments', feedId],

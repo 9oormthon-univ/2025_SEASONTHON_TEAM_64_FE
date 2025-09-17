@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as S from './FeedCard.styles';
 import likeOn from '../../assets/feed/heart-on.svg';
 import likeOff from '../../assets/feed/heart-off.svg';
+import likeGif from '../../assets/gif/like.gif';
 import commentIcon from '../../assets/feed/comment.svg';
 import nonImage from '../../assets/feed/non-image.svg';
 import menu from '../../assets/feed/menu.svg';
@@ -29,6 +30,30 @@ const FeedCard: React.FC<FeedCardProps> = ({
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [isLikeAnimating, setIsLikeAnimating] = useState(false);
+  const likeTimerRef = useRef<number | null>(null);
+
+  const LIKE_ANIMATION_DURATION = 1000;
+
+  const handleLikeClick = () => {
+    if (isLikeAnimating) return;
+
+    if (!feed.isLiked) {
+      setIsLikeAnimating(true);
+      likeTimerRef.current = window.setTimeout(() => {
+        setIsLikeAnimating(false);
+        likeTimerRef.current = null;
+      }, LIKE_ANIMATION_DURATION);
+    }
+
+    onToggleLike(feed.feedId, feed.isLiked);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (likeTimerRef.current) window.clearTimeout(likeTimerRef.current);
+    };
+  }, []);
 
   return (
     <>
@@ -75,8 +100,10 @@ const FeedCard: React.FC<FeedCardProps> = ({
         <S.Image src={feed.imageUrl} />
         <S.Actions>
           <S.LikeBtn
-            src={feed.isLiked ? likeOn : likeOff}
-            onClick={() => onToggleLike(feed.feedId, feed.isLiked)}
+            src={isLikeAnimating ? likeGif : feed.isLiked ? likeOn : likeOff}
+            onClick={handleLikeClick}
+            alt={feed.isLiked ? 'like-on' : 'like-off'}
+            data-animating={isLikeAnimating}
           />
           <S.CommentBtn
             src={commentIcon}

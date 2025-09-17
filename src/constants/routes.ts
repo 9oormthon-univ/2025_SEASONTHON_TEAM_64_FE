@@ -10,6 +10,7 @@ export const ROUTE_PATHS = {
   USER: '/user',
   FEED_GENERATE: '/create',
   FEED_MODIFY: '/modify/:feedId',
+  FORTUNE: '/fortune',
 } as const;
 
 export type RouteKey = keyof typeof ROUTE_PATHS;
