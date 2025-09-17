@@ -15,6 +15,8 @@ export const ROUTE_PATHS = {
   FORTUNE_SEND: '/fortune/send',
   FORTUNE_DETAIL: '/fortune/detail',
   NOTIFICATION: '/notification',
+  INFORMATION: '/info',
+  INFORMATION_GENERATE: '/info/create',
 } as const;
 
 export type RouteKey = keyof typeof ROUTE_PATHS;

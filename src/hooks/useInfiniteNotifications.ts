@@ -43,13 +43,11 @@ const useInfiniteNotifications = () => {
   useEffect(() => {
     if (!sentinelRef.current) return;
     const io = new IntersectionObserver(onIntersect, {
-      // 스크롤 컨테이너 내부 스크롤이므로 root를 컨테이너로 지정
       root: containerRef.current,
       threshold: 0.1,
     });
     io.observe(sentinelRef.current);
     return () => io.disconnect();
-    // items.length를 deps에 넣어 sentinel mount 이후에도 관찰자를 재설치
   }, [onIntersect, items.length, containerRef]);
 
   return {
