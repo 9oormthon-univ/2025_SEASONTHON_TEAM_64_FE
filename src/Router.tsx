@@ -30,6 +30,7 @@ const AdminGenerate = lazy(() => import('./pages/admin/generate'));
 const AdminList = lazy(() => import('./pages/admin/list'));
 const AdminModify = lazy(() => import('./pages/admin/modify'));
 const User = lazy(() => import('./pages/user'));
+const Notification = lazy(() => import('./pages/notification'));
 
 const routes: RouteObject[] = [
   {
@@ -80,6 +81,10 @@ const routes: RouteObject[] = [
   {
     path: ROUTE_PATHS.ADMIN_GENERATE,
     element: buildElement(<AdminGenerate />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.NOTIFICATION,
+    element: buildElement(<Notification />, { auth: true }),
   },
   { path: ROUTE_PATHS.USER, element: buildElement(<User />, { auth: true }) },
   { path: ROUTE_PATHS.LOGIN, element: buildElement(<Login />) },

@@ -19,7 +19,10 @@ const Fortune = () => {
   return (
     <S.Container>
       <S.Header>
-        <img src={notification ? notify : nonNotify} />
+        <img
+          src={notification ? notify : nonNotify}
+          onClick={() => navigate('/notification')}
+        />
       </S.Header>
       <S.FortuneCookieImage src={fortuneCookie} />
       <S.ButtonImage
