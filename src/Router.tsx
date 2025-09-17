@@ -33,6 +33,7 @@ const User = lazy(() => import('./pages/user'));
 const Notification = lazy(() => import('./pages/notification'));
 const Information = lazy(() => import('./pages/information'));
 const InformationGenerate = lazy(() => import('./pages/information/generate'));
+const InformationDetail = lazy(() => import('./pages/information/detail'));
 
 const routes: RouteObject[] = [
   {
@@ -52,6 +53,10 @@ const routes: RouteObject[] = [
       {
         path: ROUTE_PATHS.INFORMATION,
         element: buildElement(<Information />, { auth: true }),
+      },
+      {
+        path: ROUTE_PATHS.INFORMATION_DETAIL,
+        element: buildElement(<InformationDetail />, { auth: true }),
       },
     ],
   },

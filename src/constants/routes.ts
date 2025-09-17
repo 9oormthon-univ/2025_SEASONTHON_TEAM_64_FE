@@ -17,6 +17,7 @@ export const ROUTE_PATHS = {
   NOTIFICATION: '/notification',
   INFORMATION: '/info',
   INFORMATION_GENERATE: '/info/create',
+  INFORMATION_DETAIL: '/info/:informationId',
 } as const;
 
 export type RouteKey = keyof typeof ROUTE_PATHS;

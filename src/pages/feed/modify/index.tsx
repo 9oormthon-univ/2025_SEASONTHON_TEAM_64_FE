@@ -95,7 +95,6 @@ const FeedModify: React.FC = () => {
         setTimeout(() => navigate('/'), 2000);
       })
       .catch((error) => {
-        console.log(error);
         show(
           error?.response?.data?.message ||
             '수정에 실패했습니다. 다시 시도해주세요.',

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <path d="M36 68c10.493-12.91 15.74-22.91 15.74-30C51.74 24.536 44.204 17 36 17s-15.74 7.536-15.74 21c0 7.09 5.247 17.09 15.74 30z" fill="#FF6A25"/>
+    <circle cx="36" cy="38" r="7" fill="#FFFFFF"/>
+  </g>
+  <title>marker-orange</title>
+</svg>
