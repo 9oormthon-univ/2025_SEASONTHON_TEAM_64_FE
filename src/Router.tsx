@@ -31,6 +31,9 @@ const AdminList = lazy(() => import('./pages/admin/list'));
 const AdminModify = lazy(() => import('./pages/admin/modify'));
 const User = lazy(() => import('./pages/user'));
 const Notification = lazy(() => import('./pages/notification'));
+const Information = lazy(() => import('./pages/information'));
+const InformationGenerate = lazy(() => import('./pages/information/generate'));
+const InformationDetail = lazy(() => import('./pages/information/detail'));
 
 const routes: RouteObject[] = [
   {
@@ -46,6 +49,14 @@ const routes: RouteObject[] = [
       {
         path: ROUTE_PATHS.FORTUNE,
         element: buildElement(<Fortune />, { auth: true }),
+      },
+      {
+        path: ROUTE_PATHS.INFORMATION,
+        element: buildElement(<Information />, { auth: true }),
+      },
+      {
+        path: ROUTE_PATHS.INFORMATION_DETAIL,
+        element: buildElement(<InformationDetail />, { auth: true }),
       },
     ],
   },
@@ -68,6 +79,10 @@ const routes: RouteObject[] = [
   {
     path: ROUTE_PATHS.FORTUNE_DETAIL,
     element: buildElement(<FortuneDetail />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.INFORMATION_GENERATE,
+    element: buildElement(<InformationGenerate />, { auth: true }),
   },
   { path: ROUTE_PATHS.ADMIN, element: buildElement(<Admin />, { auth: true }) },
   {

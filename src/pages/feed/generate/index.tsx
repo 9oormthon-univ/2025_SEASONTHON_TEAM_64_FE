@@ -74,7 +74,6 @@ const FeedGenerate: React.FC = () => {
         setTimeout(() => navigate('/'), 3000);
       })
       .catch((error) => {
-        console.log(error);
         show(
           error?.response?.data?.message ||
             '업로드에 실패했습니다. 다시 시도해주세요.',

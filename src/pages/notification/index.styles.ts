@@ -86,6 +86,6 @@ export const NotificationMessage = styled.div`
 export const NotificationTime = styled.div`
   ${({ theme }) => theme.fonts.light}
   color: #C5C5C5;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   margin-left: auto;
 `;

@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "firebase": "^12.2.1",
     "react": "^19.0.0",
+    "react-daum-postcode": "^3.2.0",
     "react-dom": "^19.0.0",
     "react-kakao-maps-sdk": "^1.2.0",
     "react-router-dom": "^7.2.0",

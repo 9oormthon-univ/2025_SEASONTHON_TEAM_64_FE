@@ -4,10 +4,11 @@ import { getMyNotifications } from '../apis/notification';
 import type { NotificationResponse } from '../apis/notification/index.type';
 
 const useInfiniteNotifications = () => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ['notifications'],
-      initialPageParam: null as number | null,
+      initialPageParam: undefined as number | undefined,
       queryFn: async ({ pageParam }) => {
         const res = await getMyNotifications(pageParam ?? null).execute();
         return res.data as NotificationResponse[];
@@ -27,24 +28,36 @@ const useInfiniteNotifications = () => {
   const onIntersect = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      if (
+        entry.isIntersecting &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        !isLoading
+      ) {
         fetchNextPage();
       }
     },
-    [fetchNextPage, hasNextPage, isFetchingNextPage],
+    [fetchNextPage, hasNextPage, isFetchingNextPage, isLoading],
   );
 
   useEffect(() => {
     if (!sentinelRef.current) return;
     const io = new IntersectionObserver(onIntersect, {
-      root: null,
+      root: containerRef.current,
       threshold: 0.1,
     });
     io.observe(sentinelRef.current);
     return () => io.disconnect();
-  }, [onIntersect]);
+  }, [onIntersect, items.length, containerRef]);
 
-  return { items, isLoading, isFetchingNextPage, sentinelRef };
+  return {
+    items,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    sentinelRef,
+    containerRef,
+  };
 };
 
 export default useInfiniteNotifications;

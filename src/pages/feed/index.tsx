@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import * as S from './index.styles';
 import { useApiQuery } from '../../apis/config/builder/ApiBuilder';
 import { getUserMission } from '../../apis/mission';
-import { checkNotification } from '../../apis/notification';
 
 import logo from '../../assets/feed/logo.svg';
 import front from '../../assets/feed/front-maru.svg';
 import notify from '../../assets/feed/notification.svg';
 import nonNotify from '../../assets/feed/non-notification.svg';
+import useNotificationStatus from '../../hooks/useNotificationStatus';
 import create from '../../assets/feed/plus.svg';
 import { getFeedList, likeFeed, unlikeFeed, deleteFeed } from '../../apis/feed';
 import type { FeedResponse } from '../../apis/feed/index.type';
@@ -56,9 +56,7 @@ const FeedPage = () => {
     [],
   );
   const { data: todayMission } = useApiQuery(getUserMission(), ['userMission']);
-  const { data: notification } = useApiQuery(checkNotification(), [
-    'notification',
-  ]);
+  const notification = useNotificationStatus();
 
   const [activeFeedId, setActiveFeedId] = React.useState<number | null>(null);
   const activeFeed = React.useMemo(
