@@ -54,7 +54,9 @@ apiClient.interceptors.response.use(
 );
 
 function redirectToLogin() {
-  window.location.href = '/login';
+  if (window.location.pathname !== '/login') {
+    window.location.href = '/login';
+  }
 }
 
 export default apiClient;
