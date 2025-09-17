@@ -11,7 +11,7 @@ const FortuneDetail = () => {
   return (
     <S.Container>
       <S.Header>
-        <img src={back} alt="back" onClick={() => navigate(-1)} />
+        <img src={back} alt="back" onClick={() => navigate('/fortune')} />
       </S.Header>
       <S.Image src={cookie} alt="fortune cookie" />
       <S.FortuneDescription>{state?.fortune}</S.FortuneDescription>
