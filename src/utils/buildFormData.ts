@@ -27,7 +27,7 @@ export const buildFormDataMultiple = (
 
   if (imageFiles && imageFiles.length > 0) {
     imageFiles.forEach((file) => {
-      form.append('imageFiles', file); // 서버 필드명이 기존과 같다면 'imageFile' 로 유지
+      form.append('imageFiles', file);
     });
   }
 

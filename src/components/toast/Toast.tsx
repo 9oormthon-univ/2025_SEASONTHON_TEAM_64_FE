@@ -21,7 +21,7 @@ const ToastContainer = styled.div<{ isNavBar?: boolean }>`
   max-width: calc(550px - 4rem);
 
   left: 50%;
-  bottom: ${({ isNavBar }) => (isNavBar ? '9rem' : '2.4rem')};
+  bottom: ${({ isNavBar }) => (isNavBar ? '10.5rem' : '2.4rem')};
 
   transform: translateX(-50%);
   z-index: 9999;
@@ -48,7 +48,7 @@ const ToastBox = styled.div<{ t?: 'error' | 'info'; delay?: number }>`
   ${({ theme }) => theme.fonts.bold}
   font-size: 1.5rem;
   color: white;
-  background: ${(p) => (p.t === 'error' ? '#e74c3c' : '#000')};
+  background: ${(p) => (p.t === 'error' ? '#e74c3c' : '#FFA263')};
 
   transform: translateY(12px);
   animation: ${slideUp} 280ms ease-out forwards;
