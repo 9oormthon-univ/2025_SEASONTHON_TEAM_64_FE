@@ -1,5 +1,5 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
-import { buildFormData } from '../../utils/buildFormData';
+import { buildFormDataMultiple } from '../../utils/buildFormData';
 import type {
   InformationResponse,
   InformationCreateRequest,
@@ -11,7 +11,7 @@ const createInformation = (
   request: InformationCreateRequest,
   images?: File[] | null,
 ) => {
-  const formData = buildFormData(
+  const formData = buildFormDataMultiple(
     request as unknown as Record<string, unknown>,
     images,
   );
@@ -25,7 +25,7 @@ const modifyInformation = (
   request: InformationModifyRequest,
   images?: File[] | null,
 ) => {
-  const formData = buildFormData(
+  const formData = buildFormDataMultiple(
     request as unknown as Record<string, unknown>,
     images,
   );

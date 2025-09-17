@@ -16,7 +16,9 @@ const buildElement = (node: React.ReactNode, options?: { auth?: boolean }) => {
   return withSuspense(wrapped);
 };
 
-const Main = lazy(() => import('./pages/main'));
+const Feed = lazy(() => import('./pages/feed'));
+const FeedGenerate = lazy(() => import('./pages/feed/generate'));
+const FeedModify = lazy(() => import('./pages/feed/modify'));
 const Login = lazy(() => import('./pages/login'));
 const OnBoarding = lazy(() => import('./pages/onboarding'));
 const Admin = lazy(() => import('./pages/admin'));
@@ -34,7 +36,15 @@ const routes: RouteObject[] = [
         <DefaultLayout />
       </AuthGate>
     ),
-    children: [{ index: true, element: withSuspense(<Main />) }],
+    children: [{ index: true, element: withSuspense(<Feed />) }],
+  },
+  {
+    path: ROUTE_PATHS.FEED_GENERATE,
+    element: buildElement(<FeedGenerate />, { auth: true }),
+  },
+  {
+    path: ROUTE_PATHS.FEED_MODIFY,
+    element: buildElement(<FeedModify />, { auth: true }),
   },
   { path: ROUTE_PATHS.ADMIN, element: buildElement(<Admin />, { auth: true }) },
   {

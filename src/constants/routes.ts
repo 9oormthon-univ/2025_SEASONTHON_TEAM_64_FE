@@ -8,6 +8,8 @@ export const ROUTE_PATHS = {
   ADMIN_LIST: '/admin/list',
   ADMIN_MODIFY: '/admin/modify/:missionId',
   USER: '/user',
+  FEED_GENERATE: '/create',
+  FEED_MODIFY: '/modify/:feedId',
 } as const;
 
 export type RouteKey = keyof typeof ROUTE_PATHS;

@@ -1,6 +1,10 @@
 import ApiBuilder from '../config/builder/ApiBuilder';
-import { buildFormData } from '../../utils/buildFormData';
-import type { FeedModifyRequest, FeedResponse } from './index.type';
+import { buildFormDataSingle } from '../../utils/buildFormData';
+import type {
+  FeedModifyRequest,
+  FeedResponse,
+  FeedCreateRequest,
+} from './index.type';
 
 const getFeedList = (lastFeedId?: number) => {
   return ApiBuilder.create<void, FeedResponse[]>('/api/v1/feeds')
@@ -14,8 +18,8 @@ const getMyFeedList = (lastFeedId?: number) => {
     .setParams({ lastFeedId });
 };
 
-const createFeed = (request: FeedModifyRequest, imageFile: File[] | null) => {
-  const formData = buildFormData(
+const createFeed = (request: FeedCreateRequest, imageFile: File | null) => {
+  const formData = buildFormDataSingle(
     request as unknown as Record<string, unknown>,
     imageFile,
   );
@@ -33,9 +37,9 @@ const getFeedDetail = (feedId: number) => {
 const modifyFeed = (
   feedId: number,
   request: FeedModifyRequest,
-  imageFile: File[] | null,
+  imageFile: File | null,
 ) => {
-  const formData = buildFormData(
+  const formData = buildFormDataSingle(
     request as unknown as Record<string, unknown>,
     imageFile,
   );
