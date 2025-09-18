@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 export const CreateIcon = styled.img`
   position: absolute;
+  z-index: 99;
   right: 2rem;
   bottom: 10rem;
   aspect-ratio: 1/1;

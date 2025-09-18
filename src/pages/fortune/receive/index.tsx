@@ -5,8 +5,6 @@ import cookie from '../../../assets/gif/fortune_cookie.gif';
 import { useNavigate } from 'react-router-dom';
 import { assignFortune } from '../../../apis/fortune';
 import { useToastContext } from '../../../components/toast/Toast';
-import OldModeGuide from '../../../components/common/OldModeGuide';
-import fortuneGuide from '../../../assets/oldmode/fortune_guide.jpg';
 
 const FortuneReceive = () => {
   const navigate = useNavigate();
@@ -30,11 +28,6 @@ const FortuneReceive = () => {
 
   return (
     <>
-      <OldModeGuide
-        pageKey="fortune-receive"
-        imageSrc={fortuneGuide}
-        version="v1"
-      />
       <S.Container>
         <S.Header>
           <img src={back} alt="back" onClick={() => navigate(-1)} />
