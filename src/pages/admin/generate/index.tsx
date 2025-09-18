@@ -6,9 +6,11 @@ import { getMemberDetail } from '../../../apis/member';
 import { createMission } from '../../../apis/mission';
 import SuccessAlert from '../../../components/admin/successAlert/SuccessAlert';
 import AdminInfo from '../../../components/admin/adminInfo/AdminInfo';
+import { useToastContext } from '../../../components/toast/Toast';
 
 const AdminGenerate = () => {
   const navigate = useNavigate();
+  const { show } = useToastContext();
   const [title, setTitle] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const { data: memberData } = useApiQuery(getMemberDetail(), ['member']);
@@ -28,7 +30,7 @@ const AdminGenerate = () => {
         }, 3000);
       })
       .catch(() => {
-        alert('미션 등록에 실패했습니다. 다시 시도해주세요.');
+        show('미션 등록에 실패했습니다. 다시 시도해주세요.', 'error');
       });
   };
 
