@@ -5,9 +5,12 @@ export const Container = styled.div`
   flex-direction: column;
 
   width: 100%;
-  height: 100vh;
 
   align-items: center;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const Title = styled.div`
@@ -16,7 +19,7 @@ export const Title = styled.div`
   ${({ theme }) => theme.fonts.bold};
   color: #2b2c2f;
   font-size: 2.4rem;
-  margin-top: 14.3rem;
+  margin-top: 6rem;
   margin-bottom: 4.8rem;
 `;
 
@@ -51,8 +54,7 @@ export const ModeBox = styled.div<{
 export const ModeBoxImage = styled.img<{ mode?: 'OLD' | 'YOUNG' }>`
   max-width: 60%;
   aspect-ratio: 9.8 / 8.9;
-  margin-top: ${({ mode }) => (mode === 'OLD' ? '5rem' : '6.1rem')};
-  margin-bottom: ${({ mode }) => (mode === 'OLD' ? '0rem' : '0.8rem')};
+  margin-top: ${({ mode }) => (mode === 'OLD' ? '5rem' : '5.1rem')};
 `;
 
 export const ModeBoxText = styled.div`
@@ -101,7 +103,7 @@ export const Button = styled.button<{ disabled?: boolean }>`
 
   align-items: center;
   justify-content: center;
-  margin: auto 0%;
+  margin: 8rem 0 8rem 0;
 
   color: #fff;
   font-size: 1.8rem;

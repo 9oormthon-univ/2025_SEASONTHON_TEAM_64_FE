@@ -17,7 +17,6 @@ export const Container = styled.div`
 
   width: 100%;
   height: 100vh;
-  padding-bottom: 12rem;
 
   align-items: center;
   background: linear-gradient(180deg, #ff6a25 2.23%, #fafafa 28.58%);
@@ -94,7 +93,9 @@ export const FeedList = styled.div`
   align-items: center;
 
   overflow-y: auto;
-  margin-top: 6.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 12rem;
 
   gap: 1rem;
 

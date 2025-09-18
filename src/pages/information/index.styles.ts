@@ -16,7 +16,6 @@ export const Container = styled.div`
 
   width: 100%;
   height: 100vh;
-  padding-bottom: 12rem;
 
   align-items: center;
   background-color: #f5f5f5;
@@ -68,6 +67,7 @@ export const InfoList = styled.div`
 
   width: calc(100% - 4rem);
   align-items: flex-start;
+  padding-bottom: 12rem;
 
   gap: 2.3rem;
   margin-top: 1.8rem;

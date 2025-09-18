@@ -54,7 +54,7 @@ export const InfoCard = styled.div`
   position: absolute;
   left: 2rem;
   right: 2rem;
-  bottom: 14rem;
+  bottom: 4rem;
   z-index: 2;
   padding: 2rem;
   border-radius: 1.6rem;

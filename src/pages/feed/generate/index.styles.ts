@@ -5,6 +5,10 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100vh;
   background: linear-gradient(180deg, #ff6a25 2.23%, #fafafa 28.58%);
+
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
