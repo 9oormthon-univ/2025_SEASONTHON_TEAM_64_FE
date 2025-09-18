@@ -13,8 +13,6 @@ import MissionBox from '../../../components/feed/MissionBox';
 import ContentBox from '../../../components/feed/ContentBox';
 import SubmitButton from '../../../components/feed/SubmitButton';
 import SuccessOverlay from '../../../components/feed/SuccessOverlay';
-import OldModeGuide from '../../../components/common/OldModeGuide';
-import feedGenerateGuide from '../../../assets/oldmode/feed_main_guide.jpg';
 
 const FeedGenerate: React.FC = () => {
   const navigate = useNavigate();
@@ -88,11 +86,6 @@ const FeedGenerate: React.FC = () => {
 
   return (
     <>
-      <OldModeGuide
-        pageKey="feed-generate"
-        imageSrc={feedGenerateGuide}
-        version="v1"
-      />
       {isSuccess && <SuccessOverlay imageSrc={successVideo} />}
       <S.Container>
         <Header backIcon={back} onBack={() => navigate(-1)} />

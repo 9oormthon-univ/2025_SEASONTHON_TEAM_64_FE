@@ -7,7 +7,6 @@ import FcmRegistrar from '../utils/FcmRegistrar';
 const PageWrapper = styled.div`
   width: 100%;
   position: relative;
-  z-index: 0;
 `;
 
 const DefaultLayout = () => {
