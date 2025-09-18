@@ -247,7 +247,8 @@ export const Button = styled.button`
   margin: 5rem 0;
 
   width: calc(100% - 4rem);
-  padding: 1.7rem 8.9rem;
+  padding: 1.7rem 0rem;
+  text-align: center;
 
   border-radius: 0.8rem;
   background: #ff6a25;

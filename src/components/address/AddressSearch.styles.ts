@@ -137,7 +137,7 @@ export const Button = styled.button`
   justify-content: center;
 
   width: calc(100% - 4rem);
-  padding: 1.7rem 8.9rem;
+  padding: 1.7rem 0rem;
 
   border-radius: 0.8rem;
   background: #ff6a25;
