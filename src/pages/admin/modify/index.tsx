@@ -6,9 +6,11 @@ import { getMemberDetail } from '../../../apis/member';
 import { getMissionDetail, modifyMission } from '../../../apis/mission';
 import SuccessAlert from '../../../components/admin/successAlert/SuccessAlert';
 import AdminInfo from '../../../components/admin/adminInfo/AdminInfo';
+import { useToastContext } from '../../../components/toast/Toast';
 
 const AdminModify = () => {
   const navigate = useNavigate();
+  const { show } = useToastContext();
   const { missionId } = useParams();
   const [title, setTitle] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -25,7 +27,7 @@ const AdminModify = () => {
   }, [missionDetail]);
   const handleSubmit = () => {
     if (title.length === 0) {
-      alert('미션 내용을 입력해주세요.');
+      show('미션 내용을 입력해주세요.', 'error');
       return;
     }
     modifyMission({
@@ -41,7 +43,7 @@ const AdminModify = () => {
         }, 3000);
       })
       .catch(() => {
-        alert('미션 수정에 실패했습니다. 다시 시도해주세요.');
+        show('미션 수정에 실패했습니다. 다시 시도해주세요.', 'error');
       });
   };
 

@@ -19,6 +19,7 @@ export const MissionList = styled.div`
   margin-top: 10rem;
 
   padding: 1rem 1rem;
+  padding-bottom: 6rem;
 
   overflow-y: auto;
   gap: 1.5rem;

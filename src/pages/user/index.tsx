@@ -9,9 +9,12 @@ import { updateMemberMode } from '../../apis/member';
 import { queryClient } from '../../QueryClient';
 import type { MemberDetailResponse } from '../../apis/member/index.type';
 import { useNavigate } from 'react-router-dom';
+import { useToastContext } from '../../components/toast/Toast';
+import { time } from 'console';
 
 const UserPage = () => {
   const navigate = useNavigate();
+  const { show } = useToastContext();
   const [selectedMode, setSelectedMode] = React.useState<
     'OLD' | 'YOUNG' | null
   >(null);
@@ -26,7 +29,11 @@ const UserPage = () => {
     if (!selectedMode || saving) return;
     try {
       setSaving(true);
-      await updateMemberMode(selectedMode).execute();
+      await updateMemberMode(selectedMode)
+        .execute()
+        .then(() => {
+          show('모드가 선택되었습니다.', 'info', true);
+        });
       queryClient.setQueryData<MemberDetailResponse | undefined>(
         ['member'],
         (old) => (old ? { ...old, mode: selectedMode } : old),
@@ -35,7 +42,7 @@ const UserPage = () => {
       await queryClient.refetchQueries({ queryKey: ['member'] });
       navigate('/', { replace: true });
     } catch (e) {
-      alert('모드 변경에 실패했습니다. 다시 시도해주세요.');
+      show('모드 변경에 실패했습니다. 다시 시도해주세요.', 'error');
     } finally {
       setSaving(false);
     }

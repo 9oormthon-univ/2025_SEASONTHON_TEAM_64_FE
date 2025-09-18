@@ -4,6 +4,7 @@ import memu from '../../../assets/admin/menu.svg';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteMission } from '../../../apis/mission';
 import { useNavigate } from 'react-router-dom';
+import { useToastContext } from '../../../components/toast/Toast';
 
 interface MissionBoxProps {
   id: number;
@@ -16,18 +17,19 @@ const MissionBox = ({ id, description, isOpen, onToggle }: MissionBoxProps) => {
   const [isDelete, setIsDelete] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { show } = useToastContext();
 
   const handleDeleteMission = (id: number) => {
     deleteMission(id)
       .execute()
       .then(() => {
-        alert('미션이 삭제되었습니다.');
+        show('미션이 삭제되었습니다.', 'info');
         queryClient.invalidateQueries({ queryKey: ['missionList'] });
         setIsDelete(false);
         onToggle(id);
       })
       .catch(() => {
-        alert('미션 삭제에 실패했습니다. 다시 시도해주세요.');
+        show('미션 삭제에 실패했습니다. 다시 시도해주세요.', 'error');
         setIsDelete(false);
         onToggle(id);
       });
