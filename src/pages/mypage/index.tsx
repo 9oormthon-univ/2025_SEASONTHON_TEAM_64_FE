@@ -21,7 +21,11 @@ const MyPage = () => {
     <S.Container>
       <S.ImageWrapper>
         <S.Logo src={logo} alt="Logo" />
-        <S.Notify src={notification ? notify : nonNotify} alt="Notification" />
+        <S.Notify
+          src={notification ? notify : nonNotify}
+          alt="Notification"
+          onClick={() => navigate('/notification')}
+        />
       </S.ImageWrapper>
       <S.ProfileWrapper>
         <S.ProfileImage src={memberDetail?.profileImageUrl || nonImage} />

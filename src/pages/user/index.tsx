@@ -6,6 +6,8 @@ import young from '../../assets/user/young_maru.svg';
 import old from '../../assets/user/old_maru.svg';
 import tip from '../../assets/user/tip.svg';
 import { updateMemberMode } from '../../apis/member';
+import { queryClient } from '../../QueryClient';
+import type { MemberDetailResponse } from '../../apis/member/index.type';
 import { useNavigate } from 'react-router-dom';
 
 const UserPage = () => {
@@ -18,16 +20,24 @@ const UserPage = () => {
     setSelectedMode(mode);
   };
 
-  const handleChangeMode = () => {
-    if (selectedMode) {
-      updateMemberMode(selectedMode)
-        .execute()
-        .then(() => {
-          navigate('/');
-        })
-        .catch(() => {
-          alert('모드 변경에 실패했습니다. 다시 시도해주세요.');
-        });
+  const [saving, setSaving] = React.useState(false);
+
+  const handleChangeMode = async () => {
+    if (!selectedMode || saving) return;
+    try {
+      setSaving(true);
+      await updateMemberMode(selectedMode).execute();
+      queryClient.setQueryData<MemberDetailResponse | undefined>(
+        ['member'],
+        (old) => (old ? { ...old, mode: selectedMode } : old),
+      );
+      await queryClient.invalidateQueries({ queryKey: ['member'] });
+      await queryClient.refetchQueries({ queryKey: ['member'] });
+      navigate('/', { replace: true });
+    } catch (e) {
+      alert('모드 변경에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -70,8 +80,8 @@ const UserPage = () => {
         꿀팁
       </S.TipSection>
       <S.TipText>노인모드는 글씨와 사진을 크게 볼 수 있어요.</S.TipText>
-      <S.Button disabled={!selectedMode} onClick={handleChangeMode}>
-        선택하기
+      <S.Button disabled={!selectedMode || saving} onClick={handleChangeMode}>
+        {saving ? '변경 중...' : '선택하기'}
       </S.Button>
     </S.Container>
   );

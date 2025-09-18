@@ -5,7 +5,12 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  padding-bottom: 6rem;
+
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const Header = styled.div`

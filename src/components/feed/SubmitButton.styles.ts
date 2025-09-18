@@ -6,7 +6,7 @@ export const Button = styled.button`
 
   align-items: center;
   justify-content: center;
-  margin: auto 0;
+  margin: 5rem 0;
 
   width: calc(100% - 4rem);
   padding: 1.7rem 8.9rem;

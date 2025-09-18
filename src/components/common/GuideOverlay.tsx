@@ -9,18 +9,19 @@ type GuideOverlayProps = {
 const Backdrop = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 20000;
+  background: rgba(0, 0, 0, 0.4);
 `;
 
 const Image = styled.img`
+  display: block;
   width: 100%;
-  max-width: 500px;
-  border-radius: 1.6rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  height: auto;
+  max-height: calc(
+    100vh -
+      3px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+  );
+  object-fit: fill;
 `;
 
 const Container = styled.div`
